@@ -1,7 +1,7 @@
 export default function Home() {
   return (
     <div>
-      <h1>테스트</h1>
+      <h1>퀴즈</h1>
     </div>
   );
 }
