@@ -1,0 +1,38 @@
+/* CSS 기본 설정 */
+@charset "utf-8";
+
+@use 'styles/var.module.scss' as v;
+
+@font-face {
+  font-family: 'Noto Sans KR';
+  src: url(../public/fonts/noto-sans-kr.woff2) format('woff2');
+}
+
+body {
+  min-width: 1280px;
+  background-color: v.$white;
+}
+
+* {
+  font-family: 'Noto Sans KR';
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+li {
+  float: left;
+}
+
+a {
+  text-decoration: none;
+  color: v.$black;
+}
+
+input:focus {
+  outline: none;
+}

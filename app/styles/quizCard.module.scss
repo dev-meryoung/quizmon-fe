@@ -1,0 +1,150 @@
+/* QuizCard 컴포넌트 */
+@use 'var.module.scss' as v;
+
+.container {
+  display: flex;
+  position: relative;
+  width: 250px;
+  height: 330px;
+  flex-direction: column;
+  border: 1px solid v.$main-gray;
+  border-radius: 15px;
+  background-color: v.$main-gray;
+  overflow: hidden;
+
+  .type {
+    display: flex;
+    position: absolute;
+    width: 2.5rem;
+    height: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    font-size: v.$font-size-2xs;
+    font-weight: bold;
+    top: 0.5em;
+    right: 0.5rem;
+    border: 1.5px solid v.$main-deep-gray;
+    border-radius: 5px;
+    background-color: v.$main-gray;
+  }
+
+  .thumbnail {
+    display: flex;
+    width: 100%;
+    height: 65%;
+    overflow: hidden;
+    .thumbnail_img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .detail {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 65%;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: rgba(v.$main-deep-gray, 0.85);
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    .label {
+      display: flex;
+      font-size: v.$font-size-2xs;
+      font-weight: bold;
+      padding: 1rem 0 0 1.1rem;
+    }
+
+    .comment {
+      display: flex;
+      height: 60%;
+      word-break: break-all;
+      padding: 0 1rem;
+      font-size: v.$font-size-sm;
+    }
+
+    .playCount {
+      display: flex;
+      height: 20%;
+      word-break: break-all;
+      padding: 0 1rem;
+      font-size: v.$font-size-sm;
+    }
+  }
+
+  .visible {
+    display: flex;
+  }
+
+  .quizInfo {
+    display: flex;
+    width: 100%;
+    height: 22%;
+    overflow: hidden;
+    .title {
+      padding: 0.5rem;
+      word-break: break-all;
+      font-weight: bold;
+    }
+  }
+
+  .btnWrapper {
+    display: flex;
+    width: 100%;
+    height: 13%;
+    justify-content: space-evenly;
+
+    .playBtn {
+      display: flex;
+      width: 10rem;
+      height: 2rem;
+      justify-content: center;
+      text-align: center;
+      align-items: center;
+      border-radius: 5px;
+      background-color: v.$main-deep-gray;
+
+      .playIcon {
+        height: 0.85rem;
+        margin-right: 0.5rem;
+      }
+
+      &:hover {
+        fill: v.$white;
+        color: v.$white;
+        background-color: v.$main-green;
+      }
+    }
+
+    .infoBtn {
+      display: flex;
+      width: 4rem;
+      height: 2rem;
+      justify-content: center;
+      text-align: center;
+      align-items: center;
+      border-radius: 5px;
+      background-color: v.$main-deep-gray;
+
+      .infoIcon {
+        width: 0.85rem;
+      }
+
+      &:hover {
+        cursor: pointer;
+        fill: v.$white;
+        color: v.$white;
+        background-color: v.$main-green;
+      }
+    }
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+    transition: all 0.5s;
+  }
+}

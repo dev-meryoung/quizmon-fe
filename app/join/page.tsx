@@ -1,7 +1,9 @@
-export default function Home() {
+const Join = (): React.ReactNode => {
   return (
     <div>
-      <h1>회원가입</h1>
+      <h3>회원가입</h3>
     </div>
   );
-}
+};
+
+export default Join;

@@ -1,7 +1,9 @@
-export default function Home() {
+const Login = (): React.ReactNode => {
   return (
     <div>
-      <h1>로그인</h1>
+      <h3>로그인</h3>
     </div>
   );
-}
+};
+
+export default Login;

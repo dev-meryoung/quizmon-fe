@@ -1,18 +1,20 @@
-export const metadata = {
-  title: '테스트',
-};
+import 'app/globals.scss';
+import { Metadata } from 'next';
+import Header from 'app/components/Header';
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang="en">
+    <html lang="ko">
       <body>
-        <h1>레이아웃</h1>
+        <Header />
         {children}
       </body>
     </html>
   );
-}
+};
+
+export const metadata: Metadata = {
+  title: '퀴즈몬',
+};
+
+export default RootLayout;
