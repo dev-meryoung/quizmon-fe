@@ -13,15 +13,18 @@
     justify-content: center;
     align-items: center;
 
-    .filter {
+    .searchFilter {
+      display: flex;
       width: 100%;
-      height: 100%;
+      height: 2.4rem;
+      padding-bottom: 0.3rem;
+      margin-left: 0.5rem;
     }
 
     .quizList {
       display: grid;
       grid-template-columns: 250px 250px 250px 250px;
-      gap: 20px 20px;
+      gap: 25px 25px;
       padding: 1rem 0 1rem 0;
     }
   }

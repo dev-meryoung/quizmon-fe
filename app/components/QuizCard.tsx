@@ -16,7 +16,7 @@ const QuizCard = (): React.ReactNode => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} select_ban`}>
       <div className={styles.type}>
         <p>이미지</p>
       </div>
@@ -27,7 +27,7 @@ const QuizCard = (): React.ReactNode => {
         <p className={styles.label}>설명</p>
         <div className={styles.comment}>
           <p>
-            ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+            디지몬친구들레츠고레츠고디지몬친구들레츠고레츠고디지몬친구들레츠고레츠고디지몬친구들레츠고레츠고디지몬친구들디지몬친구들레ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
           </p>
         </div>
         <p className={styles.label}>누적 플레이</p>
@@ -42,7 +42,7 @@ const QuizCard = (): React.ReactNode => {
         <p className={styles.title}>추억의 디지몬 이름 맞추기!!!!!!!!!</p>
       </div>
       <div className={styles.btnWrapper}>
-        <Link className={styles.playBtn} href={`/quiz/${'aa'}`}>
+        <Link className={styles.playBtn} href={`/quiz/${'aa'}`} target="_blank">
           <svg
             className={styles.playIcon}
             xmlns="http://www.w3.org/2000/svg"

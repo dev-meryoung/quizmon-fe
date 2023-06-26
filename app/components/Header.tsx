@@ -20,7 +20,7 @@ const Header = (): React.ReactNode => {
         </Link>
       </div>
       <div className={styles.search}>
-        <input className={styles.search_text} type="text" />
+        <input className={styles.search_text} type="text" spellCheck="false" />
         <svg
           className={styles.search_icon}
           xmlns="http://www.w3.org/2000/svg"

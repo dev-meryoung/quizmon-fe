@@ -11,6 +11,7 @@
   border-radius: 15px;
   background-color: v.$main-gray;
   overflow: hidden;
+  box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
 
   .type {
     display: flex;
@@ -26,6 +27,10 @@
     border: 1.5px solid v.$main-deep-gray;
     border-radius: 5px;
     background-color: v.$main-gray;
+
+    &:hover {
+      cursor: default;
+    }
   }
 
   .thumbnail {
@@ -34,8 +39,8 @@
     height: 65%;
     overflow: hidden;
     .thumbnail_img {
-      width: 100%;
       height: 100%;
+      object-fit: cover;
     }
   }
 

@@ -36,3 +36,12 @@ a {
 input:focus {
   outline: none;
 }
+
+/* 이외 설정 */
+// 텍스트 선택 차단
+.select_ban {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

@@ -12,7 +12,7 @@
   .logo {
     display: flex;
     .logo_img {
-      width: 11rem;
+      width: 10rem;
       height: auto;
     }
   }
@@ -26,6 +26,8 @@
     border: 2px solid v.$main-green;
     border-radius: 15px;
     margin-right: 3rem;
+    box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+
     .search_text {
       width: 90%;
       height: 2.5rem;
