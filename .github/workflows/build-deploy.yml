@@ -23,7 +23,7 @@ jobs:
         run: npm install
         
       # 4. 환경변수 .env 관련 적용
-      - name: Generate Environment Variables File for Production
+      # - name: Generate Environment Variables File for Production
     
       # 5. Next.js 프로젝트를 빌드
       - name: Build Next.js App
