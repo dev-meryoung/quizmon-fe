@@ -1,0 +1,40 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]  # 변경 사항을 푸시할 때마다 실행
+  pull_request:
+    branches: [ main ]  # Pull Request가 생성될 때마다 실행
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 레포지토리 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      # 2. Node.js를 설치
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+          
+      # 3. NPM 패키지를 설치
+      - name: Install Dependencies
+        run: npm install
+        
+      # 4. 환경변수 .env 관련 적용
+      - name: Generate Environment Variables File for Production
+    
+      # 5. Next.js 프로젝트를 빌드
+      - name: Build Next.js App
+        run: npm run build
+        
+      # 6. SCP 명령어를 사용하여 EC2 서버에 전송
+      - name: Deploy
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}  # SCP로 전송할 서버 호스트 이름
+          username: ${{ secrets.SERVER_USERNAME }}  # SCP로 전송할 서버 사용자 이름
+          key: ${{ secrets.SERVER_PEM_KEY }}  # SCP로 전송할 서버 비밀번호
+          source: .next/  # 전송할 파일 경로
+          target: ${{ secrets.SERVER_TARGET }}  # 전송 대상 경로
