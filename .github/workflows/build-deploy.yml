@@ -16,10 +16,11 @@ jobs:
           with:
             host: ${{ secrets.SERVER_HOST }}
             username: ${{ secrets.SERVER_USERNAME }}
+            port: 22
             key: ${{ secrets.SERVER_PEM_KEY }}
             envs: SERVER_TARGET
             script: |
-                cd /home/quizmon/quizmon-fe
+                cd $SERVER_TARGET
                 rm -rf .next
       
         # 1. 레파지토리 체크아웃
@@ -54,9 +55,11 @@ jobs:
           with:
             host: ${{ secrets.SERVER_HOST }}
             username: ${{ secrets.SERVER_USERNAME }}
+            port: 22
             key: ${{ secrets.SERVER_PEM_KEY }}
+            envs: SERVER_TARGET
             script: |
-                cd /home/quizmon/quizmon-fe
+                cd $SERVER_TARGET
                 git pull
                 npm install
                 pm2 reload quizmon-fe
