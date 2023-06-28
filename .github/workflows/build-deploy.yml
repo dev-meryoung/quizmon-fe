@@ -7,7 +7,7 @@ on:
     branches: [ main ]  # Pull Request가 생성될 때마다 실행
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
     - name: executing remote ssh commands using password
@@ -17,4 +17,11 @@ jobs:
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_PEM_KEY }}
         password: ${{ secrets.SERVER_PASSWORD }}
-        script: ${{ secrets.SCRIPT }}
+        script: |
+            su
+            ${{ secrets.SERVER_PASSWORD }}
+            cd ${{ SERVER_TARGET }}
+            git pull
+            npm install
+            npm run build
+            pm2 reload quizmon-fe
