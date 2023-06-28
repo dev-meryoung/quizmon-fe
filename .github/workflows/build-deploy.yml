@@ -36,5 +36,5 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}  # SCP로 전송할 서버 호스트 이름
           username: ${{ secrets.SERVER_USERNAME }}  # SCP로 전송할 서버 사용자 이름
           key: ${{ secrets.SERVER_PEM_KEY }}  # SCP로 전송할 서버 비밀번호
-          source: /  # 전송할 파일 경로
+          source: ./  # 전송할 파일 경로
           target: ${{ secrets.SERVER_TARGET }}  # 전송 대상 경로
