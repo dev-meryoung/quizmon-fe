@@ -19,7 +19,7 @@ jobs:
             key: ${{ secrets.SERVER_PEM_KEY }}
             envs: SERVER_TARGET
             script: |
-                cd $SERVER_TARGET
+                cd /home/quizmon/quizmon-fe
                 rm -rf .next
       
         # 1. 레파지토리 체크아웃
@@ -56,7 +56,7 @@ jobs:
             username: ${{ secrets.SERVER_USERNAME }}
             key: ${{ secrets.SERVER_PEM_KEY }}
             script: |
-                cd $SERVER_TARGET
+                cd /home/quizmon/quizmon-fe
                 git pull
                 npm install
                 pm2 reload quizmon-fe
