@@ -20,7 +20,7 @@ jobs:
         script: |
             su
             ${{ secrets.SERVER_PASSWORD }}
-            cd ${{ SERVER_TARGET }}
+            cd ${{ secrets.SERVER_TARGET }}
             git pull
             npm install
             npm run build
