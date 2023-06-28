@@ -11,16 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@v0.1.10
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_PEM_KEY }}
-        password: ${{ secrets.SERVER_PASSWORD }}
         script: |
-            su
-            ${{ secrets.SERVER_PASSWORD }}
-            cd ${{ secrets.SERVER_TARGET }}
+            cd /home/quizmon/quizmon-fe
             git pull
             npm install
             npm run build
