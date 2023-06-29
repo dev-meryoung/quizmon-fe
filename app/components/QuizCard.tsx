@@ -11,12 +11,12 @@ const QuizCard = (): React.ReactNode => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   // QuizCard 컴포넌트의 퀴즈 정보 노출 상태를 항상 토글하는 핸들러 함수
-  const visibleHandler = () => {
+  const visibleHandler = (): void => {
     setIsVisible(!isVisible);
   };
 
   return (
-    <div className={`${styles.container} select_ban`}>
+    <div className={`${styles.cardWrapper} select_ban`}>
       <div className={styles.type}>
         <p>이미지</p>
       </div>
@@ -26,9 +26,7 @@ const QuizCard = (): React.ReactNode => {
       >
         <p className={styles.label}>설명</p>
         <div className={styles.comment}>
-          <p>
-            디지몬친구들레츠고레츠고디지몬친구들레츠고레츠고디지몬친구들레츠고레츠고디지몬친구들레츠고레츠고디지몬친구들디지몬친구들레ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
-          </p>
+          <p>설명</p>
         </div>
         <p className={styles.label}>누적 플레이</p>
         <div className={styles.playCount}>
@@ -39,10 +37,14 @@ const QuizCard = (): React.ReactNode => {
         <Image className={styles.thumbnail_img} src={test} alt="이미지" />
       </div>
       <div className={styles.quizInfo}>
-        <p className={styles.title}>추억의 디지몬 이름 맞추기!!!!!!!!!</p>
+        <p className={styles.title}>퀴즈 타이틀</p>
       </div>
       <div className={styles.btnWrapper}>
-        <Link className={styles.playBtn} href={`/quiz/${'aa'}`} target="_blank">
+        <Link
+          className={styles.playBtn}
+          href={`/quiz/${'url'}`}
+          target="_blank"
+        >
           <svg
             className={styles.playIcon}
             xmlns="http://www.w3.org/2000/svg"

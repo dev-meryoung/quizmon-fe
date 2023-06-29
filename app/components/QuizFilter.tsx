@@ -19,7 +19,7 @@ const QuizFilter = (props: Options): React.ReactNode => {
   const op3Dom = useRef<HTMLLIElement>(null);
 
   // 필터의 클릭에 따라 상태를 변경하는 핸들러 함수
-  const quizFilterClickHandler = (e: React.MouseEvent<HTMLElement>) => {
+  const quizFilterClickHandler = (e: React.MouseEvent<HTMLElement>): void => {
     if (e.target === op1Dom.current) {
       props.setQuizFilterFocused(1);
     } else if (e.target === op2Dom.current) {

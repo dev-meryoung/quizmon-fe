@@ -1,7 +1,7 @@
 /* QuizCard 컴포넌트 */
 @use 'var.module.scss' as v;
 
-.container {
+.cardWrapper {
   display: flex;
   position: relative;
   width: 250px;

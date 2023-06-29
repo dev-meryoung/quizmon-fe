@@ -1,4 +1,4 @@
-/* CSS 기본 설정 */
+/* CSS 기본 */
 @charset "utf-8";
 
 @use 'styles/var.module.scss' as v;
@@ -31,10 +31,38 @@ li {
 a {
   text-decoration: none;
   color: v.$black;
+
+  &:hover {
+    color: v.$main-green;
+    fill: v.$main-green;
+  }
+}
+
+button {
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  border: none;
+  border-radius: 5px;
+  color: v.$white;
+  background-color: v.$main-green;
+
+  &:hover {
+    cursor: pointer;
+    background-color: v.$main-deep-green;
+  }
 }
 
 input:focus {
   outline: none;
+}
+
+/* CSS 적용 */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 0;
 }
 
 /* 이외 설정 */

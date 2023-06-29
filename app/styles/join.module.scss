@@ -1,0 +1,87 @@
+/* Join 페이지 */
+@use 'var.module.scss' as v;
+
+.contents {
+  .joinWrapper {
+    display: flex;
+    width: 600px;
+    height: 550px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid v.$main-deep-gray;
+    overflow: hidden;
+
+    .inputWrapper {
+      display: flex;
+      position: relative;
+      width: 22rem;
+      flex-direction: column;
+
+      .input_label {
+        font-size: v.$font-size-2xs;
+      }
+
+      .input_text {
+        height: 2.5rem;
+        border: none;
+        font-size: 1rem;
+        border-bottom: 2px solid v.$main-deep-gray;
+        padding-left: 0.1rem;
+        margin-bottom: 1rem;
+
+        &:focus {
+          border-bottom: 2px solid v.$main-green;
+        }
+      }
+
+      .input_text_error {
+        height: 2.5rem;
+        border: none;
+        font-size: 1rem;
+        border-bottom: 2px solid v.$red;
+        padding-left: 0.1rem;
+        margin-bottom: 1rem;
+      }
+    }
+
+    .join_check {
+      display: flex;
+      position: absolute;
+      right: 0;
+      top: 0.8rem;
+      height: 3rem;
+      align-items: center;
+      color: v.$red;
+
+      .warn_icon {
+        width: 1.2rem;
+        height: 1.2rem;
+        fill: v.$red;
+        margin-right: 3px;
+      }
+
+      .check_icon {
+        width: 1.2rem;
+        height: 1.2rem;
+        fill: v.$main-green;
+        margin-right: 3px;
+      }
+    }
+
+    .join_btn {
+      width: 22rem;
+      height: 3rem;
+      font-size: v.$font-size-md;
+      border-radius: 5px;
+      margin-top: 2rem;
+    }
+
+    .policy_btn {
+      display: flex;
+      padding-top: 4rem;
+      font-size: v.$font-size-sm;
+      text-decoration: underline;
+    }
+  }
+}

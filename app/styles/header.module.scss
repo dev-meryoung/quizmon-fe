@@ -56,10 +56,6 @@
     align-items: center;
 
     .info {
-      &:hover .info_icon {
-        fill: v.$main-green;
-      }
-
       .info_icon {
         width: 1.3rem;
         height: 1.3rem;
@@ -67,9 +63,6 @@
     }
 
     .login {
-      &:hover .login_icon {
-        fill: v.$main-green;
-      }
       .login_icon {
         width: 1.5rem;
         height: 1.5rem;
