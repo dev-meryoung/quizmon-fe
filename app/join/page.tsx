@@ -79,9 +79,9 @@ const Join = (): React.ReactNode => {
   };
 
   return (
-    <div className={styles.contents}>
-      <div className={styles.joinWrapper}>
-        <div className={styles.inputWrapper}>
+    <main className={styles.container}>
+      <div className={styles.contents}>
+        <div className={styles.input}>
           <label className={styles.input_label}>
             *ID (4~20자 영문 소문자, 숫자 조합)
           </label>
@@ -121,7 +121,7 @@ const Join = (): React.ReactNode => {
             )}
           </div>
         </div>
-        <div className={styles.inputWrapper}>
+        <div className={styles.input}>
           <label className={styles.input_label}>
             *Password (4~20자 영문 대/소문자, 숫자, 특수문자 조합)
           </label>
@@ -204,7 +204,7 @@ const Join = (): React.ReactNode => {
           개인정보처리방침
         </Link>
       </div>
-    </div>
+    </main>
   );
 };
 

@@ -7,8 +7,8 @@ import quizmonIcon from 'public/imgs/quizmon-icon.svg';
 
 const Login = (): React.ReactNode => {
   return (
-    <div className={styles.contents}>
-      <div className={styles.loginWrapper}>
+    <div className={styles.container}>
+      <div className={styles.contents}>
         <div className={styles.logo}>
           <Image
             className={styles.logo_img}
@@ -18,7 +18,7 @@ const Login = (): React.ReactNode => {
             priority={true}
           />
         </div>
-        <div className={styles.inputWrapper}>
+        <div className={styles.input}>
           <input
             className={styles.input_text}
             type="text"

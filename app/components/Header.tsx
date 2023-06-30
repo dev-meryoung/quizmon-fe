@@ -7,7 +7,7 @@ import styles from 'app/styles/header.module.scss';
 
 const Header = (): React.ReactNode => {
   return (
-    <header className={styles.container}>
+    <header className={styles.wrapper}>
       <div className={styles.logo}>
         <Link href="/">
           <Image

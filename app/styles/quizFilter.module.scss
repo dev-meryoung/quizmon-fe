@@ -1,52 +1,54 @@
 /* QuizFilter 컴포넌트 */
 @use 'var.module.scss' as v;
 
-.quizFilter_two {
-  display: flex;
-  width: 6.7rem;
-  height: 2.4rem;
-  align-items: center;
-  justify-content: space-evenly;
-  border-radius: 5px;
-  background-color: v.$main-gray;
-  margin-right: 0.8rem;
-  overflow: hidden;
-  box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
-}
-
-.quizFilter_three {
-  display: flex;
-  width: 10rem;
-  height: 2.4rem;
-  align-items: center;
-  justify-content: space-evenly;
-  border-radius: 5px;
-  background-color: v.$main-gray;
-  margin-right: 0.8rem;
-  overflow: hidden;
-  box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
-}
-
-.quizFilter_option {
-  display: flex;
-  width: 3rem;
-  height: 2rem;
-  justify-content: center;
-  align-items: center;
-  background-color: v.$main-gray;
-  &:hover {
-    cursor: pointer;
+.wrapper {
+  .quizFilter_two {
+    display: flex;
+    width: 6.7rem;
+    height: 2.4rem;
+    align-items: center;
+    justify-content: space-evenly;
+    border-radius: 5px;
+    background-color: v.$main-gray;
+    margin-right: 0.8rem;
+    overflow: hidden;
+    box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
   }
-}
 
-.quizFilter_option_focused {
-  display: flex;
-  width: 3rem;
-  height: 2rem;
-  justify-content: center;
-  align-items: center;
-  color: v.$white;
-  background-color: v.$main-green;
-  border-radius: 5px;
-  box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+  .quizFilter_three {
+    display: flex;
+    width: 10rem;
+    height: 2.4rem;
+    align-items: center;
+    justify-content: space-evenly;
+    border-radius: 5px;
+    background-color: v.$main-gray;
+    margin-right: 0.8rem;
+    overflow: hidden;
+    box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+  }
+
+  .quizFilter_option {
+    display: flex;
+    width: 3rem;
+    height: 2rem;
+    justify-content: center;
+    align-items: center;
+    background-color: v.$main-gray;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .quizFilter_option_focused {
+    display: flex;
+    width: 3rem;
+    height: 2rem;
+    justify-content: center;
+    align-items: center;
+    color: v.$white;
+    background-color: v.$main-green;
+    border-radius: 5px;
+    box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+  }
 }

@@ -14,70 +14,88 @@ const Home = (): React.ReactNode => {
   const [quizFilter4, setQuizFilter4] = useState<number>(1);
 
   return (
-    <div className={styles.contents}>
-      <div className={styles.searchFilter}>
-        <QuizFilter
-          op1="전체"
-          op2="이미지"
-          op3="사운드"
-          quizFilterFocused={quizFilter1}
-          setQuizFilterFocused={setQuizFilter1}
-        />
-        {false ? (
-          <QuizFilter
-            op1="최신순"
-            op2="인기순"
-            op3="신고순"
-            quizFilterFocused={quizFilter2}
-            setQuizFilterFocused={setQuizFilter2}
-          />
-        ) : (
-          <QuizFilter
-            op1="최신순"
-            op2="인기순"
-            quizFilterFocused={quizFilter2}
-            setQuizFilterFocused={setQuizFilter2}
-          />
-        )}
-        {quizFilter2 === 2 ? (
-          <QuizFilter
-            op1="누적"
-            op2="실시간"
-            quizFilterFocused={quizFilter3}
-            setQuizFilterFocused={setQuizFilter3}
-          />
-        ) : (
-          ''
-        )}
-        {false ? (
-          <QuizFilter
-            op1="전체"
-            op2="공개"
-            op3="비공개"
-            quizFilterFocused={quizFilter4}
-            setQuizFilterFocused={setQuizFilter4}
-          />
-        ) : (
-          ''
-        )}
-      </div>
+    <>
+      <Header />
+      <main className={styles.container}>
+        <div className={styles.contents}>
+          <div className={styles.filterMore}>
+            <div className={styles.quizFilter}>
+              <QuizFilter
+                op1="전체"
+                op2="이미지"
+                op3="사운드"
+                quizFilterFocused={quizFilter1}
+                setQuizFilterFocused={setQuizFilter1}
+              />
+              {false ? (
+                <QuizFilter
+                  op1="최신순"
+                  op2="인기순"
+                  op3="신고순"
+                  quizFilterFocused={quizFilter2}
+                  setQuizFilterFocused={setQuizFilter2}
+                />
+              ) : (
+                <QuizFilter
+                  op1="최신순"
+                  op2="인기순"
+                  quizFilterFocused={quizFilter2}
+                  setQuizFilterFocused={setQuizFilter2}
+                />
+              )}
+              {quizFilter2 === 2 ? (
+                <QuizFilter
+                  op1="누적"
+                  op2="실시간"
+                  quizFilterFocused={quizFilter3}
+                  setQuizFilterFocused={setQuizFilter3}
+                />
+              ) : (
+                ''
+              )}
+              {false ? (
+                <QuizFilter
+                  op1="전체"
+                  op2="공개"
+                  op3="비공개"
+                  quizFilterFocused={quizFilter4}
+                  setQuizFilterFocused={setQuizFilter4}
+                />
+              ) : (
+                ''
+              )}
+            </div>
+            <div className={styles.more}>
+              <svg
+                className={styles.more_icon}
+                xmlns="http://www.w3.org/2000/svg"
+                height="1em"
+                viewBox="0 0 128 512"
+              >
+                <title>정보</title>
+                <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
+              </svg>
+            </div>
+          </div>
 
-      <div className={styles.quizList}>
-        <QuizCard />
-        <QuizCard />
-        <QuizCard />
-        <QuizCard />
-        <QuizCard />
-        <QuizCard />
-        <QuizCard />
-        <QuizCard />
-        <QuizCard />
-        <QuizCard />
-        <QuizCard />
-        <QuizCard />
-        <QuizCard />
-      </div>
-    </div>
+          <div className={styles.quizList}>
+            <QuizCard />
+            <QuizCard />
+            <QuizCard />
+            <QuizCard />
+            <QuizCard />
+            <QuizCard />
+            <QuizCard />
+            <QuizCard />
+            <QuizCard />
+            <QuizCard />
+            <QuizCard />
+            <QuizCard />
+            <QuizCard />
+          </div>
+        </div>
+      </main>
+    </>
   );
 };
 

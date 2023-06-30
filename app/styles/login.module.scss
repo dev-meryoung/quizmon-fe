@@ -1,8 +1,8 @@
 /* Login 페이지 */
 @use 'var.module.scss' as v;
 
-.contents {
-  .loginWrapper {
+.container {
+  .contents {
     display: flex;
     width: 600px;
     height: 550px;
@@ -19,7 +19,7 @@
       }
     }
 
-    .inputWrapper {
+    .input {
       display: flex;
       width: 22rem;
       flex-direction: column;

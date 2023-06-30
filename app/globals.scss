@@ -8,9 +8,10 @@
   src: url(../public/fonts/noto-sans-kr.woff2) format('woff2');
 }
 
-body {
-  min-width: 1280px;
-  background-color: v.$white;
+body,
+#root {
+  height: 100%;
+  margin: auto;
 }
 
 * {
@@ -57,19 +58,30 @@ input:focus {
   outline: none;
 }
 
-/* CSS 적용 */
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem 0;
-}
-
-/* 이외 설정 */
+/* 추가 설정 */
 // 텍스트 선택 차단
 .select_ban {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+/** 반응형 웹 포맷 **/
+@media (max-width: 767px) {
+  * {
+    background-color: red;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  * {
+    background-color: blue;
+  }
+}
+
+@media (min-width: 992px) {
+  * {
+    background-color: green;
+  }
 }

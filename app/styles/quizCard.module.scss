@@ -1,17 +1,18 @@
 /* QuizCard 컴포넌트 */
 @use 'var.module.scss' as v;
 
-.cardWrapper {
+.wrapper {
   display: flex;
   position: relative;
-  width: 250px;
-  height: 330px;
+  width: 18rem;
+  height: 20rem;
   flex-direction: column;
   border: 1px solid v.$main-gray;
   border-radius: 15px;
   background-color: v.$main-gray;
   overflow: hidden;
   box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+  margin: 0.7rem;
 
   .type {
     display: flex;
@@ -97,7 +98,7 @@
     }
   }
 
-  .btnWrapper {
+  .btns {
     display: flex;
     width: 100%;
     height: 13%;

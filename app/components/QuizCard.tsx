@@ -16,7 +16,7 @@ const QuizCard = (): React.ReactNode => {
   };
 
   return (
-    <div className={`${styles.cardWrapper} select_ban`}>
+    <div className={`${styles.wrapper} select_ban`}>
       <div className={styles.type}>
         <p>이미지</p>
       </div>
@@ -39,7 +39,7 @@ const QuizCard = (): React.ReactNode => {
       <div className={styles.quizInfo}>
         <p className={styles.title}>퀴즈 타이틀</p>
       </div>
-      <div className={styles.btnWrapper}>
+      <div className={styles.btns}>
         <Link
           className={styles.playBtn}
           href={`/quiz/${'url'}`}
