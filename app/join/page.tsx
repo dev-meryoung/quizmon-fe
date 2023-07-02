@@ -4,6 +4,7 @@ import styles from 'app/styles/join.module.scss';
 import Image from 'next/image';
 import { ReactEventHandler, useState } from 'react';
 import Link from 'next/link';
+import quizmonLogo from 'public/imgs/quizmon-logo.svg';
 
 const Join = (): React.ReactNode => {
   // 회원가입 시 사용되는 값(아이디, 비밀번호, 비밀번호 확인)을 관리하기 위한 useState
@@ -80,10 +81,19 @@ const Join = (): React.ReactNode => {
 
   return (
     <main className={styles.container}>
+      <div className={styles.logo}>
+        <Image
+          className={styles.logo_img}
+          src={quizmonLogo}
+          alt="quizmon"
+          title="퀴즈몬"
+          priority={true}
+        />
+      </div>
       <div className={styles.contents}>
         <div className={styles.input}>
           <label className={styles.input_label}>
-            *ID (4~20자 영문 소문자, 숫자 조합)
+            *ID (4~20자 영문 소문자, 숫자)
           </label>
           <input
             className={
@@ -123,7 +133,7 @@ const Join = (): React.ReactNode => {
         </div>
         <div className={styles.input}>
           <label className={styles.input_label}>
-            *Password (4~20자 영문 대/소문자, 숫자, 특수문자 조합)
+            *Password (4~20자 영문 대/소문자, 숫자, 특수문자)
           </label>
           <input
             className={styles.input_text}
@@ -161,7 +171,7 @@ const Join = (): React.ReactNode => {
             )}
           </div>
         </div>
-        <div className={styles.inputWrapper}>
+        <div className={styles.input}>
           <label className={styles.input_label}>*Confirm Password</label>
           <input
             className={styles.input_text}

@@ -2,9 +2,23 @@
 @use 'var.module.scss' as v;
 
 .container {
+  display: flex;
+  height: calc(100vh - 4rem);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .logo {
+    margin: 0;
+    .logo_img {
+      height: 4rem;
+      margin: 1rem;
+    }
+  }
+
   .contents {
     display: flex;
-    width: 600px;
+    width: 550px;
     height: 550px;
     justify-content: center;
     align-items: center;
@@ -19,7 +33,7 @@
       flex-direction: column;
 
       .input_label {
-        font-size: v.$font-size-2xs;
+        font-size: v.$font-size-xs;
       }
 
       .input_text {
@@ -28,7 +42,7 @@
         font-size: 1rem;
         border-bottom: 2px solid v.$main-deep-gray;
         padding-left: 0.1rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
 
         &:focus {
           border-bottom: 2px solid v.$main-green;
@@ -41,7 +55,7 @@
         font-size: 1rem;
         border-bottom: 2px solid v.$red;
         padding-left: 0.1rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
       }
     }
 
@@ -72,16 +86,44 @@
     .join_btn {
       width: 22rem;
       height: 3rem;
-      font-size: v.$font-size-md;
+      font-size: v.$font-size-lg;
       border-radius: 5px;
       margin-top: 2rem;
     }
 
     .policy_btn {
       display: flex;
-      padding-top: 4rem;
+      margin-top: 4rem;
       font-size: v.$font-size-sm;
       text-decoration: underline;
+    }
+  }
+}
+
+// 반응형 모바일 기준
+@media (max-width: 644px) {
+  .container {
+    .logo {
+      .logo_img {
+        height: 3.5rem;
+      }
+    }
+
+    .contents {
+      width: 85vw;
+
+      .input {
+        width: 70%;
+
+        .input_label {
+          font-size: v.$font-size-2xs;
+        }
+      }
+
+      .join_btn {
+        width: 70%;
+        font-size: v.$font-size-md;
+      }
     }
   }
 }

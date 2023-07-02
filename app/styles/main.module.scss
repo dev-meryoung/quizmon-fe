@@ -1,39 +1,70 @@
 /* Main 페이지 */
 @use 'var.module.scss' as v;
 
-.contents {
+.container {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  .filterMore {
+  .contents {
     display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    margin: 1rem 2rem;
+    width: 1610px;
+    flex-direction: column;
 
-    .quizFilter {
+    .filterMore {
       display: flex;
-    }
+      justify-content: space-between;
+      align-items: center;
+      margin: 1rem 0 0 1rem;
 
-    .more {
-      display: flex;
-      .more_icon {
-        fill: v.$main-deep-gray;
+      .quizFilter {
+        display: flex;
+      }
 
-        &:hover {
-          cursor: pointer;
-          fill: v.$main-green;
+      .more {
+        display: flex;
+        margin-right: 1.5rem;
+        .more_icon {
+          fill: v.$main-deep-gray;
+
+          &:hover {
+            cursor: pointer;
+            fill: v.$main-green;
+          }
         }
       }
     }
+
+    .quizList {
+      display: flex;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
   }
 
-  .quizList {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+  /** 반응형 웹 포맷 **/
+  @media (max-width: 1609px) {
+    .contents {
+      width: 1288px;
+    }
+  }
+
+  @media (max-width: 1287px) {
+    .contents {
+      width: 966px;
+    }
+  }
+
+  @media (max-width: 965px) {
+    .contents {
+      width: 644px;
+    }
+  }
+
+  // 반응형 모바일 기준
+  @media (max-width: 644px) {
+    .contents {
+      width: calc(100% - 2rem);
+    }
   }
 }

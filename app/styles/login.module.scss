@@ -2,22 +2,29 @@
 @use 'var.module.scss' as v;
 
 .container {
+  display: flex;
+  height: calc(100vh - 4rem);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .logo {
+    margin: 0;
+    .logo_img {
+      height: 4rem;
+      margin: 1rem;
+    }
+  }
+
   .contents {
     display: flex;
-    width: 600px;
-    height: 550px;
+    width: 550px;
+    height: 450px;
+    justify-content: center;
     align-items: center;
     flex-direction: column;
     border: 1px solid v.$main-deep-gray;
     overflow: hidden;
-
-    .logo {
-      margin: 3rem 0;
-      .logo_img {
-        width: 8rem;
-        height: 8rem;
-      }
-    }
 
     .input {
       display: flex;
@@ -42,15 +49,43 @@
     .login_btn {
       width: 22rem;
       height: 3rem;
-      font-size: v.$font-size-md;
+      font-size: v.$font-size-lg;
       border-radius: 5px;
     }
 
     .join_btn {
       display: flex;
       margin-top: 3rem;
-      font-size: v.$font-size-md;
+      font-size: v.$font-size-lg;
       text-decoration: underline;
+    }
+  }
+}
+
+// 반응형 모바일 기준
+@media (max-width: 644px) {
+  .container {
+    .logo {
+      .logo_img {
+        height: 3.5rem;
+      }
+    }
+
+    .contents {
+      width: 70vw;
+
+      .input {
+        width: 70%;
+      }
+
+      .login_btn {
+        width: 70%;
+        font-size: v.$font-size-md;
+      }
+
+      .join_btn {
+        font-size: v.$font-size-md;
+      }
     }
   }
 }

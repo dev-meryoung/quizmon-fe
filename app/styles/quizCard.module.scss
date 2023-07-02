@@ -8,11 +8,11 @@
   height: 20rem;
   flex-direction: column;
   border: 1px solid v.$main-gray;
-  border-radius: 15px;
+  border-radius: 5px;
   background-color: v.$main-gray;
   overflow: hidden;
   box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
-  margin: 0.7rem;
+  margin: 1rem;
 
   .type {
     display: flex;
@@ -106,8 +106,8 @@
 
     .playBtn {
       display: flex;
-      width: 10rem;
-      height: 2rem;
+      width: 12rem;
+      height: 2.2rem;
       justify-content: center;
       text-align: center;
       align-items: center;
@@ -129,7 +129,7 @@
     .infoBtn {
       display: flex;
       width: 4rem;
-      height: 2rem;
+      height: 2.2rem;
       justify-content: center;
       text-align: center;
       align-items: center;
@@ -152,5 +152,30 @@
   &:hover {
     transform: translateY(-5px);
     transition: all 0.5s;
+  }
+}
+
+/** 반응형 웹 포맷 **/
+@media (max-width: 644px) {
+  .wrapper {
+    width: 100vw;
+    height: calc(100vw * 0.9);
+
+    .type {
+      width: 3rem;
+      height: 1.8rem;
+    }
+
+    .btns {
+      .playBtn {
+        width: 70%;
+        height: 80%;
+      }
+
+      .infoBtn {
+        width: 20%;
+        height: 80%;
+      }
+    }
   }
 }
