@@ -13,6 +13,7 @@
     margin-right: 0.8rem;
     overflow: hidden;
     box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+    font-size: v.$font-size-md;
   }
 
   .quizFilter_three {
@@ -26,6 +27,7 @@
     margin-right: 0.8rem;
     overflow: hidden;
     box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+    font-size: v.$font-size-md;
   }
 
   .quizFilter_option {
@@ -50,5 +52,27 @@
     background-color: v.$main-green;
     border-radius: 5px;
     box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+  }
+
+  // 반응형 모바일 기준
+  @media (max-width: 644px) {
+    .quizFilter_two {
+      width: 6rem;
+      height: 2.2rem;
+      margin-right: 0.4rem;
+      font-size: v.$font-size-sm;
+    }
+
+    .quizFilter_three {
+      width: 9rem;
+      height: 2.2rem;
+      margin-right: 0.4rem;
+      font-size: v.$font-size-sm;
+    }
+
+    .quizFilter_option {
+      width: 2.7rem;
+      height: 1.9rem;
+    }
   }
 }

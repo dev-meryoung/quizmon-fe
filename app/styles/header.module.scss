@@ -12,8 +12,8 @@
   .logo {
     display: flex;
     .logo_img {
-      width: 10rem;
-      height: auto;
+      width: auto;
+      height: 3.5rem;
     }
   }
 
@@ -25,8 +25,9 @@
     justify-content: center;
     border: 2px solid v.$main-green;
     border-radius: 15px;
-    margin-right: 3rem;
+    margin-right: 2rem;
     box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+    background-color: v.$white;
 
     .search_text {
       width: 90%;
@@ -55,6 +56,10 @@
     justify-content: space-evenly;
     align-items: center;
 
+    .mobileSearch {
+      display: none;
+    }
+
     .info {
       .info_icon {
         width: 1.3rem;
@@ -67,6 +72,87 @@
         width: 1.5rem;
         height: 1.5rem;
       }
+    }
+  }
+}
+
+/** 반응형 웹 포맷 **/
+@media (max-width: 965px) {
+  .wrapper {
+    .search {
+      width: 22rem;
+    }
+
+    .user {
+      width: 6rem;
+    }
+  }
+}
+
+// 반응형 모바일 기준
+@media (max-width: 644px) {
+  .wrapper {
+    padding: 1rem 0;
+    justify-content: space-between;
+    .logo {
+      margin-left: 1rem;
+      .logo_img {
+        height: 3rem;
+      }
+    }
+
+    .search {
+      display: none;
+      position: absolute;
+      width: 90%;
+      left: 50%;
+      transform: translate(-50%, 0);
+      z-index: 5;
+    }
+
+    .search_clicked {
+      display: flex;
+    }
+
+    .user {
+      width: 7rem;
+
+      .mobileSearch {
+        display: flex;
+        .search_icon {
+          width: 1.1rem;
+          height: 1.1rem;
+        }
+
+        &:hover {
+          cursor: pointer;
+          fill: v.$main-green;
+        }
+      }
+
+      .info {
+        .info_icon {
+          width: 1.1rem;
+          height: 1.1rem;
+        }
+      }
+
+      .login {
+        .login_icon {
+          width: 1.3rem;
+          height: 1.3rem;
+        }
+      }
+    }
+
+    .dark {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: (rgba(0, 0, 0, 80%));
+      z-index: 3;
     }
   }
 }

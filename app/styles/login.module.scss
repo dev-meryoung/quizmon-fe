@@ -3,7 +3,6 @@
 
 .container {
   display: flex;
-  height: calc(100vh - 4rem);
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -19,7 +18,7 @@
   .contents {
     display: flex;
     width: 550px;
-    height: 450px;
+    min-height: 450px;
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -55,7 +54,7 @@
 
     .join_btn {
       display: flex;
-      margin-top: 3rem;
+      margin-top: 4rem;
       font-size: v.$font-size-lg;
       text-decoration: underline;
     }
@@ -72,7 +71,7 @@
     }
 
     .contents {
-      width: 70vw;
+      width: 85vw;
 
       .input {
         width: 70%;

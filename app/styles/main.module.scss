@@ -19,6 +19,10 @@
 
       .quizFilter {
         display: flex;
+
+        .quizFilterSet {
+          display: flex;
+        }
       }
 
       .more {
@@ -65,6 +69,17 @@
   @media (max-width: 644px) {
     .contents {
       width: calc(100% - 2rem);
+    }
+  }
+
+  @media (max-width: 410px) {
+    .quizFilter {
+      flex-direction: column;
+      flex-wrap: wrap;
+
+      .quizFilterSet {
+        margin-top: 0.4rem;
+      }
     }
   }
 }

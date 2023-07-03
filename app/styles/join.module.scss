@@ -3,7 +3,6 @@
 
 .container {
   display: flex;
-  height: calc(100vh - 4rem);
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -19,7 +18,7 @@
   .contents {
     display: flex;
     width: 550px;
-    height: 550px;
+    min-height: 450px;
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -31,6 +30,7 @@
       position: relative;
       width: 22rem;
       flex-direction: column;
+      margin-bottom: 1.5rem;
 
       .input_label {
         font-size: v.$font-size-xs;
@@ -42,7 +42,6 @@
         font-size: 1rem;
         border-bottom: 2px solid v.$main-deep-gray;
         padding-left: 0.1rem;
-        margin-bottom: 1.5rem;
 
         &:focus {
           border-bottom: 2px solid v.$main-green;
@@ -93,7 +92,7 @@
 
     .policy_btn {
       display: flex;
-      margin-top: 4rem;
+      margin-top: 2rem;
       font-size: v.$font-size-sm;
       text-decoration: underline;
     }

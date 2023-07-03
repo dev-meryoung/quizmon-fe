@@ -4,8 +4,48 @@ import Link from 'next/link';
 import Image from 'next/image';
 import quizmonLogo from 'public/imgs/quizmon-logo.svg';
 import styles from 'app/styles/header.module.scss';
+import { useEffect, useState } from 'react';
 
 const Header = (): React.ReactNode => {
+  // 반응형(모바일) 웹에서 search 컴포넌트의 노출 여부를 관리하기 위한 useState
+  const [mobileSearchView, setMobileSearchView] = useState<boolean>(false);
+
+  // 현재 웹 페이지의 내부 너비 값을 저장하기 위한 useState
+  const [windowInnerWidth, setWindowInnerWidth] = useState<number>(0);
+
+  // 반응형(모바일) 웹에서 search 컴포넌트의 노출 여부 상태를 변경하는 핸들러 함수
+  const mobileSearchViewHandler = (): void => {
+    setMobileSearchView(!mobileSearchView);
+  };
+
+  // 컴포넌트가 처음 마운트 될 때 브라우저의 창 크기가 변경되는 이벤트 리스너를 추가하기 위한 useEffect
+  useEffect(() => {
+    const windowSizeHandler = () => {
+      const innerWidth = window.innerWidth;
+      setWindowInnerWidth(innerWidth);
+    };
+
+    window.addEventListener('resize', windowSizeHandler);
+
+    // 컴포넌트가 언마운트 되기 전에 호출되며 기존에 추가한 이벤트 리스너를 삭제하는 클린업 함수
+    return (): void => {
+      window.removeEventListener('resize', windowSizeHandler);
+    };
+  }, []);
+
+  // 반응형(모바일) 웹 환경에서 검색 버튼이 클릭됐을 때 스크롤 기능을 막기 위한 useEffect
+  useEffect(() => {
+    if (mobileSearchView && windowInnerWidth <= 644) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+      document.body.style.overflow = 'hidden';
+    } else if (!mobileSearchView || windowInnerWidth > 644) {
+      document.body.style.overflow = 'auto';
+    }
+  }, [mobileSearchView, windowInnerWidth]);
+
   return (
     <header className={styles.wrapper}>
       <div className={styles.logo}>
@@ -19,19 +59,54 @@ const Header = (): React.ReactNode => {
           />
         </Link>
       </div>
-      <div className={styles.search}>
-        <input className={styles.search_text} type="text" spellCheck="false" />
-        <svg
-          className={styles.search_icon}
-          xmlns="http://www.w3.org/2000/svg"
-          height="1em"
-          viewBox="0 0 512 512"
-        >
-          <title>검색</title>
-          <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-        </svg>
-      </div>
+      {mobileSearchView ? (
+        <div className={`${styles.search} ${styles.search_clicked}`}>
+          <input
+            className={styles.search_text}
+            type="text"
+            spellCheck="false"
+          />
+          <svg
+            className={styles.search_icon}
+            xmlns="http://www.w3.org/2000/svg"
+            height="1em"
+            viewBox="0 0 512 512"
+          >
+            <title>검색</title>
+            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+          </svg>
+        </div>
+      ) : (
+        <div className={styles.search}>
+          <input
+            className={styles.search_text}
+            type="text"
+            spellCheck="false"
+          />
+          <svg
+            className={styles.search_icon}
+            xmlns="http://www.w3.org/2000/svg"
+            height="1em"
+            viewBox="0 0 512 512"
+          >
+            <title>검색</title>
+            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+          </svg>
+        </div>
+      )}
       <div className={styles.user}>
+        <div className={styles.mobileSearch}>
+          <svg
+            className={styles.search_icon}
+            onClick={mobileSearchViewHandler}
+            xmlns="http://www.w3.org/2000/svg"
+            height="1em"
+            viewBox="0 0 512 512"
+          >
+            <title>검색</title>
+            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
+          </svg>
+        </div>
         <div className={styles.info}>
           <Link href="/user">
             <svg
@@ -59,6 +134,11 @@ const Header = (): React.ReactNode => {
           </Link>
         </div>
       </div>
+      {mobileSearchView ? (
+        <div className={styles.dark} onClick={mobileSearchViewHandler} />
+      ) : (
+        ''
+      )}
     </header>
   );
 };
