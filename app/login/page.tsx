@@ -9,13 +9,15 @@ const Login = (): React.ReactNode => {
   return (
     <div className={styles.container}>
       <div className={styles.logo}>
-        <Image
-          className={styles.logo_img}
-          src={quizmonLogo}
-          alt="quizmon"
-          title="퀴즈몬"
-          priority={true}
-        />
+        <Link href="/">
+          <Image
+            className={styles.logo_img}
+            src={quizmonLogo}
+            alt="quizmon"
+            title="퀴즈몬"
+            priority={true}
+          />
+        </Link>
       </div>
       <div className={styles.contents}>
         <div className={styles.input}>

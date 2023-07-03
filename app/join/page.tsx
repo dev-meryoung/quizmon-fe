@@ -82,13 +82,15 @@ const Join = (): React.ReactNode => {
   return (
     <main className={styles.container}>
       <div className={styles.logo}>
-        <Image
-          className={styles.logo_img}
-          src={quizmonLogo}
-          alt="quizmon"
-          title="퀴즈몬"
-          priority={true}
-        />
+        <Link href="/">
+          <Image
+            className={styles.logo_img}
+            src={quizmonLogo}
+            alt="quizmon"
+            title="퀴즈몬"
+            priority={true}
+          />
+        </Link>
       </div>
       <div className={styles.contents}>
         <div className={styles.input}>
