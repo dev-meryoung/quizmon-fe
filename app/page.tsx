@@ -10,7 +10,6 @@ const Home = (): React.ReactNode => {
   // 퀴즈 필터 상태를 관리하기 위한 useState
   const [quizFilter1, setQuizFilter1] = useState<number>(1);
   const [quizFilter2, setQuizFilter2] = useState<number>(1);
-  const [quizFilter3, setQuizFilter3] = useState<number>(1);
 
   return (
     <>
@@ -19,26 +18,19 @@ const Home = (): React.ReactNode => {
         <div className={styles.contents}>
           <div className={styles.filterMore}>
             <div className={styles.quizFilter}>
-              <QuizFilter
-                op1="전체"
-                op2="이미지"
-                op3="사운드"
-                quizFilterFocused={quizFilter1}
-                setQuizFilterFocused={setQuizFilter1}
-              />
               <div className={styles.quizFilterSet}>
                 <QuizFilter
                   op1="최신순"
                   op2="인기순"
-                  quizFilterFocused={quizFilter2}
-                  setQuizFilterFocused={setQuizFilter2}
+                  quizFilterFocused={quizFilter1}
+                  setQuizFilterFocused={setQuizFilter1}
                 />
-                {quizFilter2 === 2 ? (
+                {quizFilter1 === 2 ? (
                   <QuizFilter
                     op1="누적"
                     op2="실시간"
-                    quizFilterFocused={quizFilter3}
-                    setQuizFilterFocused={setQuizFilter3}
+                    quizFilterFocused={quizFilter2}
+                    setQuizFilterFocused={setQuizFilter2}
                   />
                 ) : (
                   ''

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { ReactEventHandler, useState } from 'react';
 import Link from 'next/link';
 import quizmonLogo from 'public/imgs/quizmon-logo.svg';
+import userRegExp from 'app/utils/userRegExp';
 
 const Join = (): React.ReactNode => {
   // 회원가입 시 사용되는 값(아이디, 비밀번호, 비밀번호 확인)을 관리하기 위한 useState
@@ -22,35 +23,29 @@ const Join = (): React.ReactNode => {
 
   // 회원가입 시 아이디의 유효성 검사를 실행하는 idCheckHandler 함수
   const idCheckHandler = (): void => {
-    // 아이디 유효성 검사 기준 : 영어 소문자와 숫자를 포함한 4~20자
-    const idRegExp: RegExp = /^[a-z\d]{4,20}$/;
-
     if (id.length === 0) {
       setCheckId(0);
       return;
     }
 
-    if (!idRegExp.test(id)) {
-      setCheckId(2);
-    } else {
+    if (userRegExp('ID', id)) {
       setCheckId(1);
+    } else {
+      setCheckId(2);
     }
   };
 
   // 회원가입 시 비밀번호의 유효성 검사를 실행하는 pwCheckHandler 함수
   const pwCheckHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    // 비밀번호 유효성 검사 기준 : 영어 대/소문자와 숫자, 특수문자를 포함한 4~20자
-    const pwRegExp: RegExp = /^[a-zA-Z\d!@#$%^&*()\-_=+{};:,<.>]{4,20}$/;
-
     if (pw.length === 0) {
       setCheckPw(0);
       return;
     }
 
-    if (!pwRegExp.test(pw)) {
-      setCheckPw(2);
-    } else {
+    if (userRegExp('PW', pw)) {
       setCheckPw(1);
+    } else {
+      setCheckPw(2);
     }
 
     if (pw !== confirm) {
@@ -138,7 +133,9 @@ const Join = (): React.ReactNode => {
             *Password (4~20자 영문 대/소문자, 숫자, 특수문자)
           </label>
           <input
-            className={styles.input_text}
+            className={
+              checkPw !== 2 ? styles.input_text : styles.input_text_error
+            }
             type="password"
             spellCheck="false"
             placeholder="비밀번호"
@@ -176,7 +173,9 @@ const Join = (): React.ReactNode => {
         <div className={styles.input}>
           <label className={styles.input_label}>*Confirm Password</label>
           <input
-            className={styles.input_text}
+            className={
+              checkConfirm !== 2 ? styles.input_text : styles.input_text_error
+            }
             type="password"
             spellCheck="false"
             placeholder="비밀번호 확인"

@@ -51,7 +51,7 @@ const Policy = (): React.ReactNode => {
         </p>
         <p className={styles.subTitle}> 5. 개인정보의 안전성과 보호조치</p>
         <p className={styles.text}>
-          당사는 이용자의 개인정보를 안전하게 보호하기 위해 필요한 기술적,
+          퀴즈몬은 이용자의 개인정보를 안전하게 보호하기 위해 필요한 기술적,
           관리적, 물리적 보호조치를 취하고 있습니다. 개인정보 처리 시스템에 대한
           접근 제한, 권한 관리, 암호화 등을 통해 이용자의 개인정보를 안전하게
           보호하고 있습니다.
@@ -67,7 +67,7 @@ const Policy = (): React.ReactNode => {
         <p className={styles.text}>
           개인정보 처리에 관한 문의사항이 있을 경우, 아래 이메일로 문의해 주시기
           바랍니다. <br />
-          - 이메일: ?@gmail.com <br />
+          - 이메일: quizmon.main@gmail.com <br />
           개인정보 처리에 대한 자세한 내용은 개인정보처리방침 전문을 참고해
           주시기 바랍니다.
         </p>
