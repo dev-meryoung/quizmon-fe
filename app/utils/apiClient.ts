@@ -1,5 +1,5 @@
 import axios from 'axios';
-import apiAuthor from 'app/utils/apiAuthor';
+import apiCrypto from 'app/utils/apiCrypto';
 
 const apiClient = {
   idCheck(userId: string) {
@@ -9,7 +9,7 @@ const apiClient = {
     axios
       .get(url, {
         headers: {
-          Authorization: apiAuthor(method, url),
+          Authentication: apiCrypto(method, url),
         },
         withCredentials: true,
       })
