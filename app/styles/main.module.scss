@@ -19,6 +19,8 @@
 
       .quizFilter {
         display: flex;
+        justify-content: center;
+        align-items: center;
 
         .quizFilterSet {
           display: flex;
@@ -61,6 +63,7 @@
             &:hover {
               cursor: pointer;
               fill: v.$main-green;
+              transition: all 0.3s;
             }
           }
         }
@@ -118,10 +121,6 @@
     .quizFilter {
       flex-direction: column;
       flex-wrap: wrap;
-
-      .quizFilterSet {
-        margin-top: 0.4rem;
-      }
     }
   }
 }

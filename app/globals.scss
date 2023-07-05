@@ -35,6 +35,7 @@ a {
   &:hover {
     color: v.$main-green;
     fill: v.$main-green;
+    transition: all 0.3s;
   }
 }
 
@@ -50,7 +51,7 @@ button {
   &:hover {
     cursor: pointer;
     background-color: v.$main-deep-green;
-    transition: all 0.5s;
+    transition: all 0.3s;
   }
 }
 
