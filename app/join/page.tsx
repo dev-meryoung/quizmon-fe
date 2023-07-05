@@ -6,6 +6,7 @@ import { ReactEventHandler, useState } from 'react';
 import Link from 'next/link';
 import quizmonLogo from 'public/imgs/quizmon-logo.svg';
 import userRegExp from 'app/utils/userRegExp';
+import apiClient from '../utils/apiClient';
 
 const Join = (): React.ReactNode => {
   // 회원가입 시 사용되는 값(아이디, 비밀번호, 비밀번호 확인)을 관리하기 위한 useState
@@ -210,7 +211,14 @@ const Join = (): React.ReactNode => {
             )}
           </div>
         </div>
-        <button className={styles.join_btn}>회원가입</button>
+        <button
+          className={styles.join_btn}
+          onClick={() => {
+            alert(apiClient.idCheck('meryoung'));
+          }}
+        >
+          회원가입
+        </button>
         <Link className={styles.policy_btn} href={'/policy'}>
           개인정보처리방침
         </Link>
