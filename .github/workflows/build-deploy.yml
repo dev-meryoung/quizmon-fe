@@ -34,6 +34,12 @@ jobs:
         # 3. NPM 패키지 설치
         - name: Install Dependencies
           run: npm install
+          
+        # 4. 환경변수 .env 관련 적용
+        - name: Generate Environment Variables File for Production
+          run: |
+            echo "NEXT_PUBLIC_BASE_URL=${{ secrets.SERVER_HOST }}" >> .env
+            echo "NEXT_PUBLIC_API_KEY=${{ secrets.NEXT_PUBLIC_API_KEY }}" >> .env
 
         # 5. Next.js 프로젝트 빌드
         - name: Build Next.js App
