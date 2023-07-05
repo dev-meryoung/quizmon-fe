@@ -27,13 +27,41 @@
 
       .more {
         display: flex;
-        margin-right: 1.5rem;
-        .more_icon {
-          fill: v.$main-deep-gray;
+        justify-content: center;
+        align-items: center;
+
+        .newQuizBtn {
+          display: flex;
+          width: 2.4rem;
+          height: 2.4rem;
+          justify-content: center;
+          align-items: center;
+          border-radius: 100%;
+          background-color: v.$main-green;
+          overflow: hidden;
+          fill: v.$white;
+          box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+          margin-right: 1rem;
+          .newQuiz_icon {
+            width: 1.5em;
+            height: 1.5rem;
+          }
 
           &:hover {
             cursor: pointer;
-            fill: v.$main-green;
+            background-color: v.$main-deep-green;
+          }
+        }
+        .dot {
+          display: flex;
+          margin-right: 1.5rem;
+          .dot_icon {
+            fill: v.$main-deep-gray;
+
+            &:hover {
+              cursor: pointer;
+              fill: v.$main-green;
+            }
           }
         }
       }
@@ -69,6 +97,20 @@
   @media (max-width: 644px) {
     .contents {
       width: calc(100% - 2rem);
+
+      .filterMore {
+        .more {
+          .newQuizBtn {
+            width: 2.2rem;
+            height: 2.2rem;
+
+            .newQuiz_icon {
+              width: 1.2rem;
+              height: 1.2rem;
+            }
+          }
+        }
+      }
     }
   }
 

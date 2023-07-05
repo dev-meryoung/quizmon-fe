@@ -38,15 +38,27 @@ const Home = (): React.ReactNode => {
               </div>
             </div>
             <div className={styles.more}>
-              <svg
-                className={styles.more_icon}
-                xmlns="http://www.w3.org/2000/svg"
-                height="1em"
-                viewBox="0 0 128 512"
-              >
-                <title>정보</title>
-                <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
-              </svg>
+              <button className={styles.newQuizBtn}>
+                <svg
+                  className={styles.newQuiz_icon}
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="1em"
+                  viewBox="0 0 448 512"
+                >
+                  <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                </svg>
+              </button>
+              <div className={styles.dot}>
+                <svg
+                  className={styles.dot_icon}
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="1em"
+                  viewBox="0 0 128 512"
+                >
+                  <title>정보</title>
+                  <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
+                </svg>
+              </div>
             </div>
           </div>
 

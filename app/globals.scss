@@ -50,6 +50,7 @@ button {
   &:hover {
     cursor: pointer;
     background-color: v.$main-deep-green;
+    transition: all 0.5s;
   }
 }
 
