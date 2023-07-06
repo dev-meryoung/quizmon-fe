@@ -1,0 +1,63 @@
+/* Modal 컴포넌트 */
+@use 'var.module.scss' as v;
+
+.wrapper {
+  display: flex;
+  position: fixed;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 25rem;
+  height: 18rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: v.$main-gray;
+  border-radius: 15px;
+  z-index: 7;
+  box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+
+  .icon {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 3rem;
+    font-size: v.$font-size-xl;
+    font-weight: bold;
+  }
+
+  .description {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    height: 4rem;
+    overflow: hidden;
+    font-size: v.$font-size-md;
+    margin-bottom: 1.5rem;
+  }
+
+  .btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    height: 2.5rem;
+    overflow: hidden;
+
+    .btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 4rem;
+      height: 2rem;
+      margin: 0 1rem;
+    }
+  }
+}

@@ -7,6 +7,7 @@ import Link from 'next/link';
 import quizmonLogo from 'public/imgs/quizmon-logo.svg';
 import userRegExp from 'app/utils/userRegExp';
 import apiClient from '../utils/apiClient';
+import Modal from '../components/Modal';
 
 const Join = (): React.ReactNode => {
   // 회원가입 시 사용되는 값(아이디, 비밀번호, 비밀번호 확인)을 관리하기 위한 useState
@@ -19,8 +20,50 @@ const Join = (): React.ReactNode => {
   const [checkPw, setCheckPw] = useState<number>(0);
   const [checkConfirm, setCheckConfirm] = useState<number>(0);
 
-  // 유효성 검사 오류 대상에 대한 메시지를 관리하기 위한 useState
+  // 회원가입 페이지에서 발생하는 오류 코드와 메시지를 관리하기 위한 useState
+  const [errorCode, setErrorCode] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
+
+  // 회원가입 페이지에서 발생하는 오류 메시지 모달의 노출 여부를 관리하는 useState
+  const [viewModal, setViewModal] = useState<boolean>(false);
+
+  // 오류 메시지 모달 창을 닫기 위한 핸들러 함수
+  const modalCloseHandler = () => {
+    setViewModal(false);
+    setErrorCode('');
+    setErrorMsg('');
+  };
+
+  // 아이디 중복 여부 확인 API의 응답에 따라 아이디 사용 가능 여부를 설정하는 함수
+  const idCheckApiHandler = (): void => {
+    apiClient
+      .idCheck(id)
+      .then((data) => data.result)
+      .then((result) => {
+        // 아이디 중복 여부 확인 후 결과 반영
+        if (!result.idExists) {
+          setCheckId(1);
+        } else {
+          setCheckId(2);
+        }
+      });
+  };
+
+  // 회원가입 API
+  const joinApiHandler = (): void => {
+    if (checkId === 1 && checkPw === 1 && checkConfirm === 1) {
+      apiClient
+        .join(id, pw)
+        .then((data) => data.result)
+        .then((result) => console.log(result))
+        .catch((error) => {
+          setViewModal(true);
+          setErrorCode(error.response.data.code);
+          setErrorMsg(error.response.data.message);
+        });
+    } else {
+    }
+  };
 
   // 회원가입 시 아이디의 유효성 검사를 실행하는 idCheckHandler 함수
   const idCheckHandler = (): void => {
@@ -30,7 +73,8 @@ const Join = (): React.ReactNode => {
     }
 
     if (userRegExp('ID', id)) {
-      setCheckId(1);
+      // 입력된 아이디 값을 기준으로 중복 검사 API 실행
+      idCheckApiHandler();
     } else {
       setCheckId(2);
     }
@@ -211,18 +255,23 @@ const Join = (): React.ReactNode => {
             )}
           </div>
         </div>
-        <button
-          className={styles.join_btn}
-          onClick={() => {
-            alert(apiClient.idCheck('meryoung'));
-          }}
-        >
+        <button className={styles.join_btn} onClick={joinApiHandler}>
           회원가입
         </button>
         <Link className={styles.policy_btn} href={'/policy'}>
           개인정보처리방침
         </Link>
       </div>
+      {errorCode !== '' && viewModal ? (
+        <Modal
+          type="ERROR"
+          title={errorCode}
+          description={errorMsg}
+          modalCloseHandler={modalCloseHandler}
+        />
+      ) : (
+        ''
+      )}
     </main>
   );
 };

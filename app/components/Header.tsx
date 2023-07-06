@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import quizmonLogo from 'public/imgs/quizmon-logo.svg';
+import BlurBackground from './BlurBackgrond';
 import styles from 'app/styles/header.module.scss';
 import { useEffect, useState } from 'react';
 
@@ -43,6 +44,7 @@ const Header = (): React.ReactNode => {
       document.body.style.overflow = 'hidden';
     } else if (!mobileSearchView || windowInnerWidth > 644) {
       document.body.style.overflow = 'auto';
+      setMobileSearchView(false);
     }
   }, [mobileSearchView, windowInnerWidth]);
 
@@ -150,7 +152,9 @@ const Header = (): React.ReactNode => {
           </div>
         )}
         {mobileSearchView ? (
-          <div className={styles.dark} onClick={mobileSearchViewHandler} />
+          <div onClick={mobileSearchViewHandler}>
+            <BlurBackground />
+          </div>
         ) : (
           ''
         )}

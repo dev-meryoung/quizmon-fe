@@ -1,6 +1,15 @@
 /* Join 페이지 */
 @use 'var.module.scss' as v;
 
+@keyframes vibration {
+  from {
+    transform: rotate(1deg);
+  }
+  to {
+    transform: rotate(-1deg);
+  }
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -55,6 +64,10 @@
         border-bottom: 2px solid v.$red;
         padding-left: 0.1rem;
       }
+    }
+
+    .input_vibration {
+      animation: vibration 0.1s infinite;
     }
 
     .join_check {

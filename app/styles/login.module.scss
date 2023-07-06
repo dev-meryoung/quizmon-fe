@@ -37,7 +37,6 @@
         font-size: 1rem;
         border-bottom: 2px solid v.$main-deep-gray;
         padding-left: 0.1rem;
-        margin-bottom: 1rem;
 
         &:focus {
           border-bottom: 2px solid v.$main-green;
@@ -50,6 +49,7 @@
       height: 3rem;
       font-size: v.$font-size-lg;
       border-radius: 5px;
+      margin-top: 2rem;
     }
 
     .join_btn {

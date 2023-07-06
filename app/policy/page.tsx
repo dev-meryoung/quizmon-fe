@@ -7,7 +7,7 @@ import quizmonLogo from 'public/imgs/quizmon-logo.svg';
 
 const Policy = (): React.ReactNode => {
   return (
-    <div className={styles.container}>
+    <main className={styles.container}>
       <div className={styles.logo}>
         <Link href="/">
           <Image
@@ -72,7 +72,7 @@ const Policy = (): React.ReactNode => {
           주시기 바랍니다.
         </p>
       </div>
-    </div>
+    </main>
   );
 };
 

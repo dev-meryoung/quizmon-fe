@@ -7,7 +7,7 @@ import quizmonLogo from 'public/imgs/quizmon-logo.svg';
 
 const Login = (): React.ReactNode => {
   return (
-    <div className={styles.container}>
+    <main className={styles.container}>
       <div className={styles.logo}>
         <Link href="/">
           <Image
@@ -27,6 +27,8 @@ const Login = (): React.ReactNode => {
             spellCheck="false"
             placeholder="아이디"
           />
+        </div>
+        <div className={styles.input}>
           <input
             className={styles.input_text}
             type="password"
@@ -39,7 +41,7 @@ const Login = (): React.ReactNode => {
           회원가입
         </Link>
       </div>
-    </div>
+    </main>
   );
 };
 
