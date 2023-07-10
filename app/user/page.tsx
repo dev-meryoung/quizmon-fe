@@ -96,7 +96,7 @@ const User = (): React.ReactNode => {
                 </div>
               </div>
               <div className={styles.input}>
-                <label className={styles.input_label}>*ID</label>
+                <label className={styles.input_label}>ID</label>
                 <input
                   className={styles.input_text}
                   type="text"

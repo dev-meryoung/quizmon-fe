@@ -2,7 +2,7 @@
 
 import styles from 'app/styles/join.module.scss';
 import Image from 'next/image';
-import { ReactEventHandler, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import quizmonLogo from 'public/imgs/quizmon-logo.svg';
 import userRegExp from 'app/utils/userRegExp';
@@ -19,6 +19,11 @@ const Join = (): React.ReactNode => {
   const [checkId, setCheckId] = useState<number>(0);
   const [checkPw, setCheckPw] = useState<number>(0);
   const [checkConfirm, setCheckConfirm] = useState<number>(0);
+
+  // 회원가입 유효성 검사 결과에 문제가 있는 컴포넌트를 강조(흔들림 효과)하기 위한 useState
+  const [vibraId, setVibraId] = useState<boolean>(false);
+  const [vibraPw, setVibraPw] = useState<boolean>(false);
+  const [vibraConfirm, setVibraConfirm] = useState<boolean>(false);
 
   // 회원가입 페이지에서 발생하는 오류 코드와 메시지를 관리하기 위한 useState
   const [errorCode, setErrorCode] = useState<string>('');
@@ -62,6 +67,29 @@ const Join = (): React.ReactNode => {
           setErrorMsg(error.response.data.message);
         });
     } else {
+      if (checkId !== 1) {
+        setCheckId(2);
+        setVibraId(true);
+        setTimeout(() => {
+          setVibraId(false);
+        }, 300);
+      }
+
+      if (checkPw !== 1) {
+        setCheckPw(2);
+        setVibraPw(true);
+        setTimeout(() => {
+          setVibraPw(false);
+        }, 300);
+      }
+
+      if (checkConfirm !== 1) {
+        setCheckConfirm(2);
+        setVibraConfirm(true);
+        setTimeout(() => {
+          setVibraConfirm(false);
+        }, 300);
+      }
     }
   };
 
@@ -133,7 +161,9 @@ const Join = (): React.ReactNode => {
         </Link>
       </div>
       <div className={styles.contents}>
-        <div className={styles.input}>
+        <div
+          className={`${styles.input} ${vibraId ? styles.input_vibration : ''}`}
+        >
           <label className={styles.input_label}>
             *ID (4~20자 영문 소문자, 숫자)
           </label>
@@ -173,7 +203,9 @@ const Join = (): React.ReactNode => {
             )}
           </div>
         </div>
-        <div className={styles.input}>
+        <div
+          className={`${styles.input} ${vibraPw ? styles.input_vibration : ''}`}
+        >
           <label className={styles.input_label}>
             *Password (4~20자 영문 대/소문자, 숫자, 특수문자)
           </label>
@@ -215,7 +247,11 @@ const Join = (): React.ReactNode => {
             )}
           </div>
         </div>
-        <div className={styles.input}>
+        <div
+          className={`${styles.input} ${
+            vibraConfirm ? styles.input_vibration : ''
+          }`}
+        >
           <label className={styles.input_label}>*Confirm Password</label>
           <input
             className={

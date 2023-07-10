@@ -30,7 +30,7 @@ const QuizFilter = (props: Options): React.ReactNode => {
   };
 
   return (
-    <div className={`${styles.wrapper} select_ban`}>
+    <div className={styles.wrapper}>
       <ul
         className={props.op3 ? styles.quizFilter_three : styles.quizFilter_two}
         onClick={quizFilterClickHandler}

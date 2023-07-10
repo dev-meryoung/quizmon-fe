@@ -72,6 +72,10 @@
           &:focus {
             border-bottom: 2px solid v.$main-green;
           }
+
+          &:disabled {
+            background-color: transparent;
+          }
         }
 
         .input_text_error {
