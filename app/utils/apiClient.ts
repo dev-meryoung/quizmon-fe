@@ -24,7 +24,7 @@ const apiClient: ApiClient = {
     };
 
     return axios
-      .get(`${this.baseUrl}${url}`, {
+      .get(`${url}`, {
         headers,
       })
       .then((res) => {
@@ -41,7 +41,7 @@ const apiClient: ApiClient = {
     };
 
     return axios
-      .get(`${this.baseUrl}${url}`, {
+      .get(`${url}`, {
         headers,
       })
       .then((res) => {
@@ -62,7 +62,7 @@ const apiClient: ApiClient = {
     };
 
     return axios
-      .post(`${this.baseUrl}${url}`, data, {
+      .post(`${url}`, data, {
         headers,
       })
       .then((res) => {
@@ -84,7 +84,7 @@ const apiClient: ApiClient = {
     };
 
     return axios
-      .post(`${this.baseUrl}${url}`, data, {
+      .post(`${url}`, data, {
         headers,
       })
       .then((res) => {
@@ -102,7 +102,7 @@ const apiClient: ApiClient = {
     };
 
     return axios
-      .get(`${this.baseUrl}${url}`, {
+      .get(`${url}`, {
         headers,
       })
       .then((res) => {
