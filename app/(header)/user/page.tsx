@@ -1,26 +1,27 @@
 'use client';
 
-import Image from 'next/image';
 import styles from 'app/styles/user.module.scss';
-import Header from 'app/components/Header';
 import { useState } from 'react';
 import Link from 'next/link';
 import userRegExp from 'app/utils/userRegExp';
+import { useRouter } from 'next/navigation';
 
 const User = (): React.ReactNode => {
   // userEdit 컴포넌트의 노출 여부를 관리하기 위한 useState
   const [viewUserEdit, setViewUserEdit] = useState<boolean>(false);
 
-  // 회원가입 시 사용되는 값(아이디, 비밀번호, 비밀번호 확인)을 관리하기 위한 useState
+  // 회원정보 값(아이디, 비밀번호, 비밀번호 확인)을 관리하기 위한 useState
+  const [id, setId] = useState<string>('');
   const [currentPw, setCurrentPw] = useState<string>('');
   const [newPw, setNewPw] = useState<string>('');
   const [confirmNewPw, setConfirmNewPw] = useState<string>('');
 
-  // 회원가입 시 유효성 검사 결과를 관리하기 위한 useState (0 : 초기값, 1 : 성공, 2 : 실패)
+  // 회원정보 내 비밀번호 변경 시 유효성 검사 결과를 관리하기 위한 useState (0 : 초기값, 1 : 성공, 2 : 실패)
   const [checkNewPw, setCheckNewPw] = useState<number>(0);
   const [checkConfirmNewPw, setCheckConfirmNewPw] = useState<number>(0);
 
-  let id = 'meryoung2';
+  // 페이지 이동을 위한 useRouter
+  const router = useRouter();
 
   // userEdit 컴포넌트의 노출 여부 상태를 변경하고 input 값을 초기화하는 핸들러 함수
   const viewUserEditHandler = (): void => {
@@ -76,7 +77,6 @@ const User = (): React.ReactNode => {
 
   return (
     <>
-      <Header />
       <main className={styles.container}>
         <div className={styles.contents}>
           {viewUserEdit ? (

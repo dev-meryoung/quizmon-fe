@@ -6,8 +6,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 import quizmonLogo from 'public/imgs/quizmon-logo.svg';
 import userRegExp from 'app/utils/userRegExp';
-import apiClient from '../utils/apiClient';
-import Modal from '../components/Modal';
+import apiClient from '../../utils/apiClient';
+import Modal from '../../components/Modal';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import { useRouter } from 'next/navigation';
 
 const Join = (): React.ReactNode => {
   // 회원가입 시 사용되는 값(아이디, 비밀번호, 비밀번호 확인)을 관리하기 위한 useState
@@ -25,17 +27,21 @@ const Join = (): React.ReactNode => {
   const [vibraPw, setVibraPw] = useState<boolean>(false);
   const [vibraConfirm, setVibraConfirm] = useState<boolean>(false);
 
-  // 회원가입 페이지에서 발생하는 오류 코드와 메시지를 관리하기 위한 useState
-  const [errorCode, setErrorCode] = useState<string>('');
+  // 회원가입 페이지에서 발생하는 오류 메시지를 관리하기 위한 useState
   const [errorMsg, setErrorMsg] = useState<string>('');
 
   // 회원가입 페이지에서 발생하는 오류 메시지 모달의 노출 여부를 관리하는 useState
   const [viewModal, setViewModal] = useState<boolean>(false);
 
+  // 페이지 내 로딩 상태 여부를 관리하는 useState
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // 페이지 이동을 위한 useRouter
+  const router = useRouter();
+
   // 오류 메시지 모달 창을 닫기 위한 핸들러 함수
-  const modalCloseHandler = () => {
+  const modalCloseHandler = (): void => {
     setViewModal(false);
-    setErrorCode('');
     setErrorMsg('');
   };
 
@@ -57,13 +63,18 @@ const Join = (): React.ReactNode => {
   // 회원가입 API
   const joinApiHandler = (): void => {
     if (checkId === 1 && checkPw === 1 && checkConfirm === 1) {
+      setIsLoading(true);
       apiClient
         .join(id, pw)
-        .then((data) => data.result)
-        .then((result) => console.log(result))
+        .then((data) => {
+          if (data.code === 200) {
+            setIsLoading(false);
+            router.push('/login');
+          }
+        })
         .catch((error) => {
+          setIsLoading(false);
           setViewModal(true);
-          setErrorCode(error.response.data.code);
           setErrorMsg(error.response.data.message);
         });
     } else {
@@ -298,16 +309,16 @@ const Join = (): React.ReactNode => {
           개인정보처리방침
         </Link>
       </div>
-      {errorCode !== '' && viewModal ? (
+      {errorMsg !== '' && viewModal ? (
         <Modal
           type="ERROR"
-          title={errorCode}
           description={errorMsg}
           modalCloseHandler={modalCloseHandler}
         />
       ) : (
         ''
       )}
+      {isLoading ? <LoadingSpinner /> : ''}
     </main>
   );
 };

@@ -6,21 +6,26 @@ import quizmonLogo from 'public/imgs/quizmon-logo.svg';
 import BlurBackground from './BlurBackgrond';
 import styles from 'app/styles/header.module.scss';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import apiClient from 'app/utils/apiClient';
 
 const Header = (): React.ReactNode => {
+  // 헤더 컴포넌트의 마운트 상태를 관리하기 위한 useState
+  const [mounted, setMounted] = useState<boolean>(false);
+
   // 반응형(모바일) 웹에서 search 컴포넌트의 노출 여부를 관리하기 위한 useState
   const [mobileSearchView, setMobileSearchView] = useState<boolean>(false);
 
   // 현재 웹 페이지의 내부 너비 값을 저장하기 위한 useState
   const [windowInnerWidth, setWindowInnerWidth] = useState<number>(0);
 
-  // 반응형(모바일) 웹에서 search 컴포넌트의 노출 여부 상태를 변경하는 핸들러 함수
-  const mobileSearchViewHandler = (): void => {
-    setMobileSearchView(!mobileSearchView);
-  };
+  // 페이지 이동을 위한 useRouter
+  const router = useRouter();
 
   // 컴포넌트가 처음 마운트 될 때 브라우저의 창 크기가 변경되는 이벤트 리스너를 추가하기 위한 useEffect
   useEffect(() => {
+    setMounted(true);
+
     const windowSizeHandler = () => {
       const innerWidth = window.innerWidth;
       setWindowInnerWidth(innerWidth);
@@ -48,18 +53,40 @@ const Header = (): React.ReactNode => {
     }
   }, [mobileSearchView, windowInnerWidth]);
 
+  // 회원정보 버튼이 클릭되었을 때 동작하는 핸들러 함수
+  const userHandler = (): void => {
+    router.push('/user');
+  };
+
+  // 로그아웃 버튼이 클릭되었을 때 동작하는 핸들러 함수
+  const logoutApiHandler = (): void => {
+    if (localStorage.getItem('jwt') !== null) {
+      apiClient.logout(localStorage.getItem('jwt'));
+      localStorage.removeItem('jwt');
+      router.push('/');
+      router.refresh();
+    }
+  };
+
+  // 반응형(모바일) 웹에서 search 컴포넌트의 노출 여부 상태를 변경하는 핸들러 함수
+  const mobileSearchViewHandler = (): void => {
+    setMobileSearchView(!mobileSearchView);
+  };
+
   return (
     <header className={styles.wrapper}>
       <div className={styles.logo}>
-        <Link href="/">
-          <Image
-            className={styles.logo_img}
-            src={quizmonLogo}
-            alt="quizmon"
-            title="퀴즈몬"
-            priority={true}
-          />
-        </Link>
+        <Image
+          className={styles.logo_img}
+          src={quizmonLogo}
+          alt="quizmon"
+          title="퀴즈몬"
+          priority={true}
+          onClick={() => {
+            router.push('/');
+            router.refresh();
+          }}
+        />
       </div>
       {mobileSearchView ? (
         <div className={`${styles.search} ${styles.search_clicked}`}>
@@ -110,31 +137,29 @@ const Header = (): React.ReactNode => {
           </svg>
         </div>
         <div className={styles.info}>
-          <Link href="/user">
+          <svg
+            className={styles.info_icon}
+            xmlns="http://www.w3.org/2000/svg"
+            height="1em"
+            viewBox="0 0 448 512"
+            onClick={userHandler}
+          >
+            <title>회원정보</title>
+            <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z" />
+          </svg>
+        </div>
+        {mounted && localStorage.getItem('jwt') !== null ? (
+          <div className={styles.logout}>
             <svg
-              className={styles.info_icon}
+              className={styles.logout_icon}
               xmlns="http://www.w3.org/2000/svg"
               height="1em"
-              viewBox="0 0 448 512"
+              viewBox="0 0 512 512"
+              onClick={logoutApiHandler}
             >
-              <title>회원정보</title>
-              <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z" />
+              <title>로그아웃</title>
+              <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z" />
             </svg>
-          </Link>
-        </div>
-        {false ? (
-          <div className={styles.logout}>
-            <Link href="/">
-              <svg
-                className={styles.logout_icon}
-                xmlns="http://www.w3.org/2000/svg"
-                height="1em"
-                viewBox="0 0 512 512"
-              >
-                <title>로그아웃</title>
-                <path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z" />
-              </svg>
-            </Link>
           </div>
         ) : (
           <div className={styles.login}>

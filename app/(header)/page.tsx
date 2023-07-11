@@ -13,7 +13,6 @@ const Home = (): React.ReactNode => {
 
   return (
     <>
-      <Header />
       <main className={styles.container}>
         <div className={styles.contents}>
           <div className={styles.filterMore}>

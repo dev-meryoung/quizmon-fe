@@ -9,7 +9,6 @@ import { MouseEventHandler, useState } from 'react';
 // Modal 컴포넌트의 props 타입 interface
 export interface Options {
   type: string;
-  title: string;
   description: string;
   modalCloseHandler: MouseEventHandler;
 }
@@ -20,7 +19,7 @@ const Modal = (props: Options): React.ReactNode => {
       <div className={styles.wrapper}>
         <Image className={styles.icon} src={quizmonIcon} alt="로고" />
         <div className={styles.title}>
-          <p>Error : {props.title}</p>
+          <p>알 림</p>
         </div>
         <div className={styles.description}>
           <p>{props.description}</p>
