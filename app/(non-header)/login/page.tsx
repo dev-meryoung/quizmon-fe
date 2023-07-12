@@ -41,6 +41,7 @@ const Login = (): React.ReactNode => {
       .then((data) => {
         if (data.code === 200) {
           setIsLoading(false);
+          apiClient.authorCheck();
           router.push('/');
         }
       })
