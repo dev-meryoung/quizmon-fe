@@ -4,7 +4,6 @@ import { useState } from 'react';
 import styles from 'app/styles/main.module.scss';
 import QuizFilter from 'app/components/QuizFilter';
 import QuizCard from 'app/components/QuizCard';
-import Header from 'app/components/Header';
 
 const Home = (): React.ReactNode => {
   // 퀴즈 필터 상태를 관리하기 위한 useState

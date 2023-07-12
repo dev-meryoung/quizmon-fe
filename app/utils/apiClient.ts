@@ -13,7 +13,7 @@ interface ApiClient {
 // 클라이언트 API
 const apiClient: ApiClient = {
   // 개발 단계에서 사용하는 baseUrl
-  baseUrl: `http://${process.env.NEXT_PUBLIC_BASE_URL}`,
+  baseUrl: `https://${process.env.NEXT_PUBLIC_BASE_URL}`,
   /* 회원 관련 API */
   // 토큰 권한 확인 API
   authorCheck() {
@@ -24,7 +24,7 @@ const apiClient: ApiClient = {
     };
 
     return axios
-      .get(`${url}`, {
+      .get(`${this.baseUrl}${url}`, {
         headers,
       })
       .then((res) => {
@@ -41,7 +41,7 @@ const apiClient: ApiClient = {
     };
 
     return axios
-      .get(`${url}`, {
+      .get(`${this.baseUrl}${url}`, {
         headers,
       })
       .then((res) => {
@@ -62,7 +62,7 @@ const apiClient: ApiClient = {
     };
 
     return axios
-      .post(`${url}`, data, {
+      .post(`${this.baseUrl}${url}`, data, {
         headers,
       })
       .then((res) => {
@@ -84,7 +84,7 @@ const apiClient: ApiClient = {
     };
 
     return axios
-      .post(`${url}`, data, {
+      .post(`${this.baseUrl}${url}`, data, {
         headers,
       })
       .then((res) => {
@@ -102,7 +102,7 @@ const apiClient: ApiClient = {
     };
 
     return axios
-      .get(`${url}`, {
+      .get(`${this.baseUrl}${url}`, {
         headers,
       })
       .then((res) => {
