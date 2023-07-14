@@ -11,6 +11,9 @@ import LoadingSpinner from 'app/components/LoadingSpinner';
 import apiClient from 'app/utils/apiClient';
 
 const Login = (): React.ReactNode => {
+  // 페이지 이동을 위한 useRouter
+  const router = useRouter();
+
   // 로그인 시 사용되는 값(아이디, 비밀번호, 비밀번호 확인)을 관리하기 위한 useState
   const [id, setId] = useState<string>('');
   const [pw, setPw] = useState<string>('');
@@ -23,9 +26,6 @@ const Login = (): React.ReactNode => {
 
   // 페이지 내 로딩 상태 여부를 관리하는 useState
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // 페이지 이동을 위한 useRouter
-  const router = useRouter();
 
   // 오류 메시지 모달 창을 닫기 위한 핸들러 함수
   const modalCloseHandler = (): void => {
@@ -41,7 +41,7 @@ const Login = (): React.ReactNode => {
       .then((data) => {
         if (data.code === 200) {
           setIsLoading(false);
-          console.log(data);
+          localStorage.setItem('jwt', data.result.token);
           router.push('/');
         }
       })

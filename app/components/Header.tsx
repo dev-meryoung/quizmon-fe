@@ -55,13 +55,17 @@ const Header = (): React.ReactNode => {
 
   // 회원정보 버튼이 클릭되었을 때 동작하는 핸들러 함수
   const userHandler = (): void => {
-    router.push('/user');
+    if (localStorage.getItem('jwt') === null) {
+      router.push('/login');
+    } else {
+      router.push('/user');
+    }
   };
 
   // 로그아웃 버튼이 클릭되었을 때 동작하는 핸들러 함수
   const logoutApiHandler = (): void => {
     if (localStorage.getItem('jwt') !== null) {
-      apiClient.logout(localStorage.getItem('jwt'));
+      apiClient.logout();
       localStorage.removeItem('jwt');
       router.push('/');
       router.refresh();

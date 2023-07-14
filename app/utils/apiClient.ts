@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import apiCrypto from 'app/utils/apiCrypto';
 
 interface ApiClient {
@@ -7,12 +7,12 @@ interface ApiClient {
   idCheck: (userId: string) => Promise<any>;
   join: (userId: string, userPw: string) => Promise<any>;
   login: (userId: string, userPw: string) => Promise<any>;
-  logout: (jwt: string | null) => Promise<any>;
+  logout: () => Promise<any>;
 }
 
 // 클라이언트 API
 const apiClient: ApiClient = {
-  // 개발 단계에서 사용하는 baseUrl
+  /* 개발 단계에서 사용하는 baseUrl */
   baseUrl: `https://${process.env.NEXT_PUBLIC_BASE_URL}`,
   /* 회원 관련 API */
   // 토큰 권한 확인 API
@@ -21,6 +21,7 @@ const apiClient: ApiClient = {
     const url: string = `/api/v1/user/check`;
     const headers = {
       Authentication: apiCrypto(method, url),
+      Authorization: localStorage.getItem('jwt'),
     };
 
     return axios
@@ -93,12 +94,12 @@ const apiClient: ApiClient = {
   },
 
   // 로그아웃 API
-  logout(jwt) {
+  logout() {
     const method: string = 'GET';
     const url: string = `/api/v1/user/logout`;
     const headers = {
       Authentication: apiCrypto(method, url),
-      Authorization: jwt,
+      Authorization: localStorage.getItem('jwt'),
     };
 
     return axios
