@@ -174,7 +174,21 @@
             margin-left: 1.5rem;
           }
         }
+        .input {
+          width: calc(100% - 2rem);
+          .input_label {
+            font-size: v.$font-size-2xs;
+          }
+          .input_text {
+            font-size: v.$font-size-md;
+          }
+        }
+        .edit_btn {
+          width: calc(100% - 2rem);
+          font-size: v.$font-size-md;
+        }
       }
+
       .btns {
         flex-direction: column;
         padding: 1rem 0;
