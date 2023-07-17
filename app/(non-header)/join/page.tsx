@@ -2,16 +2,20 @@
 
 import styles from 'app/styles/join.module.scss';
 import Image from 'next/image';
-import { useState } from 'react';
+import { KeyboardEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import quizmonLogo from 'public/imgs/quizmon-logo.svg';
 import userRegExp from 'app/utils/userRegExp';
-import apiClient from '../../utils/apiClient';
 import Modal from '../../components/Modal';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import apiClient from 'app/utils/apiClient';
 import { useRouter } from 'next/navigation';
+import { useJoin } from 'app/hooks/useJoin';
 
 const Join = (): React.ReactNode => {
+  // 페이지 이동을 위한 useRouter
+  const router = useRouter();
+
   // 회원가입 시 사용되는 값(아이디, 비밀번호, 비밀번호 확인)을 관리하기 위한 useState
   const [id, setId] = useState<string>('');
   const [pw, setPw] = useState<string>('');
@@ -27,22 +31,16 @@ const Join = (): React.ReactNode => {
   const [vibraPw, setVibraPw] = useState<boolean>(false);
   const [vibraConfirm, setVibraConfirm] = useState<boolean>(false);
 
-  // 회원가입 페이지에서 발생하는 오류 메시지를 관리하기 위한 useState
-  const [errorMsg, setErrorMsg] = useState<string>('');
+  // 회원가입 페이지에서 발생하는 모달 메시지를 관리하기 위한 useState
+  const [modalMsg, setModalMsg] = useState<string>('');
 
-  // 회원가입 페이지에서 발생하는 오류 메시지 모달의 노출 여부를 관리하는 useState
-  const [viewModal, setViewModal] = useState<boolean>(false);
+  // 회원가입 페이지에서 발생하는 인포 모달의 노출 여부를 관리하는 useState
+  const [viewInfoModal, setViewInfoModal] = useState<boolean>(false);
 
-  // 페이지 내 로딩 상태 여부를 관리하는 useState
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // 페이지 이동을 위한 useRouter
-  const router = useRouter();
-
-  // 오류 메시지 모달 창을 닫기 위한 핸들러 함수
+  // 인포 모달 창을 닫기 위한 핸들러 함수
   const modalCloseHandler = (): void => {
-    setViewModal(false);
-    setErrorMsg('');
+    setViewInfoModal(false);
+    setModalMsg('');
   };
 
   // 아이디 중복 여부 확인 API의 응답에 따라 아이디 사용 가능 여부를 설정하는 함수
@@ -58,50 +56,6 @@ const Join = (): React.ReactNode => {
           setCheckId(2);
         }
       });
-  };
-
-  // 회원가입 API
-  const joinApiHandler = (): void => {
-    if (checkId === 1 && checkPw === 1 && checkConfirm === 1) {
-      setIsLoading(true);
-      apiClient
-        .join(id, pw)
-        .then((data) => {
-          if (data.code === 200) {
-            setIsLoading(false);
-            router.push('/login');
-          }
-        })
-        .catch((error) => {
-          setIsLoading(false);
-          setViewModal(true);
-          setErrorMsg(error.response.data.message);
-        });
-    } else {
-      if (checkId !== 1) {
-        setCheckId(2);
-        setVibraId(true);
-        setTimeout(() => {
-          setVibraId(false);
-        }, 300);
-      }
-
-      if (checkPw !== 1) {
-        setCheckPw(2);
-        setVibraPw(true);
-        setTimeout(() => {
-          setVibraPw(false);
-        }, 300);
-      }
-
-      if (checkConfirm !== 1) {
-        setCheckConfirm(2);
-        setVibraConfirm(true);
-        setTimeout(() => {
-          setVibraConfirm(false);
-        }, 300);
-      }
-    }
   };
 
   // 회원가입 시 아이디의 유효성 검사를 실행하는 idCheckHandler 함수
@@ -158,83 +112,91 @@ const Join = (): React.ReactNode => {
     setConfirm(nowConfirm);
   };
 
+  // 회원가입 관련 useMutate Custom Hook
+  const { joinMutate, isJoinLoading, isJoinSuccess, isJoinError, joinError } =
+    useJoin(id, pw);
+
+  // 회원가입 버튼이 클릭되었을 때 실행하는 joinHandler 함수
+  const joinHandler = (): void => {
+    if (checkId === 1 && checkPw === 1 && checkConfirm === 1) {
+      joinMutate();
+    } else {
+      if (checkId !== 1) {
+        setCheckId(2);
+        setVibraId(true);
+        setTimeout(() => {
+          setVibraId(false);
+        }, 300);
+      }
+
+      if (checkPw !== 1) {
+        setCheckPw(2);
+        setVibraPw(true);
+        setTimeout(() => {
+          setVibraPw(false);
+        }, 300);
+      }
+
+      if (checkConfirm !== 1) {
+        setCheckConfirm(2);
+        setVibraConfirm(true);
+        setTimeout(() => {
+          setVibraConfirm(false);
+        }, 300);
+      }
+    }
+  };
+
+  // 회원가입 과정을 관리하기 위한 useEffect
+  useEffect(() => {
+    if (isJoinError) {
+      setModalMsg(joinError.response.data.message);
+      setViewInfoModal(true);
+    }
+
+    if (isJoinSuccess) {
+      router.push('/login');
+    }
+  }, [router, isJoinSuccess, isJoinError, joinError, id]);
+
   return (
-    <main className={styles.container}>
-      <div className={styles.logo}>
-        <Link href="/">
-          <Image
-            className={styles.logo_img}
-            src={quizmonLogo}
-            alt="quizmon"
-            title="퀴즈몬"
-            priority={true}
-          />
-        </Link>
-      </div>
-      <div className={styles.contents}>
-        <div
-          className={`${styles.input} ${vibraId ? styles.input_vibration : ''}`}
-        >
-          <label className={styles.input_label}>
-            *ID (4~20자 영문 소문자, 숫자)
-          </label>
-          <input
-            className={
-              checkId !== 2 ? styles.input_text : styles.input_text_error
-            }
-            type="text"
-            spellCheck="false"
-            placeholder="아이디"
-            onChange={onChangeId}
-            onBlur={idCheckHandler}
-            value={id}
-            maxLength={20}
-          />
-          <div className={styles.join_check}>
-            {checkId === 2 ? (
-              <svg
-                className={styles.warn_icon}
-                xmlns="http://www.w3.org/2000/svg"
-                height="1em"
-                viewBox="0 0 512 512"
-              >
-                <path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c-9.4 9.4-9.4 24.6 0 33.9l47 47-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47 47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47 47-47c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47-47-47c-9.4-9.4-24.6-9.4-33.9 0z" />
-              </svg>
-            ) : checkId === 1 ? (
-              <svg
-                className={styles.check_icon}
-                xmlns="http://www.w3.org/2000/svg"
-                height="1em"
-                viewBox="0 0 512 512"
-              >
-                <path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z" />
-              </svg>
-            ) : (
-              ''
-            )}
-          </div>
+    <>
+      {isJoinLoading ? <LoadingSpinner /> : ''}
+      <main className={styles.container}>
+        <div className={styles.logo}>
+          <Link href="/">
+            <Image
+              className={styles.logo_img}
+              src={quizmonLogo}
+              alt="quizmon"
+              title="퀴즈몬"
+              priority={true}
+            />
+          </Link>
         </div>
-        <div
-          className={`${styles.input} ${vibraPw ? styles.input_vibration : ''}`}
-        >
-          <label className={styles.input_label}>
-            *Password (4~20자 영문 대/소문자, 숫자, 특수문자)
-          </label>
-          <input
-            className={
-              checkPw !== 2 ? styles.input_text : styles.input_text_error
-            }
-            type="password"
-            spellCheck="false"
-            placeholder="비밀번호"
-            onChange={onChangePw}
-            onBlur={pwCheckHandler}
-            value={pw}
-            maxLength={20}
-          />
-          <div className={styles.join_check}>
-            {checkPw === 2 ? (
-              <>
+        <div className={styles.contents}>
+          <div
+            className={`${styles.input} ${
+              vibraId ? styles.input_vibration : ''
+            }`}
+          >
+            <label className={styles.input_label}>
+              *ID (4~20자 영문 소문자, 숫자)
+            </label>
+            <input
+              className={
+                checkId !== 2 ? styles.input_text : styles.input_text_error
+              }
+              type="text"
+              spellCheck="false"
+              placeholder="아이디"
+              onChange={onChangeId}
+              onBlur={idCheckHandler}
+              value={id}
+              maxLength={20}
+            />
+            <div className={styles.join_check}>
+              {checkId === 2 ? (
                 <svg
                   className={styles.warn_icon}
                   xmlns="http://www.w3.org/2000/svg"
@@ -243,83 +205,128 @@ const Join = (): React.ReactNode => {
                 >
                   <path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c-9.4 9.4-9.4 24.6 0 33.9l47 47-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47 47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47 47-47c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47-47-47c-9.4-9.4-24.6-9.4-33.9 0z" />
                 </svg>
-              </>
-            ) : checkPw === 1 ? (
-              <svg
-                className={styles.check_icon}
-                xmlns="http://www.w3.org/2000/svg"
-                height="1em"
-                viewBox="0 0 512 512"
-              >
-                <path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z" />
-              </svg>
-            ) : (
-              ''
-            )}
-          </div>
-        </div>
-        <div
-          className={`${styles.input} ${
-            vibraConfirm ? styles.input_vibration : ''
-          }`}
-        >
-          <label className={styles.input_label}>*Confirm Password</label>
-          <input
-            className={
-              checkConfirm !== 2 ? styles.input_text : styles.input_text_error
-            }
-            type="password"
-            spellCheck="false"
-            placeholder="비밀번호 확인"
-            onBlur={pwCheckHandler}
-            onChange={onChangeConfirm}
-            value={confirm}
-            maxLength={20}
-          />
-          <div className={styles.join_check}>
-            {checkConfirm === 2 ? (
-              <>
+              ) : checkId === 1 ? (
                 <svg
-                  className={styles.warn_icon}
+                  className={styles.check_icon}
                   xmlns="http://www.w3.org/2000/svg"
                   height="1em"
                   viewBox="0 0 512 512"
                 >
-                  <path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c-9.4 9.4-9.4 24.6 0 33.9l47 47-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47 47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47 47-47c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47-47-47c-9.4-9.4-24.6-9.4-33.9 0z" />
+                  <path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z" />
                 </svg>
-              </>
-            ) : checkConfirm === 1 ? (
-              <svg
-                className={styles.check_icon}
-                xmlns="http://www.w3.org/2000/svg"
-                height="1em"
-                viewBox="0 0 512 512"
-              >
-                <path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z" />
-              </svg>
-            ) : (
-              ''
-            )}
+              ) : (
+                ''
+              )}
+            </div>
           </div>
+          <div
+            className={`${styles.input} ${
+              vibraPw ? styles.input_vibration : ''
+            }`}
+          >
+            <label className={styles.input_label}>
+              *Password (4~20자 영문 대/소문자, 숫자, 특수문자)
+            </label>
+            <input
+              className={
+                checkPw !== 2 ? styles.input_text : styles.input_text_error
+              }
+              type="password"
+              spellCheck="false"
+              placeholder="비밀번호"
+              onChange={onChangePw}
+              onBlur={pwCheckHandler}
+              value={pw}
+              maxLength={20}
+            />
+            <div className={styles.join_check}>
+              {checkPw === 2 ? (
+                <>
+                  <svg
+                    className={styles.warn_icon}
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="1em"
+                    viewBox="0 0 512 512"
+                  >
+                    <path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c-9.4 9.4-9.4 24.6 0 33.9l47 47-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47 47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47 47-47c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47-47-47c-9.4-9.4-24.6-9.4-33.9 0z" />
+                  </svg>
+                </>
+              ) : checkPw === 1 ? (
+                <svg
+                  className={styles.check_icon}
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="1em"
+                  viewBox="0 0 512 512"
+                >
+                  <path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z" />
+                </svg>
+              ) : (
+                ''
+              )}
+            </div>
+          </div>
+          <div
+            className={`${styles.input} ${
+              vibraConfirm ? styles.input_vibration : ''
+            }`}
+          >
+            <label className={styles.input_label}>*Confirm Password</label>
+            <input
+              className={
+                checkConfirm !== 2 ? styles.input_text : styles.input_text_error
+              }
+              type="password"
+              spellCheck="false"
+              placeholder="비밀번호 확인"
+              onBlur={pwCheckHandler}
+              onChange={onChangeConfirm}
+              value={confirm}
+              maxLength={20}
+            />
+            <div className={styles.join_check}>
+              {checkConfirm === 2 ? (
+                <>
+                  <svg
+                    className={styles.warn_icon}
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="1em"
+                    viewBox="0 0 512 512"
+                  >
+                    <path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c-9.4 9.4-9.4 24.6 0 33.9l47 47-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47 47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47 47-47c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47-47-47c-9.4-9.4-24.6-9.4-33.9 0z" />
+                  </svg>
+                </>
+              ) : checkConfirm === 1 ? (
+                <svg
+                  className={styles.check_icon}
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="1em"
+                  viewBox="0 0 512 512"
+                >
+                  <path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z" />
+                </svg>
+              ) : (
+                ''
+              )}
+            </div>
+          </div>
+          <button className={styles.join_btn} onClick={joinHandler}>
+            회원가입
+          </button>
+          <Link className={styles.policy_btn} href={'/policy'}>
+            개인정보처리방침
+          </Link>
         </div>
-        <button className={styles.join_btn} onClick={joinApiHandler}>
-          회원가입
-        </button>
-        <Link className={styles.policy_btn} href={'/policy'}>
-          개인정보처리방침
-        </Link>
-      </div>
-      {errorMsg !== '' && viewModal ? (
-        <Modal
-          type="ERROR"
-          description={errorMsg}
-          modalCloseHandler={modalCloseHandler}
-        />
-      ) : (
-        ''
-      )}
-      {isLoading ? <LoadingSpinner /> : ''}
-    </main>
+        {modalMsg !== '' && viewInfoModal ? (
+          <Modal
+            type="INFO"
+            description={modalMsg}
+            modalCloseHandler={modalCloseHandler}
+          />
+        ) : (
+          ''
+        )}
+      </main>
+    </>
   );
 };
 

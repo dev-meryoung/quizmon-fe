@@ -1,12 +1,15 @@
 'use client';
 
 import styles from 'app/styles/user.module.scss';
-import { useEffect, useState } from 'react';
+import { KeyboardEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import userRegExp from 'app/utils/userRegExp';
+import LoadingSpinner from 'app/components/LoadingSpinner';
 import { useRouter } from 'next/navigation';
 import { useAuthorCheck } from 'app/hooks/useAuthorCheck';
-import LoadingSpinner from '@/app/components/LoadingSpinner';
+import { useUserEdit } from 'app/hooks/useUserEdit';
+import Modal from 'app/components/Modal';
+import { useUserWithdraw } from '@/app/hooks/useUserWithdraw';
 
 const User = (): React.ReactNode => {
   // 페이지 이동을 위한 useRouter
@@ -15,15 +18,37 @@ const User = (): React.ReactNode => {
   // userEdit 컴포넌트의 노출 여부를 관리하기 위한 useState
   const [viewUserEdit, setViewUserEdit] = useState<boolean>(false);
 
+  // 회원정보 페이지에서 발생하는 모달 메시지를 관리하기 위한 useState
+  const [modalMsg, setModalMsg] = useState<string>('');
+
+  // 회원정보 페이지에서 발생하는 인포 모달의 노출 여부를 관리하는 useState
+  const [viewInfoModal, setViewInfoModal] = useState<boolean>(false);
+
+  // 회원정보 페이지에서 발생하는 액션 모달의 노출 여부를 관리하는 useState
+  const [viewActionModal, setViewActionModal] = useState<boolean>(false);
+
   // 회원정보 값(아이디, 비밀번호, 비밀번호 확인)을 관리하기 위한 useState
   const [id, setId] = useState<string>('');
   const [currentPw, setCurrentPw] = useState<string>('');
   const [newPw, setNewPw] = useState<string>('');
   const [confirmNewPw, setConfirmNewPw] = useState<string>('');
 
-  // 회원정보 내 비밀번호 변경 시 유효성 검사 결과를 관리하기 위한 useState (0 : 초기값, 1 : 성공, 2 : 실패)
+  // 회원정보 수정 시 유효성 검사 결과를 관리하기 위한 useState (0 : 초기값, 1 : 성공, 2 : 실패)
+  const [checkCurrentPw, setCheckCurrentPw] = useState<number>(0);
   const [checkNewPw, setCheckNewPw] = useState<number>(0);
   const [checkConfirmNewPw, setCheckConfirmNewPw] = useState<number>(0);
+
+  // 회원정보 수정 시 유효성 검사 결과에 문제가 있는 컴포넌트를 강조(흔들림 효과)하기 위한 useState
+  const [vibraCurrentPw, setVibraCurrentPw] = useState<boolean>(false);
+  const [vibraNewPw, setVibraNewPw] = useState<boolean>(false);
+  const [vibraConfirmNewPw, setVibraConfirmNewPw] = useState<boolean>(false);
+
+  // 오류 메시지 모달 창을 닫기 위한 핸들러 함수
+  const modalCloseHandler = (): void => {
+    setViewInfoModal(false);
+    setViewActionModal(false);
+    setModalMsg('');
+  };
 
   // userEdit 컴포넌트의 노출 여부 상태를 변경하고 input 값을 초기화하는 핸들러 함수
   const viewUserEditHandler = (): void => {
@@ -36,6 +61,17 @@ const User = (): React.ReactNode => {
     setCheckConfirmNewPw(0);
   };
 
+  // 내 정보 수정 시 현재 비밀번호의 유효성 검사를 실행하는 currentPwCheckHandler 함수
+  const currentPwCheckHandler = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    if (currentPw.length === 0) {
+      setCheckCurrentPw(0);
+    } else {
+      setCheckCurrentPw(1);
+    }
+  };
+
   // 내 정보 수정 시 새로운 비밀번호의 유효성 검사를 실행하는 newPwCheckHandler 함수
   const newPwCheckHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (newPw.length === 0) {
@@ -43,7 +79,7 @@ const User = (): React.ReactNode => {
       return;
     }
 
-    if (userRegExp('PW', newPw)) {
+    if (userRegExp('PW', newPw) && currentPw !== newPw) {
       setCheckNewPw(1);
     } else {
       setCheckNewPw(2);
@@ -85,7 +121,7 @@ const User = (): React.ReactNode => {
     isAuthorCheckError,
   } = useAuthorCheck();
 
-  // JWT 토큰 검증에 실패한 경우 로그인 페이지로 이동
+  // JWT 토큰 검증 과정을 관리하기 위한 useEffect
   useEffect(() => {
     if (isAuthorCheckSuccess || isAuthorCheckError) {
       setId(authorCheckId);
@@ -95,9 +131,132 @@ const User = (): React.ReactNode => {
     }
   }, [router, authorCheckId, isAuthorCheckSuccess, isAuthorCheckError]);
 
+  // 회원정보 수정 관련 useMutate Custom Hook
+  const {
+    userEditMutate,
+    isUserEditLoading,
+    isUserEditSuccess,
+    isUserEditError,
+    userEditError,
+  } = useUserEdit(currentPw, newPw);
+
+  // 정보 수정 버튼이 클릭되었을 때 실행하는 editHandler 함수
+  const userEditHandler = (): void => {
+    if (checkCurrentPw === 1 && checkNewPw === 1 && checkConfirmNewPw === 1) {
+      userEditMutate();
+    } else {
+      if (checkCurrentPw !== 1) {
+        setCheckCurrentPw(2);
+        setVibraCurrentPw(true);
+        setTimeout(() => {
+          setVibraCurrentPw(false);
+        }, 300);
+      }
+
+      if (checkNewPw !== 1) {
+        setCheckNewPw(2);
+        setVibraNewPw(true);
+        setTimeout(() => {
+          setVibraNewPw(false);
+        }, 300);
+      }
+
+      if (checkConfirmNewPw !== 1) {
+        setCheckConfirmNewPw(2);
+        setVibraConfirmNewPw(true);
+        setTimeout(() => {
+          setVibraConfirmNewPw(false);
+        }, 300);
+      }
+    }
+  };
+
+  // 회원정보 수정 과정을 관리하기 위한 useEffect
+  useEffect(() => {
+    if (isUserEditSuccess) {
+      setModalMsg('회원정보 수정에 성공했습니다.');
+      setViewInfoModal(true);
+    }
+
+    if (isUserEditError) {
+      setModalMsg(userEditError.response.data.message);
+      setCheckCurrentPw(2);
+      setViewInfoModal(true);
+    }
+  }, [isUserEditSuccess, isUserEditError, userEditError]);
+
+  // 회원탈퇴 관련 useMutate Custom Hook
+  const {
+    userWithdrawMutate,
+    isUserWithdrawLoading,
+    isUserWithdrawSuccess,
+    isUserWithdrawError,
+    userWithdrawError,
+  } = useUserWithdraw(currentPw);
+
+  // 회원탈퇴 버튼이 클릭되었을 때 실행하는 userWithdrawHandler 함수
+  const userWithdrawHandler = (): void => {
+    if (checkCurrentPw === 1) {
+      userWithdrawMutate();
+      setViewActionModal(false);
+    } else {
+      if (checkCurrentPw !== 1) {
+        setViewActionModal(false);
+        setCheckCurrentPw(2);
+        setVibraCurrentPw(true);
+        setTimeout(() => {
+          setVibraCurrentPw(false);
+        }, 300);
+      }
+    }
+  };
+
+  // 회원탈퇴 과정을 관리하기 위한 useEffect
+  useEffect(() => {
+    if (isUserWithdrawSuccess) {
+      setModalMsg('탈퇴에 성공했습니다.');
+      setViewInfoModal(true);
+      localStorage.removeItem('jwt');
+      router.push('/');
+    }
+
+    if (isUserWithdrawError) {
+      setModalMsg(userWithdrawError.response.data.message);
+      setViewInfoModal(true);
+
+      if (userWithdrawError.response.data.code === 11301) {
+        setCheckCurrentPw(2);
+      }
+    }
+  }, [router, isUserWithdrawSuccess, isUserWithdrawError, userWithdrawError]);
+
   return (
     <>
-      {isAuthorCheckLoading ? <LoadingSpinner /> : ''}
+      {viewInfoModal ? (
+        <Modal
+          type="INFO"
+          description={modalMsg}
+          modalCloseHandler={modalCloseHandler}
+        />
+      ) : (
+        ''
+      )}
+      {viewActionModal ? (
+        <Modal
+          type="ACTION"
+          description="정말 탈퇴하시겠습니까?"
+          actionBtn="탈퇴"
+          modalActionHandler={userWithdrawHandler}
+          modalCloseHandler={modalCloseHandler}
+        />
+      ) : (
+        ''
+      )}
+      {isAuthorCheckLoading || isUserEditLoading || isUserWithdrawLoading ? (
+        <LoadingSpinner />
+      ) : (
+        ''
+      )}
       {authorCheckId ? (
         <main className={styles.container}>
           <div className={styles.contents}>
@@ -129,26 +288,57 @@ const User = (): React.ReactNode => {
                     disabled
                   />
                 </div>
-                <div className={styles.input}>
+                <div
+                  className={`${styles.input} ${
+                    vibraCurrentPw ? styles.input_vibration : ''
+                  }`}
+                >
                   <label className={styles.input_label}>
                     *Current Password
                   </label>
                   <input
-                    className={styles.input_text}
+                    className={
+                      checkCurrentPw !== 2
+                        ? styles.input_text
+                        : styles.input_text_error
+                    }
                     type="password"
                     spellCheck="false"
                     placeholder="현재 비밀번호"
                     value={currentPw}
+                    onBlur={currentPwCheckHandler}
                     onChange={onChangeCurrentPw}
                     maxLength={20}
                   />
+                  {checkCurrentPw === 2 ? (
+                    <div className={styles.edit_check}>
+                      <svg
+                        className={styles.warn_icon}
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="1em"
+                        viewBox="0 0 512 512"
+                      >
+                        <path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c-9.4 9.4-9.4 24.6 0 33.9l47 47-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47 47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47 47-47c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47-47-47c-9.4-9.4-24.6-9.4-33.9 0z" />
+                      </svg>
+                    </div>
+                  ) : (
+                    ''
+                  )}
                 </div>
-                <div className={styles.input}>
+                <div
+                  className={`${styles.input} ${
+                    vibraNewPw ? styles.input_vibration : ''
+                  }`}
+                >
                   <label className={styles.input_label}>
                     *New Password (4~20자 영문 대/소문자, 숫자, 특수문자)
                   </label>
                   <input
-                    className={styles.input_text}
+                    className={
+                      checkNewPw !== 2
+                        ? styles.input_text
+                        : styles.input_text_error
+                    }
                     type="password"
                     spellCheck="false"
                     placeholder="새로운 비밀번호"
@@ -183,12 +373,20 @@ const User = (): React.ReactNode => {
                     )}
                   </div>
                 </div>
-                <div className={styles.input}>
+                <div
+                  className={`${styles.input} ${
+                    vibraConfirmNewPw ? styles.input_vibration : ''
+                  }`}
+                >
                   <label className={styles.input_label}>
                     *Confirm New Password
                   </label>
                   <input
-                    className={styles.input_text}
+                    className={
+                      checkConfirmNewPw !== 2
+                        ? styles.input_text
+                        : styles.input_text_error
+                    }
                     type="password"
                     spellCheck="false"
                     placeholder="새로운 비밀번호 확인"
@@ -223,10 +421,17 @@ const User = (): React.ReactNode => {
                     )}
                   </div>
                 </div>
-                <button className={styles.edit_btn}>정보 수정</button>
-                <Link className={styles.delete_btn} href={'/'}>
+                <button className={styles.edit_btn} onClick={userEditHandler}>
+                  정보 수정
+                </button>
+                <a
+                  className={styles.delete_btn}
+                  onClick={() => {
+                    setViewActionModal(true);
+                  }}
+                >
                   회원탈퇴
-                </Link>
+                </a>
               </div>
             ) : (
               <div className={styles.btns}>

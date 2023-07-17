@@ -4,9 +4,11 @@ import apiCrypto from 'app/utils/apiCrypto';
 interface ApiClient {
   baseUrl: string;
   authorCheck: () => Promise<any>;
-  idCheck: (userId: string) => Promise<any>;
-  join: (userId: string, userPw: string) => Promise<any>;
-  login: (userId: string, userPw: string) => Promise<any>;
+  idCheck: (id: string) => Promise<any>;
+  join: (id: string, pw: string) => Promise<any>;
+  userEdit: (currentPw: string, newPw: string) => Promise<any>;
+  userWithdraw: (currentPw: string) => Promise<any>;
+  login: (id: string, pw: string) => Promise<any>;
   logout: () => Promise<any>;
 }
 
@@ -34,9 +36,9 @@ const apiClient: ApiClient = {
   },
 
   // 아이디 중복 여부 확인 API
-  idCheck(userId) {
+  idCheck(id) {
     const method: string = 'GET';
-    const url: string = `/api/v1/user/${userId}/check`;
+    const url: string = `/api/v1/user/${id}/check`;
     const headers = {
       Authentication: apiCrypto(method, url),
     };
@@ -51,15 +53,15 @@ const apiClient: ApiClient = {
   },
 
   // 회원가입 API
-  join(userId, userPw) {
+  join(id, pw) {
     const method: string = 'POST';
     const url: string = `/api/v1/user`;
     const headers = {
       Authentication: apiCrypto(method, url),
     };
     const data: { id: string; password: string } = {
-      id: userId,
-      password: userPw,
+      id: id,
+      password: pw,
     };
 
     return axios
@@ -71,8 +73,55 @@ const apiClient: ApiClient = {
       });
   },
 
+  // 회원정보 수정 API
+  userEdit(currentPw, newPw) {
+    const method: string = 'PUT';
+    const url: string = `/api/v1/user`;
+
+    const headers = {
+      Authentication: apiCrypto(method, url),
+      Authorization: localStorage.getItem('jwt'),
+    };
+    const data: { oldPassword: string; newPassword: string } = {
+      oldPassword: currentPw,
+      newPassword: newPw,
+    };
+
+    return axios
+      .put(`${this.baseUrl}${url}`, data, {
+        headers,
+      })
+      .then((res) => {
+        return res.data;
+      });
+  },
+
+  // 회원탈퇴 API
+  userWithdraw(currentPw) {
+    const method: string = 'POST';
+    const url: string = `/api/v1/user/delete`;
+
+    const headers = {
+      Authentication: apiCrypto(method, url),
+      Authorization: localStorage.getItem('jwt'),
+    };
+    const data: { password: string } = {
+      password: currentPw,
+    };
+
+    console.log(method, url, data);
+
+    return axios
+      .post(`${this.baseUrl}${url}`, data, {
+        headers,
+      })
+      .then((res) => {
+        return res.data;
+      });
+  },
+
   // 로그인 API
-  login(userId, userPw) {
+  login(id, pw) {
     const method: string = 'POST';
     const url: string = `/api/v1/user/login`;
 
@@ -80,8 +129,8 @@ const apiClient: ApiClient = {
       Authentication: apiCrypto(method, url),
     };
     const data: { id: string; password: string } = {
-      id: userId,
-      password: userPw,
+      id: id,
+      password: pw,
     };
 
     return axios

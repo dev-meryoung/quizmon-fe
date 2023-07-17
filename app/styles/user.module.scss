@@ -1,6 +1,15 @@
 /* User 페이지 */
 @use 'var.module.scss' as v;
 
+@keyframes vibration {
+  from {
+    transform: rotate(1deg);
+  }
+  to {
+    transform: rotate(-1deg);
+  }
+}
+
 .container {
   display: flex;
   justify-content: center;
@@ -111,6 +120,10 @@
         }
       }
 
+      .input_vibration {
+        animation: vibration 0.1s infinite;
+      }
+
       .edit_btn {
         width: 22rem;
         height: 3rem;
@@ -124,6 +137,10 @@
         margin: 2rem;
         font-size: v.$font-size-sm;
         text-decoration: underline;
+
+        &:hover {
+          cursor: pointer;
+        }
       }
     }
 
