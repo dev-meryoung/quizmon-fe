@@ -37,7 +37,7 @@ const Join = (): React.ReactNode => {
   // 회원가입 페이지에서 발생하는 인포 모달의 노출 여부를 관리하는 useState
   const [viewInfoModal, setViewInfoModal] = useState<boolean>(false);
 
-  // 인포 모달 창을 닫기 위한 핸들러 함수
+  // 모달 창을 닫기 위한 핸들러 함수
   const modalCloseHandler = (): void => {
     setViewInfoModal(false);
     setModalMsg('');

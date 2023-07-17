@@ -1,8 +1,7 @@
 'use client';
 
 import styles from 'app/styles/user.module.scss';
-import { KeyboardEvent, useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import userRegExp from 'app/utils/userRegExp';
 import LoadingSpinner from 'app/components/LoadingSpinner';
 import { useRouter } from 'next/navigation';
@@ -43,10 +42,16 @@ const User = (): React.ReactNode => {
   const [vibraNewPw, setVibraNewPw] = useState<boolean>(false);
   const [vibraConfirmNewPw, setVibraConfirmNewPw] = useState<boolean>(false);
 
-  // 오류 메시지 모달 창을 닫기 위한 핸들러 함수
+  // 모달 창을 닫기 위한 핸들러 함수
   const modalCloseHandler = (): void => {
     setViewInfoModal(false);
     setViewActionModal(false);
+
+    if (modalMsg === '탈퇴가 완료되었습니다.') {
+      router.push('/');
+      router.refresh();
+    }
+
     setModalMsg('');
   };
 
@@ -176,6 +181,9 @@ const User = (): React.ReactNode => {
     if (isUserEditSuccess) {
       setModalMsg('회원정보 수정에 성공했습니다.');
       setViewInfoModal(true);
+      setCurrentPw('');
+      setNewPw('');
+      setConfirmNewPw('');
     }
 
     if (isUserEditError) {
@@ -214,10 +222,9 @@ const User = (): React.ReactNode => {
   // 회원탈퇴 과정을 관리하기 위한 useEffect
   useEffect(() => {
     if (isUserWithdrawSuccess) {
-      setModalMsg('탈퇴에 성공했습니다.');
-      setViewInfoModal(true);
       localStorage.removeItem('jwt');
-      router.push('/');
+      setModalMsg('탈퇴가 완료되었습니다.');
+      setViewInfoModal(true);
     }
 
     if (isUserWithdrawError) {
