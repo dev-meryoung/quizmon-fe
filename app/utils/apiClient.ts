@@ -109,8 +109,6 @@ const apiClient: ApiClient = {
       password: currentPw,
     };
 
-    console.log(method, url, data);
-
     return axios
       .post(`${this.baseUrl}${url}`, data, {
         headers,

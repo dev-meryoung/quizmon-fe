@@ -1,5 +1,6 @@
 import { UseMutateFunction, useMutation } from 'react-query';
 import apiClient from 'app/utils/apiClient';
+import stringCrypto from 'app/utils/stringCrypto';
 
 // 로그인을 진행하는 useMutate
 export const useLogin = (
@@ -7,6 +8,7 @@ export const useLogin = (
   pw: string
 ): {
   loginMutate: UseMutateFunction;
+  loginData: { id: string };
   isLoginLoading: boolean;
   isLoginSuccess: boolean;
   isLoginError: boolean;
@@ -14,21 +16,27 @@ export const useLogin = (
 } => {
   const {
     mutate: loginMutate,
+    data: loginData,
     isLoading: isLoginLoading,
     isSuccess: isLoginSuccess,
     isError: isLoginError,
     error: loginError,
-  } = useMutation('login', () =>
+  } = useMutation(['login'], () =>
     apiClient.login(id, pw).then((data) => {
       if (data.code === 200) {
         localStorage.setItem('jwt', data.result.token);
-        return data.result.id;
+        localStorage.setItem(
+          'user',
+          `${data.result.id}:${stringCrypto(data.result.admin)}`
+        );
+        return data.result;
       }
     })
   );
 
   return {
     loginMutate,
+    loginData,
     isLoginLoading,
     isLoginSuccess,
     isLoginError,

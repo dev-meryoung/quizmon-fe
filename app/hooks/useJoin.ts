@@ -18,7 +18,7 @@ export const useJoin = (
     isSuccess: isJoinSuccess,
     isError: isJoinError,
     error: joinError,
-  } = useMutation('join', () =>
+  } = useMutation(['join'], () =>
     apiClient.join(id, pw).then((data) => {
       if (data.code === 200) {
         return data.result.id;

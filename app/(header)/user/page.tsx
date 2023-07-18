@@ -5,14 +5,16 @@ import { useEffect, useState } from 'react';
 import userRegExp from 'app/utils/userRegExp';
 import LoadingSpinner from 'app/components/LoadingSpinner';
 import { useRouter } from 'next/navigation';
-import { useAuthorCheck } from 'app/hooks/useAuthorCheck';
 import { useUserEdit } from 'app/hooks/useUserEdit';
 import Modal from 'app/components/Modal';
-import { useUserWithdraw } from '@/app/hooks/useUserWithdraw';
+import { useUserWithdraw } from 'app/hooks/useUserWithdraw';
 
 const User = (): React.ReactNode => {
   // 페이지 이동을 위한 useRouter
   const router = useRouter();
+
+  // 회원정보 페이지의 마운트 상태를 관리하기 위한 useState
+  const [mounted, setMounted] = useState<boolean>(false);
 
   // userEdit 컴포넌트의 노출 여부를 관리하기 위한 useState
   const [viewUserEdit, setViewUserEdit] = useState<boolean>(false);
@@ -118,23 +120,23 @@ const User = (): React.ReactNode => {
     setConfirmNewPw(nowConfirmNewPw);
   };
 
-  // JWT 토큰 검증 관련 useQuery Custom Hook
-  const {
-    authorCheckId,
-    isAuthorCheckLoading,
-    isAuthorCheckSuccess,
-    isAuthorCheckError,
-  } = useAuthorCheck();
-
-  // JWT 토큰 검증 과정을 관리하기 위한 useEffect
+  // 최초 회원정보 페이지 마운트 과정을 관리하기 위한 useEffect
   useEffect(() => {
-    if (isAuthorCheckSuccess || isAuthorCheckError) {
-      setId(authorCheckId);
-      if (authorCheckId === undefined) {
-        router.push('/login');
+    setMounted(true);
+    if (localStorage.getItem('jwt') === null) {
+      router.push('/login');
+    } else {
+      if (localStorage.getItem('user')) {
+        const userId: string | undefined = localStorage
+          .getItem('user')
+          ?.split(':')[0];
+
+        if (userId) {
+          setId(userId);
+        }
       }
     }
-  }, [router, authorCheckId, isAuthorCheckSuccess, isAuthorCheckError]);
+  }, [router]);
 
   // 회원정보 수정 관련 useMutate Custom Hook
   const {
@@ -259,12 +261,8 @@ const User = (): React.ReactNode => {
       ) : (
         ''
       )}
-      {isAuthorCheckLoading || isUserEditLoading || isUserWithdrawLoading ? (
-        <LoadingSpinner />
-      ) : (
-        ''
-      )}
-      {authorCheckId ? (
+      {isUserEditLoading || isUserWithdrawLoading ? <LoadingSpinner /> : ''}
+      {mounted && localStorage.getItem('jwt') !== null ? (
         <main className={styles.container}>
           <div className={styles.contents}>
             {viewUserEdit ? (

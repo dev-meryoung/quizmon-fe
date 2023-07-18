@@ -17,7 +17,7 @@ export const useUserWithdraw = (
     isSuccess: isUserWithdrawSuccess,
     isError: isUserWithdrawError,
     error: userWithdrawError,
-  } = useMutation('userWithdraw', () =>
+  } = useMutation(['userWithdraw'], () =>
     apiClient.userWithdraw(pw).then((data) => {
       if (data.code === 200) {
         return data.result.id;

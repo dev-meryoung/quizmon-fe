@@ -67,6 +67,7 @@ const Header = (): React.ReactNode => {
     if (localStorage.getItem('jwt') !== null) {
       apiClient.logout();
       localStorage.removeItem('jwt');
+      localStorage.removeItem('user');
       router.push('/');
       router.refresh();
     }

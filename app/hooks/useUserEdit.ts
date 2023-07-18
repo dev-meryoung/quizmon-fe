@@ -18,7 +18,7 @@ export const useUserEdit = (
     isSuccess: isUserEditSuccess,
     isError: isUserEditError,
     error: userEditError,
-  } = useMutation('userEdit', () =>
+  } = useMutation(['userEdit'], () =>
     apiClient.userEdit(pw, newPw).then((data) => {
       if (data.code === 200) {
         return data.result.id;

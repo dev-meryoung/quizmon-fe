@@ -3,30 +3,30 @@ import apiClient from 'app/utils/apiClient';
 
 // 현재 브라우저에 존재하는 JWT 토큰의 유효성 검사를 진행하는 useQuery
 export const useAuthorCheck = (): {
-  authorCheckId: string;
+  authorCheckData: { id: string; valid: boolean; admin: boolean };
   isAuthorCheckLoading: boolean;
   isAuthorCheckSuccess: boolean;
   isAuthorCheckError: boolean;
 } => {
   const {
-    data: authorCheckId,
+    data: authorCheckData,
     isLoading: isAuthorCheckLoading,
     isSuccess: isAuthorCheckSuccess,
     isError: isAuthorCheckError,
   } = useQuery(
-    'authorCheck',
+    ['authorCheck'],
     () =>
       apiClient
         .authorCheck()
         .then((data) => {
-          return data.result.id;
+          return data.result;
         })
         .catch((error) => console.log(error.response.data.message)),
-    { retry: 0 }
+    { retry: 0, refetchOnWindowFocus: false }
   );
 
   return {
-    authorCheckId,
+    authorCheckData,
     isAuthorCheckLoading,
     isAuthorCheckSuccess,
     isAuthorCheckError,
