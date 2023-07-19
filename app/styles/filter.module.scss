@@ -2,7 +2,7 @@
 @use 'var.module.scss' as v;
 
 .wrapper {
-  .quizFilter_two {
+  .filter_two {
     display: flex;
     width: 6.7rem;
     height: 2.4rem;
@@ -16,7 +16,7 @@
     font-size: v.$font-size-md;
   }
 
-  .quizFilter_three {
+  .filter_three {
     display: flex;
     width: 10rem;
     height: 2.4rem;
@@ -30,7 +30,7 @@
     font-size: v.$font-size-md;
   }
 
-  .quizFilter_option {
+  .filter_option {
     display: flex;
     width: 3rem;
     height: 2rem;
@@ -42,7 +42,7 @@
     }
   }
 
-  .quizFilter_option_focused {
+  .filter_option_focused {
     display: flex;
     width: 3rem;
     height: 2rem;
@@ -56,21 +56,21 @@
 
   // 반응형 모바일 기준
   @media (max-width: 644px) {
-    .quizFilter_two {
+    .filter_two {
       width: 6rem;
       height: 2.2rem;
       margin-right: 0.4rem;
       font-size: v.$font-size-sm;
     }
 
-    .quizFilter_three {
+    .filter_three {
       width: 9rem;
       height: 2.2rem;
       margin-right: 0.4rem;
       font-size: v.$font-size-sm;
     }
 
-    .quizFilter_option {
+    .filter_option {
       width: 2.7rem;
       height: 1.9rem;
     }

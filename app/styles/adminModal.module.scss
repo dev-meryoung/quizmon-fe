@@ -1,0 +1,51 @@
+/* AdminModal 컴포넌트 */
+@use 'var.module.scss' as v;
+
+.wrapper {
+  display: flex;
+  position: absolute;
+  justify-content: flex-end;
+  align-items: center;
+  transform: translate(-93%, -35%);
+  background-color: v.$main-gray;
+  border-radius: 5px;
+  z-index: 1;
+  box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+  padding: 0.3rem;
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+
+    .option_title {
+      margin-left: 3px;
+      font-size: v.$font-size-2xs;
+      font-weight: bold;
+    }
+  }
+
+  .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0.1rem;
+    width: 2.4rem;
+    height: 2.4rem;
+
+    .btn_icon {
+      fill: v.$white;
+    }
+  }
+}
+
+/** 반응형 웹 포맷 **/
+// 반응형 모바일 기준
+@media (max-width: 644px) {
+  .wrapper {
+    .btn {
+      width: 2.2rem;
+      height: 2.2rem;
+    }
+  }
+}

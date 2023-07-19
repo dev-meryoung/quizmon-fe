@@ -241,6 +241,7 @@ const User = (): React.ReactNode => {
 
   return (
     <>
+      {isUserEditLoading || isUserWithdrawLoading ? <LoadingSpinner /> : ''}
       {viewInfoModal ? (
         <Modal
           type="INFO"
@@ -261,7 +262,6 @@ const User = (): React.ReactNode => {
       ) : (
         ''
       )}
-      {isUserEditLoading || isUserWithdrawLoading ? <LoadingSpinner /> : ''}
       {mounted && localStorage.getItem('jwt') !== null ? (
         <main className={styles.container}>
           <div className={styles.contents}>
