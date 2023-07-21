@@ -268,7 +268,7 @@ const User = (): React.ReactNode => {
             {viewUserEdit ? (
               <div className={styles.userEdit}>
                 <div className={styles.title}>
-                  <p>내 정보 수정</p>
+                  <p className={styles.title_text}>내 정보 수정</p>
                   <div className={styles.back}>
                     <svg
                       className={styles.back_icon}

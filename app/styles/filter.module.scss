@@ -52,6 +52,11 @@
     background-color: v.$main-green;
     border-radius: 5px;
     box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+
+    &:hover {
+      background-color: v.$main-deep-green;
+      transition: all 0.3s;
+    }
   }
 
   // 반응형 모바일 기준

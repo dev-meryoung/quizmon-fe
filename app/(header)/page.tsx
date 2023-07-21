@@ -8,8 +8,12 @@ import LoadingSpinner from 'app/components/LoadingSpinner';
 import { useAuthorCheck } from 'app/hooks/useAuthorCheck';
 import stringCrypto from 'app/utils/stringCrypto';
 import AdminModal from '../components/AdminModal';
+import { useRouter } from 'next/navigation';
 
 const Home = (): React.ReactNode => {
+  // 페이지 이동을 위한 useRouter
+  const router = useRouter();
+
   // 메인 페이지의 마운트 상태를 관리하기 위한 useState
   const [mounted, setMounted] = useState<boolean>(false);
 
@@ -80,7 +84,7 @@ const Home = (): React.ReactNode => {
   useEffect(() => {
     if (adminQuizFilter1 === 1) {
       setQuizFilter1(3);
-    } else if (quizFilter1 === 1 && adminQuizFilter1 === 2) {
+    } else if (adminQuizFilter1 === 2) {
       setQuizFilter1(1);
     }
   }, [adminQuizFilter1]);
@@ -112,7 +116,16 @@ const Home = (): React.ReactNode => {
               </div>
             </div>
             <div className={styles.more}>
-              <button className={styles.newQuizBtn}>
+              <button
+                className={styles.newQuizBtn}
+                onClick={() => {
+                  if (localStorage.getItem('jwt') === null) {
+                    router.push('/login');
+                  } else {
+                    router.push('/quiz/new');
+                  }
+                }}
+              >
                 <svg
                   className={styles.newQuiz_icon}
                   xmlns="http://www.w3.org/2000/svg"
