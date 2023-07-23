@@ -46,7 +46,7 @@ const QuizCard = (): React.ReactNode => {
           target="_blank"
         >
           <svg
-            className={styles.playIcon}
+            className={styles.play_icon}
             xmlns="http://www.w3.org/2000/svg"
             height="1em"
             viewBox="0 0 384 512"
@@ -57,7 +57,7 @@ const QuizCard = (): React.ReactNode => {
         </Link>
         <div className={styles.infoBtn} onClick={visibleHandler}>
           <svg
-            className={styles.infoIcon}
+            className={styles.info_icon}
             xmlns="http://www.w3.org/2000/svg"
             height="1em"
             viewBox="0 0 512 512"

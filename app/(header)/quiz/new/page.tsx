@@ -5,9 +5,10 @@ import Filter from 'app/components/Filter';
 import styles from 'app/styles/newQuiz.module.scss';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Infomation from '@/app/components/Infomation';
 
 export interface QnaArrayType {
-  optionArray: string[];
+  optionArray: string[] | null;
   answerArray: string[];
 }
 
@@ -34,6 +35,9 @@ const New = (): React.ReactNode => {
 
   // 객관식 여부 필터 상태를 관리하기 위한 useState (1 : 객관식, 2 : 기본)
   const [multipleFilter, setMultipleFilter] = useState<number>(2);
+
+  // 객관식 문제의 보기 중 정답에 해당하는 상태를 선택하기 위한 useState
+  const [multipleAnswer, setMultipleAnswer] = useState<number>(0);
 
   // 공개 여부 필터 상태를 관리하기 위한 useState (1 : 비공개, 2 : 기본)
   const [publicFilter, setPublicFilter] = useState<number>(2);
@@ -98,7 +102,7 @@ const New = (): React.ReactNode => {
                 <label className={styles.input_label}>*OPTION</label>
                 <div className={styles.options}>
                   <div className={styles.option}>
-                    <p className={styles.option_title}>퀴즈 난이도</p>
+                    <div className={styles.option_title}>퀴즈 난이도</div>
                     <SelectBox
                       op1="VERY EASY (10초)"
                       op2="EASY (7초)"
@@ -110,7 +114,10 @@ const New = (): React.ReactNode => {
                     />
                   </div>
                   <div className={styles.option}>
-                    <p className={styles.option_title}>랜덤 출제</p>
+                    <div className={styles.option_title}>
+                      랜덤 출제
+                      <Infomation infomation="랜덤 출제 옵션이 켜져있을 경우, 문제 등록 순서에 상관 없이 매번 랜덤하게 문제가 출제되도록 설정합니다." />
+                    </div>
                     <Filter
                       op1="ON"
                       op2="OFF"
@@ -119,7 +126,10 @@ const New = (): React.ReactNode => {
                     />
                   </div>
                   <div className={styles.option}>
-                    <p className={styles.option_title}>객관식(4지선다)</p>
+                    <div className={styles.option_title}>
+                      객관식 (4지선다)
+                      <Infomation infomation="객관식 옵션이 켜져있을 경우, 직접 정답을 입력하지 않고 4개의 보기 중에 정답을 선택하도록 설정합니다." />
+                    </div>
                     <Filter
                       op1="ON"
                       op2="OFF"
@@ -128,7 +138,10 @@ const New = (): React.ReactNode => {
                     />
                   </div>
                   <div className={styles.option}>
-                    <p className={styles.option_title}>비공개</p>
+                    <div className={styles.option_title}>
+                      비공개
+                      <Infomation infomation="비공개 옵션이 켜져있을 경우, 링크 공유를 통한 URL 주소 접근만 가능하도록 설정합니다." />
+                    </div>
                     <Filter
                       op1="ON"
                       op2="OFF"
@@ -139,14 +152,171 @@ const New = (): React.ReactNode => {
                 </div>
               </div>
               <div className={styles.input}>
-                <label className={styles.input_label}>
-                  *QUIZ (퀴즈 이미지 용량 제한 : 5MB)
-                </label>
+                <label className={styles.input_label}>*QUIZ</label>
                 <div className={styles.quizList}>
                   <div className={styles.quiz}>
                     <div className={styles.quizNum}>1</div>
                     <div className={styles.quizImg}></div>
-                    <div className={styles.quizInfo}></div>
+                    <div className={styles.quizInfo}>
+                      {multipleFilter === 1 ? (
+                        <div className={styles.answers}>
+                          <p className={styles.answers_title}>
+                            보기 (정답 보기에 체크)
+                          </p>
+                          <div className={styles.multipleAnswer}>
+                            <p className={styles.multipleNum}>1.</p>
+                            <input
+                              className={styles.multiple_text}
+                              type="text"
+                              spellCheck="false"
+                            />
+                            {multipleAnswer === 1 ? (
+                              <div className={styles.multiple_check_focused}>
+                                <svg
+                                  className={styles.multiple_check_icon}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  height="1em"
+                                  viewBox="0 0 448 512"
+                                >
+                                  <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                                </svg>
+                              </div>
+                            ) : (
+                              <div
+                                className={styles.multiple_check}
+                                onClick={() => {
+                                  setMultipleAnswer(1);
+                                }}
+                              />
+                            )}
+                          </div>
+                          <div className={styles.multipleAnswer}>
+                            <p className={styles.multipleNum}>2.</p>
+                            <input
+                              className={styles.multiple_text}
+                              type="text"
+                              spellCheck="false"
+                            />
+                            {multipleAnswer === 2 ? (
+                              <div className={styles.multiple_check_focused}>
+                                <svg
+                                  className={styles.multiple_check_icon}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  height="1em"
+                                  viewBox="0 0 448 512"
+                                >
+                                  <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                                </svg>
+                              </div>
+                            ) : (
+                              <div
+                                className={styles.multiple_check}
+                                onClick={() => {
+                                  setMultipleAnswer(2);
+                                }}
+                              />
+                            )}
+                          </div>
+                          <div className={styles.multipleAnswer}>
+                            <p className={styles.multipleNum}>3.</p>
+                            <input
+                              className={styles.multiple_text}
+                              type="text"
+                              spellCheck="false"
+                            />
+                            {multipleAnswer === 3 ? (
+                              <div className={styles.multiple_check_focused}>
+                                <svg
+                                  className={styles.multiple_check_icon}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  height="1em"
+                                  viewBox="0 0 448 512"
+                                >
+                                  <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                                </svg>
+                              </div>
+                            ) : (
+                              <div
+                                className={styles.multiple_check}
+                                onClick={() => {
+                                  setMultipleAnswer(3);
+                                }}
+                              />
+                            )}
+                          </div>
+                          <div className={styles.multipleAnswer}>
+                            <p className={styles.multipleNum}>4.</p>
+                            <input
+                              className={styles.multiple_text}
+                              type="text"
+                              spellCheck="false"
+                            />
+                            {multipleAnswer === 4 ? (
+                              <div className={styles.multiple_check_focused}>
+                                <svg
+                                  className={styles.multiple_check_icon}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  height="1em"
+                                  viewBox="0 0 448 512"
+                                >
+                                  <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                                </svg>
+                              </div>
+                            ) : (
+                              <div
+                                className={styles.multiple_check}
+                                onClick={() => {
+                                  setMultipleAnswer(4);
+                                }}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className={styles.answers}>
+                          <p className={styles.answers_title}>
+                            정답 (중복 포함 최대 3개)
+                          </p>
+                          <div className={styles.shortAnswer}>
+                            <input
+                              className={styles.shortAnswer_text}
+                              type="text"
+                              spellCheck="false"
+                            />
+                          </div>
+                          <div className={styles.shortAnswer}>
+                            <input
+                              className={styles.shortAnswer_text}
+                              type="text"
+                              spellCheck="false"
+                            />
+                            <svg
+                              className={styles.btn_icon}
+                              xmlns="http://www.w3.org/2000/svg"
+                              height="1em"
+                              viewBox="0 0 384 512"
+                            >
+                              <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z" />
+                            </svg>
+                          </div>
+                          <div className={styles.shortAnswer}>
+                            <input
+                              className={styles.shortAnswer_text}
+                              type="text"
+                              spellCheck="false"
+                            />
+                            <svg
+                              className={styles.btn_icon}
+                              xmlns="http://www.w3.org/2000/svg"
+                              height="1em"
+                              viewBox="0 0 384 512"
+                            >
+                              <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z" />
+                            </svg>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     <div className={styles.quizBtns}>
                       <button className={styles.quizImgEditBtn}>
                         <svg

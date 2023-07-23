@@ -30,6 +30,11 @@
     border-radius: 5px;
     box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
     margin-left: 0.2rem;
+
+    &:hover {
+      background-color: v.$main-deep-green;
+      transition: all 0.3s;
+    }
   }
 
   .arrow {
@@ -87,6 +92,12 @@
       margin: 0.1rem 0;
       font-size: v.$font-size-sm;
       color: v.$white;
+
+      &:hover {
+        background-color: v.$main-deep-green;
+        transition: all 0.3s;
+        border: none;
+      }
     }
   }
 }

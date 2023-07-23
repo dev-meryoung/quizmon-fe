@@ -1,0 +1,42 @@
+/* LoadingSpinner 컴포넌트 */
+@use 'var.module.scss' as v;
+
+.wrapper {
+  display: flex;
+  position: relative;
+  width: 0.6rem;
+  height: 0.6rem;
+  justify-content: center;
+  align-items: center;
+  margin-left: 0.2rem;
+  border-radius: 50%;
+  font-weight: normal;
+
+  .info_icon {
+    width: 0.6rem;
+    height: 0.6rem;
+
+    &:hover {
+      cursor: pointer;
+      fill: v.$main-green;
+      transition: all 0.3s;
+    }
+  }
+
+  .infoBox {
+    display: none;
+    position: absolute;
+    width: 12rem;
+    top: 1rem;
+    color: v.$white;
+    background-color: v.$main-green;
+    border: 1.5px solid v.$main-deep-green;
+    border-radius: 3px;
+    padding: 0.5rem;
+    font-size: v.$font-size-xs;
+  }
+
+  &:hover .infoBox {
+    display: flex;
+  }
+}

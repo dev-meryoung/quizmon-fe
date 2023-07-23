@@ -3,7 +3,6 @@
 import styles from 'app/styles/loadingSpinner.module.scss';
 import Image from 'next/image';
 import spinnerIcon from 'public/imgs/spinner-icon.svg';
-import BlurBackground from './BlurBackgrond';
 
 const LoadingSpinner = (): React.ReactNode => {
   return (
