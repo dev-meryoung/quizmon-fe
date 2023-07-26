@@ -41,7 +41,8 @@
     overflow: hidden;
     .thumbnail_img {
       height: 100%;
-      object-fit: cover;
+      background-color: v.$main-deep-gray;
+      object-fit: contain;
     }
   }
 
