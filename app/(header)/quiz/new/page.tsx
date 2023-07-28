@@ -24,9 +24,8 @@ const New = (): React.ReactNode => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [thumbnailImg, setThumbnailImg] = useState<File | null>(null);
-  const [nowImgFile, setNowImgFile] = useState<FileList | null>(null);
   const [quizImgArray, setQuizImgArray] = useState<File[] | null>(null);
-  const [qnaArray, setQnaArray] = useState<QnaArrayType[] | null>(null);
+  const [qnaArray, setQnaArray] = useState<QnaArrayType[]>([]);
   const [signatureMsg, setSignatureMsg] = useState<string>('');
 
   // 퀴즈 난이도(제한 시간) 상태를 관리하기 위한 useState (1 : VERY EASY ~ 5 : VERY HARD)
@@ -81,10 +80,6 @@ const New = (): React.ReactNode => {
       }
     }
   };
-
-  useEffect(() => {
-    console.log(quizImgArray);
-  }, [quizImgArray]);
 
   return (
     <>
@@ -201,25 +196,16 @@ const New = (): React.ReactNode => {
                                 type="text"
                                 spellCheck="false"
                               />
-                              {multipleAnswer === 1 ? (
-                                <div className={styles.multiple_check_focused}>
-                                  <svg
-                                    className={styles.multiple_check_icon}
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    height="1em"
-                                    viewBox="0 0 448 512"
-                                  >
-                                    <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
-                                  </svg>
-                                </div>
-                              ) : (
-                                <div
-                                  className={styles.multiple_check}
-                                  onClick={() => {
-                                    setMultipleAnswer(1);
-                                  }}
-                                />
-                              )}
+                              <div className={styles.multiple_check_focused}>
+                                <svg
+                                  className={styles.multiple_check_icon}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  height="1em"
+                                  viewBox="0 0 448 512"
+                                >
+                                  <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                                </svg>
+                              </div>
                             </div>
                             <div className={styles.multipleAnswer}>
                               <p className={styles.multipleNum}>2.</p>
@@ -228,25 +214,16 @@ const New = (): React.ReactNode => {
                                 type="text"
                                 spellCheck="false"
                               />
-                              {multipleAnswer === 2 ? (
-                                <div className={styles.multiple_check_focused}>
-                                  <svg
-                                    className={styles.multiple_check_icon}
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    height="1em"
-                                    viewBox="0 0 448 512"
-                                  >
-                                    <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
-                                  </svg>
-                                </div>
-                              ) : (
-                                <div
-                                  className={styles.multiple_check}
-                                  onClick={() => {
-                                    setMultipleAnswer(2);
-                                  }}
-                                />
-                              )}
+                              <div className={styles.multiple_check_focused}>
+                                <svg
+                                  className={styles.multiple_check_icon}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  height="1em"
+                                  viewBox="0 0 448 512"
+                                >
+                                  <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                                </svg>
+                              </div>
                             </div>
                             <div className={styles.multipleAnswer}>
                               <p className={styles.multipleNum}>3.</p>
@@ -255,25 +232,16 @@ const New = (): React.ReactNode => {
                                 type="text"
                                 spellCheck="false"
                               />
-                              {multipleAnswer === 3 ? (
-                                <div className={styles.multiple_check_focused}>
-                                  <svg
-                                    className={styles.multiple_check_icon}
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    height="1em"
-                                    viewBox="0 0 448 512"
-                                  >
-                                    <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
-                                  </svg>
-                                </div>
-                              ) : (
-                                <div
-                                  className={styles.multiple_check}
-                                  onClick={() => {
-                                    setMultipleAnswer(3);
-                                  }}
-                                />
-                              )}
+                              <div className={styles.multiple_check_focused}>
+                                <svg
+                                  className={styles.multiple_check_icon}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  height="1em"
+                                  viewBox="0 0 448 512"
+                                >
+                                  <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                                </svg>
+                              </div>
                             </div>
                             <div className={styles.multipleAnswer}>
                               <p className={styles.multipleNum}>4.</p>
@@ -282,25 +250,16 @@ const New = (): React.ReactNode => {
                                 type="text"
                                 spellCheck="false"
                               />
-                              {multipleAnswer === 4 ? (
-                                <div className={styles.multiple_check_focused}>
-                                  <svg
-                                    className={styles.multiple_check_icon}
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    height="1em"
-                                    viewBox="0 0 448 512"
-                                  >
-                                    <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
-                                  </svg>
-                                </div>
-                              ) : (
-                                <div
-                                  className={styles.multiple_check}
-                                  onClick={() => {
-                                    setMultipleAnswer(4);
-                                  }}
-                                />
-                              )}
+                              <div className={styles.multiple_check_focused}>
+                                <svg
+                                  className={styles.multiple_check_icon}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  height="1em"
+                                  viewBox="0 0 448 512"
+                                >
+                                  <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                                </svg>
+                              </div>
                             </div>
                           </div>
                         ) : (
@@ -310,19 +269,13 @@ const New = (): React.ReactNode => {
                             </p>
                             <div className={styles.shortAnswer}>
                               <input
-                                className={styles.shortAnswer_text}
-                                type="text"
-                                spellCheck="false"
-                              />
-                            </div>
-                            <div className={styles.shortAnswer}>
-                              <input
+                                name={`${i}`}
                                 className={styles.shortAnswer_text}
                                 type="text"
                                 spellCheck="false"
                               />
                               <svg
-                                className={styles.btn_icon}
+                                className={styles.removeBtn_icon}
                                 xmlns="http://www.w3.org/2000/svg"
                                 height="1em"
                                 viewBox="0 0 384 512"
@@ -332,12 +285,29 @@ const New = (): React.ReactNode => {
                             </div>
                             <div className={styles.shortAnswer}>
                               <input
+                                name={`${i}`}
                                 className={styles.shortAnswer_text}
                                 type="text"
                                 spellCheck="false"
                               />
                               <svg
-                                className={styles.btn_icon}
+                                className={styles.removeBtn_icon}
+                                xmlns="http://www.w3.org/2000/svg"
+                                height="1em"
+                                viewBox="0 0 384 512"
+                              >
+                                <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z" />
+                              </svg>
+                            </div>
+                            <div className={styles.shortAnswer}>
+                              <input
+                                name={`${i}`}
+                                className={styles.shortAnswer_text}
+                                type="text"
+                                spellCheck="false"
+                              />
+                              <svg
+                                className={styles.removeBtn_icon}
                                 xmlns="http://www.w3.org/2000/svg"
                                 height="1em"
                                 viewBox="0 0 384 512"

@@ -201,7 +201,7 @@
                     font-size: v.$font-size-sm;
                   }
 
-                  .btn_icon {
+                  .removeBtn_icon {
                     width: 0.8rem;
                     height: 0.8rem;
                     fill: v.$main-deep-gray;
@@ -209,6 +209,34 @@
                     &:hover {
                       cursor: pointer;
                     }
+                  }
+                }
+
+                .addAnswer {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  width: calc(100% - 0.8rem);
+                  height: 2.8rem;
+                  border: 2px solid v.$main-deep-gray;
+                  border-radius: 15px;
+                  background-color: v.$white;
+                  margin: 0.15rem 0.4rem;
+                  box-sizing: border-box;
+                  font-size: v.$font-size-sm;
+
+                  &:hover {
+                    cursor: pointer;
+
+                    .add_icon {
+                      width: 1.4rem;
+                      height: 1.4rem;
+                    }
+                  }
+
+                  .add_icon {
+                    width: 1.3rem;
+                    height: 1.3rem;
                   }
                 }
 
