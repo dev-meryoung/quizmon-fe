@@ -44,7 +44,7 @@ const User = (): React.ReactNode => {
   const [vibraNewPw, setVibraNewPw] = useState<boolean>(false);
   const [vibraConfirmNewPw, setVibraConfirmNewPw] = useState<boolean>(false);
 
-  // 모달 창을 닫기 위한 핸들러 함수
+  // 모달 창을 닫기 위한 modalCloseHandler 함수
   const modalCloseHandler = (): void => {
     setViewInfoModal(false);
     setViewActionModal(false);
@@ -57,7 +57,7 @@ const User = (): React.ReactNode => {
     setModalMsg('');
   };
 
-  // userEdit 컴포넌트의 노출 여부 상태를 변경하고 input 값을 초기화하는 핸들러 함수
+  // userEdit 컴포넌트의 노출 여부 상태를 변경하고 input 값을 초기화하는 viewUserEditHandler 함수
   const viewUserEditHandler = (): void => {
     setViewUserEdit(!viewUserEdit);
 

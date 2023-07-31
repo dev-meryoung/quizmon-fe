@@ -392,6 +392,19 @@
         }
       }
     }
+
+    .post {
+      display: flex;
+      justify-content: right;
+      align-items: center;
+
+      .postBtn {
+        width: 5rem;
+        height: 2.5rem;
+        font-size: v.$font-size-md;
+        font-weight: bold;
+      }
+    }
   }
 
   // 반응형 모바일 기준
