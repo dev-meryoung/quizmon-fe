@@ -7,10 +7,9 @@ import Quiz from 'app/components/Quiz';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Infomation from 'app/components/Infomation';
-import Image from 'next/image';
 
 export interface QnaArrayType {
-  optionArray: string[] | null;
+  optionArray: string[];
   answerArray: string[];
 }
 
@@ -76,9 +75,28 @@ const New = (): React.ReactNode => {
 
       if (quizImgArray) {
         setQuizImgArray([...quizImgArray, ...nowImageFile]);
+
+        const updateQnaArray = [...qnaArray];
+        nowImageFile.map(() => {
+          updateQnaArray.push({
+            optionArray: ['', '', '', ''],
+            answerArray: ['', '', ''],
+          });
+        });
+        setQnaArray([...updateQnaArray]);
       } else {
         setQuizImgArray([...nowImageFile]);
+
+        const updateQnaArray = [...qnaArray];
+        nowImageFile.map(() => {
+          updateQnaArray.push({
+            optionArray: ['', '', '', ''],
+            answerArray: ['', '', ''],
+          });
+        });
+        setQnaArray([...updateQnaArray]);
       }
+      e.target.value = '';
     }
   };
 
@@ -179,7 +197,9 @@ const New = (): React.ReactNode => {
                       file={quizImgArray[i]}
                       multipleFilter={multipleFilter}
                       quizImgArray={quizImgArray}
+                      qnaArray={qnaArray}
                       setQuizImgArray={setQuizImgArray}
+                      setQnaArray={setQnaArray}
                     />
                   ))}
                   <div

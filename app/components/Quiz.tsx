@@ -2,7 +2,12 @@
 
 import Image from 'next/image';
 import styles from 'app/styles/quiz.module.scss';
-import { useEffect, useRef } from 'react';
+import { useRef, useState } from 'react';
+
+export interface QnaArrayType {
+  optionArray: string[];
+  answerArray: string[];
+}
 
 // Quiz 컴포넌트의 props 타입 interface
 export interface Options {
@@ -10,7 +15,9 @@ export interface Options {
   file: File;
   multipleFilter: number;
   quizImgArray: File[];
+  qnaArray: QnaArrayType[];
   setQuizImgArray: Function;
+  setQnaArray: Function;
 }
 
 const Quiz = (props: Options): React.ReactNode => {
@@ -18,20 +25,127 @@ const Quiz = (props: Options): React.ReactNode => {
   const quizImgArray = props.quizImgArray;
   const setQuizImgArray = props.setQuizImgArray;
 
+  // 퀴즈 생성에 필요한 정답 값을 관리하기 위한 useState
+  const qnaArray = props.qnaArray;
+  const setQnaArray = props.setQnaArray;
+
+  // 문제에 대한 정답 개수를 관리하기 위한 useState
+  const [shortAnswersNum, setShortAnswerNum] = useState<number>(1);
+
+  // 객관식 보기 체크 값을 관리하기 위한 useState
+  const [multipleCheck, setMultipleCheck] = useState<number>(1);
+
+  // 객관식 보기 체크박스 커스텀을 위해 기존 input을 식별하기 위한 useRef
+  const multipleCheck1 = useRef<HTMLInputElement>(null);
+  const multipleCheck2 = useRef<HTMLInputElement>(null);
+  const multipleCheck3 = useRef<HTMLInputElement>(null);
+  const multipleCheck4 = useRef<HTMLInputElement>(null);
+
   // 이미지 파일 첨부 시 사용되는 기존 input을 식별하기 위한 useRef
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 정답 값이 변경되었을 때 useState에 적용하기 위한 onChange 함수
+  const onChangeShortAnswers = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    const updateQnaArray = [...qnaArray];
+
+    updateQnaArray[props.quizNum].answerArray[parseInt(e.target.name) - 1] =
+      e.target.value;
+
+    setQnaArray(updateQnaArray);
+  };
+
+  // 객관식 보기 값이 변경되었을 때 useState에 적용하기 위한 onChange 함수
+  const onChangeMultipleAnswers = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    const updateQnaArray = [...qnaArray];
+
+    updateQnaArray[props.quizNum].optionArray[parseInt(e.target.name) - 1] =
+      e.target.value;
+
+    setQnaArray(updateQnaArray);
+  };
+
+  // 객관식 보기 체크 값이 변경되었을 때 오직 1개의 체크만 useState에 적용하기 위한 onChange 함수
+  const onChangeMultipleCheck = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
+    if (e.target.value === '1') {
+      setMultipleCheck(1);
+    } else if (e.target.value === '2') {
+      setMultipleCheck(2);
+    } else if (e.target.value === '3') {
+      setMultipleCheck(3);
+    } else if (e.target.value === '4') {
+      setMultipleCheck(4);
+    }
+
+    const updateQnaArray = [...qnaArray];
+
+    updateQnaArray[props.quizNum].answerArray[0] =
+      updateQnaArray[props.quizNum].optionArray[parseInt(e.target.value) - 1];
+
+    setQnaArray(updateQnaArray);
+  };
 
   // 새로운 이미지 파일이 첨부되었을 때 최신화하기 위한 onChange 함수
   const onChangeImageFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files) {
       const nowImageFile: File[] | null = Array.from(e.target.files);
 
-      const updateImgArray = [...props.quizImgArray];
+      const updateImgArray = [...quizImgArray];
 
       updateImgArray[props.quizNum] = nowImageFile[0];
 
       setQuizImgArray(updateImgArray);
     }
+  };
+
+  // 중복 정답을 추가하기 위한 addBtnHandler 함수
+  const addBtnHandler = (i: number): void => {
+    if (i === 2) {
+      setShortAnswerNum(2);
+    } else if (i === 3) {
+      setShortAnswerNum(3);
+    }
+  };
+
+  // 입력된 정답 값을 삭제하고 재정렬하기 위한 removeBtnHandler 함수
+  const removeBtnHandler = (i: number): void => {
+    const updateQnaArray = [...qnaArray];
+    if (i === 1) {
+      if (shortAnswersNum === 3) {
+        setShortAnswerNum(2);
+        updateQnaArray[props.quizNum].answerArray[0] =
+          updateQnaArray[props.quizNum].answerArray[1];
+        updateQnaArray[props.quizNum].answerArray[1] =
+          updateQnaArray[props.quizNum].answerArray[2];
+        updateQnaArray[props.quizNum].answerArray[2] = '';
+      } else if (shortAnswersNum === 2) {
+        setShortAnswerNum(1);
+        updateQnaArray[props.quizNum].answerArray[0] =
+          updateQnaArray[props.quizNum].answerArray[1];
+        updateQnaArray[props.quizNum].answerArray[1] = '';
+      } else {
+        updateQnaArray[props.quizNum].answerArray[0] = '';
+      }
+    } else if (i === 2) {
+      if (shortAnswersNum === 3) {
+        setShortAnswerNum(2);
+        updateQnaArray[props.quizNum].answerArray[1] =
+          updateQnaArray[props.quizNum].answerArray[2];
+        updateQnaArray[props.quizNum].answerArray[2] = '';
+      } else {
+        setShortAnswerNum(1);
+        updateQnaArray[props.quizNum].answerArray[1] = '';
+      }
+    } else if (i === 3) {
+      setShortAnswerNum(2);
+      updateQnaArray[props.quizNum].answerArray[2] = '';
+    }
+    setQnaArray(updateQnaArray);
   };
 
   // 문제 삭제를 위한 quizDeleteHandler 함수
@@ -65,8 +179,18 @@ const Quiz = (props: Options): React.ReactNode => {
                 className={styles.multiple_text}
                 type="text"
                 spellCheck="false"
+                name="1"
+                value={qnaArray[props.quizNum].optionArray[0]}
+                onChange={onChangeMultipleAnswers}
               />
-              <div className={styles.multiple_check_focused}>
+              <div
+                className={
+                  multipleCheck === 1
+                    ? styles.multiple_check_focused
+                    : styles.multiple_check
+                }
+                onClick={() => multipleCheck1.current?.click()}
+              >
                 <svg
                   className={styles.multiple_check_icon}
                   xmlns="http://www.w3.org/2000/svg"
@@ -75,6 +199,13 @@ const Quiz = (props: Options): React.ReactNode => {
                 >
                   <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
                 </svg>
+                <input
+                  type="checkbox"
+                  style={{ display: 'none' }}
+                  ref={multipleCheck1}
+                  value={1}
+                  onChange={onChangeMultipleCheck}
+                />
               </div>
             </div>
             <div className={styles.multipleAnswer}>
@@ -83,8 +214,18 @@ const Quiz = (props: Options): React.ReactNode => {
                 className={styles.multiple_text}
                 type="text"
                 spellCheck="false"
+                name="2"
+                value={qnaArray[props.quizNum].optionArray[1]}
+                onChange={onChangeMultipleAnswers}
               />
-              <div className={styles.multiple_check_focused}>
+              <div
+                className={
+                  multipleCheck === 2
+                    ? styles.multiple_check_focused
+                    : styles.multiple_check
+                }
+                onClick={() => multipleCheck2.current?.click()}
+              >
                 <svg
                   className={styles.multiple_check_icon}
                   xmlns="http://www.w3.org/2000/svg"
@@ -93,6 +234,13 @@ const Quiz = (props: Options): React.ReactNode => {
                 >
                   <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
                 </svg>
+                <input
+                  type="checkbox"
+                  style={{ display: 'none' }}
+                  ref={multipleCheck2}
+                  value={2}
+                  onChange={onChangeMultipleCheck}
+                />
               </div>
             </div>
             <div className={styles.multipleAnswer}>
@@ -101,8 +249,18 @@ const Quiz = (props: Options): React.ReactNode => {
                 className={styles.multiple_text}
                 type="text"
                 spellCheck="false"
+                name="3"
+                value={qnaArray[props.quizNum].optionArray[2]}
+                onChange={onChangeMultipleAnswers}
               />
-              <div className={styles.multiple_check_focused}>
+              <div
+                className={
+                  multipleCheck === 3
+                    ? styles.multiple_check_focused
+                    : styles.multiple_check
+                }
+                onClick={() => multipleCheck3.current?.click()}
+              >
                 <svg
                   className={styles.multiple_check_icon}
                   xmlns="http://www.w3.org/2000/svg"
@@ -111,6 +269,13 @@ const Quiz = (props: Options): React.ReactNode => {
                 >
                   <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
                 </svg>
+                <input
+                  type="checkbox"
+                  style={{ display: 'none' }}
+                  ref={multipleCheck3}
+                  value={3}
+                  onChange={onChangeMultipleCheck}
+                />
               </div>
             </div>
             <div className={styles.multipleAnswer}>
@@ -119,8 +284,18 @@ const Quiz = (props: Options): React.ReactNode => {
                 className={styles.multiple_text}
                 type="text"
                 spellCheck="false"
+                name="4"
+                value={qnaArray[props.quizNum].optionArray[3]}
+                onChange={onChangeMultipleAnswers}
               />
-              <div className={styles.multiple_check_focused}>
+              <div
+                className={
+                  multipleCheck === 4
+                    ? styles.multiple_check_focused
+                    : styles.multiple_check
+                }
+                onClick={() => multipleCheck4.current?.click()}
+              >
                 <svg
                   className={styles.multiple_check_icon}
                   xmlns="http://www.w3.org/2000/svg"
@@ -129,6 +304,13 @@ const Quiz = (props: Options): React.ReactNode => {
                 >
                   <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
                 </svg>
+                <input
+                  type="checkbox"
+                  style={{ display: 'none' }}
+                  ref={multipleCheck4}
+                  value={4}
+                  onChange={onChangeMultipleCheck}
+                />
               </div>
             </div>
           </div>
@@ -140,46 +322,92 @@ const Quiz = (props: Options): React.ReactNode => {
                 className={styles.shortAnswer_text}
                 type="text"
                 spellCheck="false"
+                name="1"
+                value={qnaArray[props.quizNum].answerArray[0]}
+                onChange={onChangeShortAnswers}
               />
               <svg
                 className={styles.removeBtn_icon}
                 xmlns="http://www.w3.org/2000/svg"
                 height="1em"
                 viewBox="0 0 384 512"
+                onClick={() => removeBtnHandler(1)}
               >
                 <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z" />
               </svg>
             </div>
-            <div className={styles.shortAnswer}>
-              <input
-                className={styles.shortAnswer_text}
-                type="text"
-                spellCheck="false"
-              />
-              <svg
-                className={styles.removeBtn_icon}
-                xmlns="http://www.w3.org/2000/svg"
-                height="1em"
-                viewBox="0 0 384 512"
+            {shortAnswersNum >= 2 ? (
+              <div className={styles.shortAnswer}>
+                <input
+                  className={styles.shortAnswer_text}
+                  type="text"
+                  spellCheck="false"
+                  name="2"
+                  value={qnaArray[props.quizNum].answerArray[1]}
+                  onChange={onChangeShortAnswers}
+                />
+                <svg
+                  className={styles.removeBtn_icon}
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="1em"
+                  viewBox="0 0 384 512"
+                  onClick={() => removeBtnHandler(2)}
+                >
+                  <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z" />
+                </svg>
+              </div>
+            ) : (
+              <div
+                className={styles.addAnswer}
+                onClick={() => addBtnHandler(2)}
               >
-                <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z" />
-              </svg>
-            </div>
-            <div className={styles.shortAnswer}>
-              <input
-                className={styles.shortAnswer_text}
-                type="text"
-                spellCheck="false"
-              />
-              <svg
-                className={styles.removeBtn_icon}
-                xmlns="http://www.w3.org/2000/svg"
-                height="1em"
-                viewBox="0 0 384 512"
+                <svg
+                  className={styles.add_icon}
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="1em"
+                  viewBox="0 0 448 512"
+                >
+                  <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                </svg>
+              </div>
+            )}
+            {shortAnswersNum === 3 ? (
+              <div className={styles.shortAnswer}>
+                <input
+                  className={styles.shortAnswer_text}
+                  type="text"
+                  spellCheck="false"
+                  name="3"
+                  value={qnaArray[props.quizNum].answerArray[2]}
+                  onChange={onChangeShortAnswers}
+                />
+                <svg
+                  className={styles.removeBtn_icon}
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="1em"
+                  viewBox="0 0 384 512"
+                  onClick={() => removeBtnHandler(3)}
+                >
+                  <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z" />
+                </svg>
+              </div>
+            ) : shortAnswersNum === 2 ? (
+              <div
+                className={styles.addAnswer}
+                onClick={() => addBtnHandler(3)}
               >
-                <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z" />
-              </svg>
-            </div>
+                <svg
+                  className={styles.add_icon}
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="1em"
+                  viewBox="0 0 448 512"
+                >
+                  <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                </svg>
+              </div>
+            ) : (
+              ''
+            )}
           </div>
         )}
       </div>
