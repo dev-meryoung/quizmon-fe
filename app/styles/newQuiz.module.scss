@@ -342,7 +342,7 @@
           .addBtn {
             display: flex;
             width: 100%;
-            height: 5rem;
+            height: 7rem;
             justify-content: center;
             align-items: center;
             border: none;
@@ -361,8 +361,8 @@
             }
 
             .add_icon {
-              width: 2.2rem;
-              height: 2.2rem;
+              width: 3rem;
+              height: 3rem;
             }
           }
         }
@@ -390,19 +390,122 @@
             margin-right: 3px;
           }
         }
+
+        .thumbnail {
+          display: flex;
+          flex-direction: column;
+          border: 1.5px solid v.$main-deep-gray;
+          border-radius: 5px;
+          padding: 1rem;
+
+          .preview {
+            display: flex;
+            width: 100%;
+            height: 20rem;
+            border: none;
+            border-radius: 5px;
+            background-color: v.$main-gray;
+            box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+            font-size: v.$font-size-md;
+            outline: none;
+            box-sizing: border-box;
+            padding: 0.5rem;
+
+            .previewImgWrapper {
+              display: flex;
+              position: relative;
+              width: 100%;
+              height: 100%;
+
+              .previewImg {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                background-color: v.$main-deep-gray;
+                z-index: 1;
+              }
+
+              .previewDelete {
+                display: flex;
+                position: absolute;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+                background: (rgba(0, 0, 0, 30%));
+
+                .previewDelete_icon {
+                  fill: v.$white;
+                  width: 7rem;
+                  height: 7rem;
+                }
+              }
+
+              &:hover {
+                cursor: pointer;
+
+                .previewDelete {
+                  z-index: 2;
+                }
+              }
+            }
+          }
+
+          .addBtn {
+            display: flex;
+            width: 100%;
+            height: 20rem;
+            justify-content: center;
+            align-items: center;
+            border: none;
+            border-radius: 5px;
+            background-color: v.$main-gray;
+            box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+            font-size: v.$font-size-md;
+            outline: none;
+
+            &:hover {
+              cursor: pointer;
+              color: v.$white;
+              fill: v.$white;
+              background-color: v.$main-green;
+              transition: all 0.3s;
+            }
+
+            .add_icon {
+              width: 5rem;
+              height: 5rem;
+            }
+          }
+        }
       }
     }
 
-    .post {
+    .cancelPost {
       display: flex;
       justify-content: right;
       align-items: center;
 
-      .postBtn {
+      .cancelBtn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 5rem;
         height: 2.5rem;
-        font-size: v.$font-size-md;
-        font-weight: bold;
+        background-color: v.$main-deep-gray;
+        margin-right: 0.5rem;
+
+        &:hover {
+          background-color: v.$deep-red;
+        }
+      }
+
+      .postBtn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 5rem;
+        height: 2.5rem;
       }
     }
   }

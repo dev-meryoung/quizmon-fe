@@ -15,15 +15,65 @@
   box-sizing: border-box;
   padding: 0.5rem;
 
-  .quizNum {
+  .quizMoveNum {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
     width: 10%;
     height: 100%;
     border-right: 1.5px solid v.$main-deep-gray;
-    font-size: v.$font-size-xl;
-    font-weight: bold;
+    padding-right: 0.5rem;
+
+    .quizMoveUp {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      margin-top: 0.5rem;
+
+      &:hover {
+        cursor: pointer;
+
+        .quizMoveUp_icon {
+          fill: v.$main-green;
+          transition: all 0.3s;
+        }
+      }
+
+      .quizMoveUp_icon {
+        fill: v.$main-deep-gray;
+      }
+    }
+
+    .quizMoveDown {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 0.5rem;
+
+      &:hover {
+        cursor: pointer;
+
+        .quizMoveDown_icon {
+          fill: v.$main-green;
+          transition: all 0.3s;
+        }
+      }
+
+      .quizMoveDown_icon {
+        fill: v.$main-deep-gray;
+      }
+    }
+
+    .quizNum {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: v.$font-size-xl;
+      font-weight: bold;
+    }
   }
 
   .quizImgWrapper {

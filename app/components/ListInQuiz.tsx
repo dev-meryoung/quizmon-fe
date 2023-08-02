@@ -1,18 +1,18 @@
 'use client';
 
 import Image from 'next/image';
-import styles from 'app/styles/quiz.module.scss';
+import styles from 'app/styles/listInQuiz.module.scss';
 import { useRef, useState } from 'react';
 
 export interface QnaArrayType {
   optionArray: string[];
   answerArray: string[];
+  answerNum: number;
 }
 
 // Quiz 컴포넌트의 props 타입 interface
 export interface Options {
   quizNum: number;
-  file: File;
   multipleFilter: number;
   quizImgArray: File[];
   qnaArray: QnaArrayType[];
@@ -20,7 +20,7 @@ export interface Options {
   setQnaArray: Function;
 }
 
-const Quiz = (props: Options): React.ReactNode => {
+const ListInQuiz = (props: Options): React.ReactNode => {
   // 퀴즈 생성에 필요한 이미지를 관리하기 위한 useState
   const quizImgArray = props.quizImgArray;
   const setQuizImgArray = props.setQuizImgArray;
@@ -28,9 +28,6 @@ const Quiz = (props: Options): React.ReactNode => {
   // 퀴즈 생성에 필요한 정답 값을 관리하기 위한 useState
   const qnaArray = props.qnaArray;
   const setQnaArray = props.setQnaArray;
-
-  // 문제에 대한 정답 개수를 관리하기 위한 useState
-  const [shortAnswersNum, setShortAnswerNum] = useState<number>(1);
 
   // 객관식 보기 체크 값을 관리하기 위한 useState
   const [multipleCheck, setMultipleCheck] = useState<number>(1);
@@ -103,12 +100,53 @@ const Quiz = (props: Options): React.ReactNode => {
     }
   };
 
+  // 퀴즈 위치 변경 기능을 실행하기 위한 moveBtnHandler 함수
+  const moveBtnHandler = (act: string): void => {
+    if (act === 'UP' && props.quizNum !== 0) {
+      const updateImgArray = [...quizImgArray];
+      const updateQnaArray = [...qnaArray];
+
+      const tempImg = updateImgArray[props.quizNum - 1];
+      const tempQna = updateQnaArray[props.quizNum - 1];
+
+      updateImgArray[props.quizNum - 1] = updateImgArray[props.quizNum];
+      updateImgArray[props.quizNum] = tempImg;
+      updateQnaArray[props.quizNum - 1] = updateQnaArray[props.quizNum];
+      updateQnaArray[props.quizNum] = tempQna;
+
+      setQuizImgArray(updateImgArray);
+      setQnaArray(updateQnaArray);
+    } else if (act === 'DOWN' && props.quizNum !== quizImgArray.length - 1) {
+      const updateImgArray = [...quizImgArray];
+      const updateQnaArray = [...qnaArray];
+
+      const tempImg = updateImgArray[props.quizNum + 1];
+      const tempQna = updateQnaArray[props.quizNum + 1];
+
+      updateImgArray[props.quizNum + 1] = updateImgArray[props.quizNum];
+      updateImgArray[props.quizNum] = tempImg;
+      updateQnaArray[props.quizNum + 1] = updateQnaArray[props.quizNum];
+      updateQnaArray[props.quizNum] = tempQna;
+
+      setQuizImgArray(updateImgArray);
+      setQnaArray(updateQnaArray);
+    }
+  };
+
   // 중복 정답을 추가하기 위한 addBtnHandler 함수
   const addBtnHandler = (i: number): void => {
     if (i === 2) {
-      setShortAnswerNum(2);
+      const updateQnaArray = [...qnaArray];
+
+      updateQnaArray[props.quizNum].answerNum = 2;
+
+      setQnaArray(updateQnaArray);
     } else if (i === 3) {
-      setShortAnswerNum(3);
+      const updateQnaArray = [...qnaArray];
+
+      updateQnaArray[props.quizNum].answerNum = 3;
+
+      setQnaArray(updateQnaArray);
     }
   };
 
@@ -116,15 +154,15 @@ const Quiz = (props: Options): React.ReactNode => {
   const removeBtnHandler = (i: number): void => {
     const updateQnaArray = [...qnaArray];
     if (i === 1) {
-      if (shortAnswersNum === 3) {
-        setShortAnswerNum(2);
+      if (updateQnaArray[props.quizNum].answerNum === 3) {
+        updateQnaArray[props.quizNum].answerNum = 2;
         updateQnaArray[props.quizNum].answerArray[0] =
           updateQnaArray[props.quizNum].answerArray[1];
         updateQnaArray[props.quizNum].answerArray[1] =
           updateQnaArray[props.quizNum].answerArray[2];
         updateQnaArray[props.quizNum].answerArray[2] = '';
-      } else if (shortAnswersNum === 2) {
-        setShortAnswerNum(1);
+      } else if (updateQnaArray[props.quizNum].answerNum === 2) {
+        updateQnaArray[props.quizNum].answerNum = 1;
         updateQnaArray[props.quizNum].answerArray[0] =
           updateQnaArray[props.quizNum].answerArray[1];
         updateQnaArray[props.quizNum].answerArray[1] = '';
@@ -132,17 +170,17 @@ const Quiz = (props: Options): React.ReactNode => {
         updateQnaArray[props.quizNum].answerArray[0] = '';
       }
     } else if (i === 2) {
-      if (shortAnswersNum === 3) {
-        setShortAnswerNum(2);
+      if (updateQnaArray[props.quizNum].answerNum === 3) {
+        updateQnaArray[props.quizNum].answerNum = 2;
         updateQnaArray[props.quizNum].answerArray[1] =
           updateQnaArray[props.quizNum].answerArray[2];
         updateQnaArray[props.quizNum].answerArray[2] = '';
       } else {
-        setShortAnswerNum(1);
+        updateQnaArray[props.quizNum].answerNum = 1;
         updateQnaArray[props.quizNum].answerArray[1] = '';
       }
     } else if (i === 3) {
-      setShortAnswerNum(2);
+      updateQnaArray[props.quizNum].answerNum = 2;
       updateQnaArray[props.quizNum].answerArray[2] = '';
     }
     setQnaArray(updateQnaArray);
@@ -150,20 +188,50 @@ const Quiz = (props: Options): React.ReactNode => {
 
   // 문제 삭제를 위한 quizDeleteHandler 함수
   const quizDeleteHandler = (): void => {
-    const updateImgArray = [...props.quizImgArray];
+    const updateImgArray = [...quizImgArray];
+    const updataQnaArray = [...qnaArray];
 
     updateImgArray.splice(props.quizNum, 1);
+    updataQnaArray.splice(props.quizNum, 1);
 
     setQuizImgArray(updateImgArray);
+    setQnaArray(updataQnaArray);
   };
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.quizNum}>{props.quizNum + 1}</div>
+      <div className={styles.quizMoveNum}>
+        <div className={styles.quizMoveUp} onClick={() => moveBtnHandler('UP')}>
+          <svg
+            className={styles.quizMoveUp_icon}
+            xmlns="http://www.w3.org/2000/svg"
+            width="2rem"
+            viewBox="0 0 512 512"
+          >
+            <path d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z" />
+          </svg>
+        </div>
+
+        <div className={styles.quizNum}>{props.quizNum + 1}</div>
+
+        <div
+          className={styles.quizMoveDown}
+          onClick={() => moveBtnHandler('DOWN')}
+        >
+          <svg
+            className={styles.quizMoveDown_icon}
+            xmlns="http://www.w3.org/2000/svg"
+            width="2rem"
+            viewBox="0 0 512 512"
+          >
+            <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z" />
+          </svg>
+        </div>
+      </div>
       <div className={styles.quizImgWrapper}>
         <Image
           className={styles.quizImg}
-          src={URL.createObjectURL(props.file)}
+          src={URL.createObjectURL(props.quizImgArray[props.quizNum])}
           alt={`${props.quizNum}`}
           width={500}
           height={500}
@@ -336,7 +404,7 @@ const Quiz = (props: Options): React.ReactNode => {
                 <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z" />
               </svg>
             </div>
-            {shortAnswersNum >= 2 ? (
+            {qnaArray[props.quizNum].answerNum >= 2 ? (
               <div className={styles.shortAnswer}>
                 <input
                   className={styles.shortAnswer_text}
@@ -371,7 +439,7 @@ const Quiz = (props: Options): React.ReactNode => {
                 </svg>
               </div>
             )}
-            {shortAnswersNum === 3 ? (
+            {qnaArray[props.quizNum].answerNum === 3 ? (
               <div className={styles.shortAnswer}>
                 <input
                   className={styles.shortAnswer_text}
@@ -391,7 +459,7 @@ const Quiz = (props: Options): React.ReactNode => {
                   <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z" />
                 </svg>
               </div>
-            ) : shortAnswersNum === 2 ? (
+            ) : qnaArray[props.quizNum].answerNum === 2 ? (
               <div
                 className={styles.addAnswer}
                 onClick={() => addBtnHandler(3)}
@@ -471,4 +539,4 @@ const Quiz = (props: Options): React.ReactNode => {
   );
 };
 
-export default Quiz;
+export default ListInQuiz;

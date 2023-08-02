@@ -2,15 +2,18 @@
 
 import SelectBox from 'app/components/SelectBox';
 import Filter from 'app/components/Filter';
+import Infomation from 'app/components/Infomation';
+import ListInQuiz from 'app/components/ListInQuiz';
+import Modal from 'app/components/Modal';
 import styles from 'app/styles/newQuiz.module.scss';
-import Quiz from 'app/components/Quiz';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import Infomation from 'app/components/Infomation';
+import Image from 'next/image';
 
 export interface QnaArrayType {
   optionArray: string[];
   answerArray: string[];
+  answerNum: number;
 }
 
 const New = (): React.ReactNode => {
@@ -40,11 +43,20 @@ const New = (): React.ReactNode => {
   // 공개 여부 필터 상태를 관리하기 위한 useState (1 : 비공개, 2 : 기본)
   const [publicFilter, setPublicFilter] = useState<number>(2);
 
-  // 이미지 파일 첨부 시 사용되는 기존 input을 식별하기 위한 useRef
+  // 퀴즈 생성 페이지에서 발생하는 모달 메시지를 관리하기 위한 useState
+  const [modalMsg, setModalMsg] = useState<string>('');
+
+  // 퀴즈 생성 페이지에서 발생하는 인포 모달의 노출 여부를 관리하는 useState
+  const [viewInfoModal, setViewInfoModal] = useState<boolean>(false);
+
+  // 퀴즈 생성 페이지에서 발생하는 액션 모달의 노출 여부를 관리하는 useState
+  const [viewActionModal, setViewActionModal] = useState<boolean>(false);
+
+  // 퀴즈 이미지 파일 첨부 시 사용되는 기존 input을 식별하기 위한 useRef
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 퀴즈 목록에 해당하는 div를 식별하기 위한 useRef
-  const quizListRef = useRef<HTMLDivElement>(null);
+  // 썸네일 이미지 파일 첨부 시 사용되는 기존 input을 식별하기 위한 useRef
+  const thumbnailInputRef = useRef<HTMLInputElement>(null);
 
   // 최초 퀴즈 생성 페이지 마운트 과정을 관리하기 위한 useEffect
   useEffect(() => {
@@ -52,7 +64,20 @@ const New = (): React.ReactNode => {
     if (localStorage.getItem('jwt') === null) {
       router.push('/login');
     }
+
+    // 새로고침 관련 재확인 메시지 표시
+    window.onbeforeunload = function () {
+      return '사이트를 새로고침하시겠습니까?';
+    };
   }, [router]);
+
+  // 모달 창을 닫기 위한 modalCloseHandler 함수
+  const modalCloseHandler = (): void => {
+    setViewInfoModal(false);
+    setViewActionModal(false);
+
+    setModalMsg('');
+  };
 
   // 제목 값의 변화를 useState에 적용하기 위한 onChange 함수
   const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -81,6 +106,7 @@ const New = (): React.ReactNode => {
           updateQnaArray.push({
             optionArray: ['', '', '', ''],
             answerArray: ['', '', ''],
+            answerNum: 1,
           });
         });
         setQnaArray([...updateQnaArray]);
@@ -92,6 +118,7 @@ const New = (): React.ReactNode => {
           updateQnaArray.push({
             optionArray: ['', '', '', ''],
             answerArray: ['', '', ''],
+            answerNum: 1,
           });
         });
         setQnaArray([...updateQnaArray]);
@@ -100,8 +127,32 @@ const New = (): React.ReactNode => {
     }
   };
 
+  // 새로운 썸네일 이미지가 첨부되었을 때 최신화하기 위한 onChange 함수
+  const onChangeThumbnail = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    if (e.target.files) {
+      const nowThumbnail: File | null = e.target.files[0];
+
+      setThumbnailImg(nowThumbnail);
+
+      e.target.value = '';
+    }
+  };
+
   return (
     <>
+      {viewActionModal ? (
+        <Modal
+          type="ACTION"
+          description="입력된 내용은 저장되지 않습니다."
+          actionBtn="확인"
+          modalActionHandler={() => {
+            router.push('/');
+          }}
+          modalCloseHandler={modalCloseHandler}
+        />
+      ) : (
+        ''
+      )}
       {mounted && localStorage.getItem('jwt') !== null ? (
         <main className={styles.container}>
           <div className={styles.contents}>
@@ -189,12 +240,11 @@ const New = (): React.ReactNode => {
               </div>
               <div className={styles.input}>
                 <label className={styles.input_label}>*QUIZ</label>
-                <div className={styles.quizList} ref={quizListRef}>
+                <div className={styles.quizList}>
                   {quizImgArray?.map((file, i) => (
-                    <Quiz
+                    <ListInQuiz
                       key={i}
                       quizNum={i}
-                      file={quizImgArray[i]}
                       multipleFilter={multipleFilter}
                       quizImgArray={quizImgArray}
                       qnaArray={qnaArray}
@@ -226,17 +276,102 @@ const New = (): React.ReactNode => {
                 </div>
               </div>
               <div className={styles.input}>
-                <label className={styles.input_label}>THUMBNAIL IMAGE</label>
+                <label className={styles.input_label}>
+                  THUMBNAIL IMAGE (미등록 시 1번 문제의 이미지가 대표 썸네일
+                  이미지로 사용됩니다.)
+                </label>
+                <div className={styles.thumbnail}>
+                  {thumbnailImg ? (
+                    <div className={styles.preview}>
+                      <div className={styles.previewImgWrapper}>
+                        <Image
+                          className={styles.previewImg}
+                          src={URL.createObjectURL(thumbnailImg)}
+                          alt={'thumbnail'}
+                          width={500}
+                          height={500}
+                        />
+                        <div
+                          className={styles.previewDelete}
+                          onClick={() => {
+                            setThumbnailImg(null);
+                          }}
+                        >
+                          <svg
+                            className={styles.previewDelete_icon}
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="1em"
+                            viewBox="0 0 448 512"
+                          >
+                            <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      className={styles.addBtn}
+                      onClick={() => thumbnailInputRef.current?.click()}
+                    >
+                      <svg
+                        className={styles.add_icon}
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="1em"
+                        viewBox="0 0 448 512"
+                      >
+                        <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                      </svg>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={thumbnailInputRef}
+                        style={{ display: 'none' }}
+                        onChange={onChangeThumbnail}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className={styles.post}>
+              <div className={styles.cancelPost}>
+                <button
+                  className={styles.cancelBtn}
+                  onClick={() => {
+                    setViewActionModal(true);
+                  }}
+                >
+                  <svg
+                    width="34"
+                    height="17"
+                    viewBox="0 0 54 28"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M18.2 7.74H15.2L18.2 15.87H12.2L9.35 7.74H9.32L6.5 15.87H0.5L3.5 7.74H0.5V3.09H6.2V0.989999H12.5V3.09H18.2V7.74ZM19.4 1.89H25.4V27.27H19.4V1.89ZM0.5 16.89H18.2V21.54H12.35V27.27H6.05V21.54H0.5V16.89ZM37.6006 1.89H44.0806L53.5906 18.27H46.6906L40.8406 7.71L34.9906 18.27H28.0906L37.6006 1.89ZM28.3906 22.62H37.6906V16.47H43.9906V22.62H53.2906V27.27H28.3906V22.62Z"
+                      fill="white"
+                    />
+                  </svg>
+                </button>
                 <button
                   className={styles.postBtn}
                   onClick={() => {
-                    console.log(quizListRef.current);
                     console.log(quizImgArray);
+                    console.log(qnaArray);
+                    console.log(thumbnailImg);
                   }}
                 >
-                  등록
+                  <svg
+                    width="34"
+                    height="17"
+                    viewBox="0 0 54 27"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M0.5 0.889999H25.4V4.49C23.98 4.71 22.49 4.87 20.93 4.97C19.37 5.05 17.58 5.09 15.56 5.09H6.5V5.93H15.56C17.58 5.93 19.37 5.89 20.93 5.81C22.49 5.71 23.98 5.55 25.4 5.33V10.13H0.5V0.889999ZM0.5 11.06H25.4V15.71H0.5V11.06ZM25.55 21.47C25.55 23.13 25.12 24.34 24.26 25.1C23.4 25.88 22.06 26.27 20.24 26.27H5.66C3.84 26.27 2.5 25.88 1.64 25.1C0.78 24.34 0.35 23.13 0.35 21.47C0.35 19.81 0.78 18.6 1.64 17.84C2.5 17.06 3.84 16.67 5.66 16.67H20.24C22.06 16.67 23.4 17.06 24.26 17.84C25.12 18.6 25.55 19.81 25.55 21.47ZM12.95 25.94C12.95 24.46 13.89 23.36 15.77 22.64C17.67 21.9 20.51 21.51 24.29 21.47C20.51 21.43 17.67 21.05 15.77 20.33C13.89 19.61 12.95 18.5 12.95 17C12.95 18.5 12 19.61 10.1 20.33C8.2 21.05 5.36 21.43 1.58 21.47C5.36 21.51 8.2 21.9 10.1 22.64C12 23.36 12.95 24.46 12.95 25.94ZM28.3906 13.76H37.6906V12.95H28.3906V5.21H47.2906V4.43H28.3906V0.889999H53.2906V7.43C51.7506 7.65 50.2406 7.83 48.7606 7.97C47.2806 8.11 45.7806 8.23 44.2606 8.33C42.7406 8.43 41.1706 8.5 39.5506 8.54C37.9306 8.58 36.2106 8.6 34.3906 8.6V9.41C36.2106 9.41 37.9306 9.39 39.5506 9.35C41.1706 9.31 42.7306 9.25 44.2306 9.17C45.7506 9.07 47.2506 8.95 48.7306 8.81C50.2106 8.67 51.7306 8.49 53.2906 8.27V12.95H43.9906V13.76H53.2906V17.81H28.3906V13.76ZM47.2906 26.27V22.91H28.3906V18.56H53.2906V26.27H47.2906Z"
+                      fill="white"
+                    />
+                  </svg>
                 </button>
               </div>
             </div>
