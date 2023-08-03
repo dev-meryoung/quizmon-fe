@@ -13,6 +13,7 @@ export interface QnaArrayType {
 // Quiz 컴포넌트의 props 타입 interface
 export interface Options {
   quizNum: number;
+  checkQuiz: number;
   multipleFilter: number;
   quizImgArray: File[];
   qnaArray: QnaArrayType[];
@@ -199,7 +200,13 @@ const ListInQuiz = (props: Options): React.ReactNode => {
   };
 
   return (
-    <div className={styles.wrapper}>
+    <div
+      className={
+        props.checkQuiz !== props.quizNum
+          ? styles.wrapper
+          : styles.wrapper_error
+      }
+    >
       <div className={styles.quizMoveNum}>
         <div className={styles.quizMoveUp} onClick={() => moveBtnHandler('UP')}>
           <svg

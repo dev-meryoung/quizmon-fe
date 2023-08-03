@@ -27,7 +27,7 @@ const New = (): React.ReactNode => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [thumbnailImg, setThumbnailImg] = useState<File | null>(null);
-  const [quizImgArray, setQuizImgArray] = useState<File[] | null>(null);
+  const [quizImgArray, setQuizImgArray] = useState<File[]>([]);
   const [qnaArray, setQnaArray] = useState<QnaArrayType[]>([]);
   const [signatureMsg, setSignatureMsg] = useState<string>('');
 
@@ -42,6 +42,11 @@ const New = (): React.ReactNode => {
 
   // 공개 여부 필터 상태를 관리하기 위한 useState (1 : 비공개, 2 : 기본)
   const [publicFilter, setPublicFilter] = useState<number>(2);
+
+  // 퀴즈 생성 시 유효성 검사 결과를 관리하기 위한 useState
+  const [checkTitle, setCheckTitle] = useState<boolean>(true);
+  const [checkQuizList, setCheckQuizList] = useState<boolean>(true);
+  const [checkQuiz, setCheckQuiz] = useState<number>(-1);
 
   // 퀴즈 생성 페이지에서 발생하는 모달 메시지를 관리하기 위한 useState
   const [modalMsg, setModalMsg] = useState<string>('');
@@ -71,6 +76,20 @@ const New = (): React.ReactNode => {
     };
   }, [router]);
 
+  // 문제 이미지가 제한 개수를 넘게 등록되었을 때의 처리 과정을 위한 useEffect
+  useEffect(() => {
+    if (quizImgArray.length > 30) {
+      const updateQuizImgArray = [...quizImgArray];
+
+      updateQuizImgArray.splice(30, quizImgArray.length - 30);
+
+      setQuizImgArray(updateQuizImgArray);
+
+      setModalMsg('최대 등록 가능한 문제 수는 30문제입니다.');
+      setViewInfoModal(true);
+    }
+  }, [quizImgArray]);
+
   // 모달 창을 닫기 위한 modalCloseHandler 함수
   const modalCloseHandler = (): void => {
     setViewInfoModal(false);
@@ -79,10 +98,36 @@ const New = (): React.ReactNode => {
     setModalMsg('');
   };
 
+  // 퀴즈 등록 버튼을 클릭했을 때 실행되는 postBtnHandler 함수
+  const postBtnHandler = (): void => {
+    // 제목 유효성 검사
+    if (title.length < 5) {
+      setCheckTitle(false);
+      setModalMsg('제목은 최소 5글자 이상 입력되어야 합니다.');
+      setViewInfoModal(true);
+      return;
+    }
+
+    // 퀴즈 개수 유효성 검사
+    if (qnaArray.length < 5) {
+      setCheckQuizList(false);
+      setModalMsg('퀴즈는 최소 5문제 이상 등록되어야 합니다.');
+      setViewInfoModal(true);
+      return;
+    }
+
+    // 퀴즈 정답 값 유효성 검사
+
+    console.log(quizImgArray);
+    console.log(qnaArray);
+    console.log(thumbnailImg);
+  };
+
   // 제목 값의 변화를 useState에 적용하기 위한 onChange 함수
   const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const nowTitle: string = e.target.value;
     setTitle(nowTitle);
+    setCheckTitle(true);
   };
 
   // 내용 값의 변화를 useState에 적용하기 위한 onChange 함수
@@ -123,6 +168,7 @@ const New = (): React.ReactNode => {
         });
         setQnaArray([...updateQnaArray]);
       }
+      setCheckQuizList(true);
       e.target.value = '';
     }
   };
@@ -140,10 +186,19 @@ const New = (): React.ReactNode => {
 
   return (
     <>
+      {viewInfoModal ? (
+        <Modal
+          type="INFO"
+          description={modalMsg}
+          modalCloseHandler={modalCloseHandler}
+        />
+      ) : (
+        ''
+      )}
       {viewActionModal ? (
         <Modal
           type="ACTION"
-          description="입력된 내용은 저장되지 않습니다."
+          description="퀴즈 생성을 그만두고 목록으로 이동하시겠습니까?"
           actionBtn="확인"
           modalActionHandler={() => {
             router.push('/');
@@ -161,11 +216,27 @@ const New = (): React.ReactNode => {
             </div>
             <div className={styles.inputs}>
               <div className={styles.input}>
-                <label className={styles.input_label}>
-                  *TITLE (최소 5자 이상)
-                </label>
+                <div className={styles.input_labels}>
+                  <label className={styles.input_label}>
+                    *TITLE (최소 5자 이상)
+                  </label>
+                  <label className={styles.input_length}>
+                    (
+                    {(title.length < 5 && title.length !== 0) ||
+                    title.length > 30 ? (
+                      <span className={styles.bad}>{title.length}</span>
+                    ) : title.length >= 5 ? (
+                      <span className={styles.good}>{title.length}</span>
+                    ) : (
+                      <span>{title.length}</span>
+                    )}
+                    /30)
+                  </label>
+                </div>
                 <input
-                  className={styles.input_text}
+                  className={
+                    checkTitle ? styles.input_text : styles.input_text_error
+                  }
                   type="text"
                   spellCheck="false"
                   placeholder="제목"
@@ -175,7 +246,20 @@ const New = (): React.ReactNode => {
                 />
               </div>
               <div className={styles.input}>
-                <label className={styles.input_label}>DESCRIPTION</label>
+                <div className={styles.input_labels}>
+                  <label className={styles.input_label}>
+                    DESCRIPTION (최대 100자)
+                  </label>
+                  <label className={styles.input_length}>
+                    (
+                    {description.length > 100 ? (
+                      <span className={styles.bad}>{description.length}</span>
+                    ) : (
+                      <span>{description.length}</span>
+                    )}
+                    /100)
+                  </label>
+                </div>
                 <textarea
                   className={styles.input_textarea}
                   spellCheck="false"
@@ -186,7 +270,9 @@ const New = (): React.ReactNode => {
                 />
               </div>
               <div className={styles.input}>
-                <label className={styles.input_label}>*OPTION</label>
+                <div className={styles.input_labels}>
+                  <label className={styles.input_label}>*OPTION</label>
+                </div>
                 <div className={styles.options}>
                   <div className={styles.option}>
                     <div className={styles.option_title}>퀴즈 난이도</div>
@@ -239,12 +325,34 @@ const New = (): React.ReactNode => {
                 </div>
               </div>
               <div className={styles.input}>
-                <label className={styles.input_label}>*QUIZ</label>
-                <div className={styles.quizList}>
-                  {quizImgArray?.map((file, i) => (
+                <div className={styles.input_labels}>
+                  <label className={styles.input_label}>
+                    *QUIZ (최소 5문제 이상)
+                  </label>
+                  <label className={styles.input_length}>
+                    (
+                    {quizImgArray &&
+                    quizImgArray.length < 5 &&
+                    quizImgArray.length !== 0 ? (
+                      <span className={styles.bad}>{quizImgArray.length}</span>
+                    ) : quizImgArray && quizImgArray.length >= 5 ? (
+                      <span className={styles.good}>{quizImgArray.length}</span>
+                    ) : (
+                      <span>{quizImgArray.length}</span>
+                    )}
+                    /30)
+                  </label>
+                </div>
+                <div
+                  className={
+                    checkQuizList ? styles.quizList : styles.quizList_error
+                  }
+                >
+                  {quizImgArray.map((file, i) => (
                     <ListInQuiz
                       key={i}
                       quizNum={i}
+                      checkQuiz={checkQuiz}
                       multipleFilter={multipleFilter}
                       quizImgArray={quizImgArray}
                       qnaArray={qnaArray}
@@ -252,34 +360,40 @@ const New = (): React.ReactNode => {
                       setQnaArray={setQnaArray}
                     />
                   ))}
-                  <div
-                    className={styles.addBtn}
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <svg
-                      className={styles.add_icon}
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="1em"
-                      viewBox="0 0 448 512"
+                  {quizImgArray.length < 30 ? (
+                    <div
+                      className={styles.addBtn}
+                      onClick={() => fileInputRef.current?.click()}
                     >
-                      <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
-                    </svg>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      ref={fileInputRef}
-                      style={{ display: 'none' }}
-                      onChange={onChangeImageFile}
-                      multiple
-                    />
-                  </div>
+                      <svg
+                        className={styles.add_icon}
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="1em"
+                        viewBox="0 0 448 512"
+                      >
+                        <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                      </svg>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                        onChange={onChangeImageFile}
+                        multiple
+                      />
+                    </div>
+                  ) : (
+                    ''
+                  )}
                 </div>
               </div>
               <div className={styles.input}>
-                <label className={styles.input_label}>
-                  THUMBNAIL IMAGE (미등록 시 1번 문제의 이미지가 대표 썸네일
-                  이미지로 사용됩니다.)
-                </label>
+                <div className={styles.input_labels}>
+                  <label className={styles.input_label}>
+                    THUMBNAIL IMAGE (미등록 시 1번 문제의 이미지가 대표 썸네일
+                    이미지로 사용됩니다.)
+                  </label>
+                </div>
                 <div className={styles.thumbnail}>
                   {thumbnailImg ? (
                     <div className={styles.preview}>
@@ -352,14 +466,7 @@ const New = (): React.ReactNode => {
                     />
                   </svg>
                 </button>
-                <button
-                  className={styles.postBtn}
-                  onClick={() => {
-                    console.log(quizImgArray);
-                    console.log(qnaArray);
-                    console.log(thumbnailImg);
-                  }}
-                >
+                <button className={styles.postBtn} onClick={postBtnHandler}>
                   <svg
                     width="34"
                     height="17"

@@ -50,7 +50,10 @@ const Modal = (props: Options): React.ReactNode => {
           <button className={styles.btn} onClick={props.modalActionHandler}>
             {props.actionBtn}
           </button>
-          <button className={styles.btn} onClick={props.modalCloseHandler}>
+          <button
+            className={styles.cancelBtn}
+            onClick={props.modalCloseHandler}
+          >
             취소
           </button>
         </div>

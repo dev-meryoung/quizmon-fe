@@ -42,10 +42,22 @@
         flex-direction: column;
         margin-bottom: 1.5rem;
 
-        .input_label {
+        .input_labels {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 0.2rem;
           font-size: v.$font-size-xs;
           font-weight: bold;
-          margin-bottom: 0.2rem;
+
+          .input_length {
+            .bad {
+              color: v.$red;
+            }
+
+            .good {
+              color: v.$main-deep-green;
+            }
+          }
         }
 
         .input_text {
@@ -69,9 +81,8 @@
           height: 2.5rem;
           border: none;
           font-size: 1rem;
-          border-bottom: 1.5px solid v.$red;
+          border: 1.5px solid v.$red;
           border-radius: 5px;
-          margin-top: 0.2rem;
           padding-left: 0.3rem;
         }
 
@@ -122,7 +133,7 @@
           flex-direction: column;
           border: 1.5px solid v.$main-deep-gray;
           border-radius: 5px;
-          padding: 1rem;
+          padding: 1rem 1rem 0 1rem;
 
           .quiz {
             display: flex;
@@ -351,6 +362,7 @@
             box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
             font-size: v.$font-size-md;
             outline: none;
+            margin-bottom: 1rem;
 
             &:hover {
               cursor: pointer;
@@ -367,28 +379,9 @@
           }
         }
 
-        .edit_check {
-          display: flex;
-          position: absolute;
-          right: 0;
-          top: 0.8rem;
-          height: 3rem;
-          align-items: center;
-          color: v.$red;
-
-          .warn_icon {
-            width: 1.2rem;
-            height: 1.2rem;
-            fill: v.$red;
-            margin-right: 3px;
-          }
-
-          .check_icon {
-            width: 1.2rem;
-            height: 1.2rem;
-            fill: v.$main-green;
-            margin-right: 3px;
-          }
+        .quizList_error {
+          @extend .quizList;
+          border: 1.5px solid v.$red;
         }
 
         .thumbnail {

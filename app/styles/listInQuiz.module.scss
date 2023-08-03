@@ -265,3 +265,8 @@
     }
   }
 }
+
+.wrapper_error {
+  @extend .wrapper;
+  border: 1.5px solid v.$red;
+}
