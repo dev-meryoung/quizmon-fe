@@ -12,6 +12,7 @@ import Image from 'next/image';
 
 export interface QnaArrayType {
   optionArray: string[];
+  optionCheck: number;
   answerArray: string[];
   answerNum: number;
 }
@@ -116,11 +117,60 @@ const New = (): React.ReactNode => {
       return;
     }
 
-    // 퀴즈 정답 값 유효성 검사
+    // 퀴즈 보기, 정답 값 앞뒤 공백 제거 및 유효성 검사
+    if (qnaArray) {
+      // 보기, 정답 값 앞뒤 공백 제거
+      const updateQnaArray = [...qnaArray];
 
-    console.log(quizImgArray);
-    console.log(qnaArray);
-    console.log(thumbnailImg);
+      updateQnaArray.map((quiz) => {
+        for (let i = 0; i < 4; i++) {
+          quiz.optionArray[i] = quiz.optionArray[i].trim();
+        }
+
+        for (let i = 0; i < quiz.answerNum; i++) {
+          quiz.answerArray[i] = quiz.answerArray[i].trim();
+        }
+      });
+
+      setQnaArray(updateQnaArray);
+
+      // 유효성 검사
+      let flag: boolean = true;
+
+      if (multipleFilter === 1) {
+        qnaArray.map((quiz, quizNum) => {
+          quiz.optionArray.map((option, optionNum) => {
+            if (option === '' && flag) {
+              setModalMsg(
+                `${quizNum + 1}번 문제의 ${
+                  optionNum + 1
+                }번 보기가 비어있습니다.`
+              );
+              setViewInfoModal(true);
+              flag = false;
+            }
+          });
+        });
+      } else if (multipleFilter === 2) {
+        qnaArray.map((quiz, quizNum) => {
+          for (let i: number = 0; i < quiz.answerNum; i++) {
+            if (quiz.answerArray[i] === '' && flag) {
+              setModalMsg(
+                `${quizNum + 1}번 문제의 정답 값이 모두 입력되어야 합니다.`
+              );
+              setViewInfoModal(true);
+              flag = false;
+            }
+          }
+        });
+      }
+
+      if (!flag) {
+        return;
+      } else {
+        // 유효성 검사를 모두 통과했을 경우 퀴즈 등록 API 호출
+      }
+    }
   };
 
   // 제목 값의 변화를 useState에 적용하기 위한 onChange 함수
@@ -150,6 +200,7 @@ const New = (): React.ReactNode => {
         nowImageFile.map(() => {
           updateQnaArray.push({
             optionArray: ['', '', '', ''],
+            optionCheck: 1,
             answerArray: ['', '', ''],
             answerNum: 1,
           });
@@ -162,6 +213,7 @@ const New = (): React.ReactNode => {
         nowImageFile.map(() => {
           updateQnaArray.push({
             optionArray: ['', '', '', ''],
+            optionCheck: 1,
             answerArray: ['', '', ''],
             answerNum: 1,
           });

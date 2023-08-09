@@ -2,10 +2,11 @@
 
 import Image from 'next/image';
 import styles from 'app/styles/listInQuiz.module.scss';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 export interface QnaArrayType {
   optionArray: string[];
+  optionCheck: number;
   answerArray: string[];
   answerNum: number;
 }
@@ -30,9 +31,6 @@ const ListInQuiz = (props: Options): React.ReactNode => {
   const qnaArray = props.qnaArray;
   const setQnaArray = props.setQnaArray;
 
-  // 객관식 보기 체크 값을 관리하기 위한 useState
-  const [multipleCheck, setMultipleCheck] = useState<number>(1);
-
   // 객관식 보기 체크박스 커스텀을 위해 기존 input을 식별하기 위한 useRef
   const multipleCheck1 = useRef<HTMLInputElement>(null);
   const multipleCheck2 = useRef<HTMLInputElement>(null);
@@ -46,10 +44,11 @@ const ListInQuiz = (props: Options): React.ReactNode => {
   const onChangeShortAnswers = (
     e: React.ChangeEvent<HTMLInputElement>
   ): void => {
+    const text = e.target.value.replace(/  +/g, ' ');
     const updateQnaArray = [...qnaArray];
 
     updateQnaArray[props.quizNum].answerArray[parseInt(e.target.name) - 1] =
-      e.target.value;
+      text;
 
     setQnaArray(updateQnaArray);
   };
@@ -58,10 +57,12 @@ const ListInQuiz = (props: Options): React.ReactNode => {
   const onChangeMultipleAnswers = (
     e: React.ChangeEvent<HTMLInputElement>
   ): void => {
+    const text = e.target.value.replace(/  +/g, ' ');
+
     const updateQnaArray = [...qnaArray];
 
     updateQnaArray[props.quizNum].optionArray[parseInt(e.target.name) - 1] =
-      e.target.value;
+      text;
 
     setQnaArray(updateQnaArray);
   };
@@ -70,17 +71,17 @@ const ListInQuiz = (props: Options): React.ReactNode => {
   const onChangeMultipleCheck = (
     e: React.ChangeEvent<HTMLInputElement>
   ): void => {
-    if (e.target.value === '1') {
-      setMultipleCheck(1);
-    } else if (e.target.value === '2') {
-      setMultipleCheck(2);
-    } else if (e.target.value === '3') {
-      setMultipleCheck(3);
-    } else if (e.target.value === '4') {
-      setMultipleCheck(4);
-    }
-
     const updateQnaArray = [...qnaArray];
+
+    if (e.target.value === '1') {
+      updateQnaArray[props.quizNum].optionCheck = 1;
+    } else if (e.target.value === '2') {
+      updateQnaArray[props.quizNum].optionCheck = 2;
+    } else if (e.target.value === '3') {
+      updateQnaArray[props.quizNum].optionCheck = 3;
+    } else if (e.target.value === '4') {
+      updateQnaArray[props.quizNum].optionCheck = 4;
+    }
 
     updateQnaArray[props.quizNum].answerArray[0] =
       updateQnaArray[props.quizNum].optionArray[parseInt(e.target.value) - 1];
@@ -260,7 +261,7 @@ const ListInQuiz = (props: Options): React.ReactNode => {
               />
               <div
                 className={
-                  multipleCheck === 1
+                  qnaArray[props.quizNum].optionCheck === 1
                     ? styles.multiple_check_focused
                     : styles.multiple_check
                 }
@@ -295,7 +296,7 @@ const ListInQuiz = (props: Options): React.ReactNode => {
               />
               <div
                 className={
-                  multipleCheck === 2
+                  qnaArray[props.quizNum].optionCheck === 2
                     ? styles.multiple_check_focused
                     : styles.multiple_check
                 }
@@ -330,7 +331,7 @@ const ListInQuiz = (props: Options): React.ReactNode => {
               />
               <div
                 className={
-                  multipleCheck === 3
+                  qnaArray[props.quizNum].optionCheck === 3
                     ? styles.multiple_check_focused
                     : styles.multiple_check
                 }
@@ -365,7 +366,7 @@ const ListInQuiz = (props: Options): React.ReactNode => {
               />
               <div
                 className={
-                  multipleCheck === 4
+                  qnaArray[props.quizNum].optionCheck === 4
                     ? styles.multiple_check_focused
                     : styles.multiple_check
                 }
