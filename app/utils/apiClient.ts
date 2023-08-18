@@ -10,6 +10,7 @@ interface ApiClient {
   userWithdraw: (currentPw: string) => Promise<any>;
   login: (id: string, pw: string) => Promise<any>;
   logout: () => Promise<any>;
+  newQuiz: () => Promise<any>;
 }
 
 // 클라이언트 API
@@ -151,6 +152,25 @@ const apiClient: ApiClient = {
 
     return axios
       .get(`${this.baseUrl}${url}`, {
+        headers,
+      })
+      .then((res) => {
+        return res.data;
+      });
+  },
+
+  // 퀴즈 생성 API
+  newQuiz() {
+    const method: string = 'POST';
+    const url: string = `/api/quiz/image`;
+
+    const headers = {
+      Authentication: apiCrypto(method, url),
+    };
+    const data: {} = {};
+
+    return axios
+      .post(`${this.baseUrl}${url}`, data, {
         headers,
       })
       .then((res) => {
