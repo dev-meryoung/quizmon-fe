@@ -8,7 +8,6 @@ export const useLogin = (
   pw: string
 ): {
   loginMutate: UseMutateFunction;
-  loginData: { id: string };
   isLoginLoading: boolean;
   isLoginSuccess: boolean;
   isLoginError: boolean;
@@ -16,7 +15,6 @@ export const useLogin = (
 } => {
   const {
     mutate: loginMutate,
-    data: loginData,
     isLoading: isLoginLoading,
     isSuccess: isLoginSuccess,
     isError: isLoginError,
@@ -36,7 +34,6 @@ export const useLogin = (
 
   return {
     loginMutate,
-    loginData,
     isLoginLoading,
     isLoginSuccess,
     isLoginError,

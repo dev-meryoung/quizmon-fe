@@ -3,19 +3,13 @@
 import SelectBox from 'app/components/SelectBox';
 import Filter from 'app/components/Filter';
 import Infomation from 'app/components/Infomation';
-import ListInQuiz from 'app/components/ListInQuiz';
+import ListInQuiz, { QnaArrayType } from 'app/components/ListInQuiz';
 import Modal from 'app/components/Modal';
 import styles from 'app/styles/newQuiz.module.scss';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-
-export interface QnaArrayType {
-  optionArray: string[];
-  optionCheck: number;
-  answerArray: string[];
-  answerNum: number;
-}
+import { useNewQuiz } from '@/app/hooks/useNewQuiz';
 
 const New = (): React.ReactNode => {
   // 페이지 이동을 위한 useRouter
@@ -30,7 +24,6 @@ const New = (): React.ReactNode => {
   const [thumbnailImg, setThumbnailImg] = useState<File | null>(null);
   const [quizImgArray, setQuizImgArray] = useState<File[]>([]);
   const [qnaArray, setQnaArray] = useState<QnaArrayType[]>([]);
-  const [signatureMsg, setSignatureMsg] = useState<string>('');
 
   // 퀴즈 난이도(제한 시간) 상태를 관리하기 위한 useState (1 : VERY EASY ~ 5 : VERY HARD)
   const [limitTime, setLimitTime] = useState<number>(3);
@@ -98,6 +91,87 @@ const New = (): React.ReactNode => {
 
     setModalMsg('');
   };
+
+  // 제목 값의 변화를 useState에 적용하기 위한 onChange 함수
+  const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const nowTitle: string = e.target.value;
+    setTitle(nowTitle);
+    setCheckTitle(true);
+  };
+
+  // 내용 값의 변화를 useState에 적용하기 위한 onChange 함수
+  const onChangeDescription = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ): void => {
+    const nowDescription: string = e.target.value;
+    setDescription(nowDescription);
+  };
+
+  // 새로운 이미지 파일이 첨부되었을 때 최신화하기 위한 onChange 함수
+  const onChangeImageFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    if (e.target.files) {
+      const nowImageFile: File[] | null = Array.from(e.target.files);
+
+      if (quizImgArray) {
+        setQuizImgArray([...quizImgArray, ...nowImageFile]);
+
+        const updateQnaArray = [...qnaArray];
+        nowImageFile.map(() => {
+          updateQnaArray.push({
+            optionArray: ['', '', '', ''],
+            optionCheck: 1,
+            answerArray: ['', '', ''],
+            answerNum: 1,
+          });
+        });
+        setQnaArray([...updateQnaArray]);
+      } else {
+        setQuizImgArray([...nowImageFile]);
+
+        const updateQnaArray = [...qnaArray];
+        nowImageFile.map(() => {
+          updateQnaArray.push({
+            optionArray: ['', '', '', ''],
+            optionCheck: 1,
+            answerArray: ['', '', ''],
+            answerNum: 1,
+          });
+        });
+        setQnaArray([...updateQnaArray]);
+      }
+      setCheckQuizList(true);
+      e.target.value = '';
+    }
+  };
+
+  // 새로운 썸네일 이미지가 첨부되었을 때 최신화하기 위한 onChange 함수
+  const onChangeThumbnail = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    if (e.target.files) {
+      const nowThumbnail: File | null = e.target.files[0];
+
+      setThumbnailImg(nowThumbnail);
+
+      e.target.value = '';
+    }
+  };
+
+  // 퀴즈 생성 관련 useMutate Custom Hook
+  const {
+    newQuizMutate,
+    isNewQuizLoading,
+    isNewQuizSuccess,
+    isNewQuizError,
+    newQuizError,
+  } = useNewQuiz(
+    title,
+    description,
+    limitTime,
+    thumbnailImg,
+    publicFilter,
+    randomFilter,
+    multipleFilter,
+    qnaArray
+  );
 
   // 퀴즈 등록 버튼을 클릭했을 때 실행되는 postBtnHandler 함수
   const postBtnHandler = (): void => {
@@ -169,70 +243,11 @@ const New = (): React.ReactNode => {
         return;
       } else {
         // 유효성 검사를 모두 통과했을 경우 퀴즈 등록 API 호출
+        console.log(qnaArray);
+        console.log(quizImgArray);
+
+        newQuizMutate();
       }
-    }
-  };
-
-  // 제목 값의 변화를 useState에 적용하기 위한 onChange 함수
-  const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const nowTitle: string = e.target.value;
-    setTitle(nowTitle);
-    setCheckTitle(true);
-  };
-
-  // 내용 값의 변화를 useState에 적용하기 위한 onChange 함수
-  const onChangeDescription = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ): void => {
-    const nowDescription: string = e.target.value;
-    setDescription(nowDescription);
-  };
-
-  // 새로운 이미지 파일이 첨부되었을 때 최신화하기 위한 onChange 함수
-  const onChangeImageFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    if (e.target.files) {
-      const nowImageFile: File[] | null = Array.from(e.target.files);
-
-      if (quizImgArray) {
-        setQuizImgArray([...quizImgArray, ...nowImageFile]);
-
-        const updateQnaArray = [...qnaArray];
-        nowImageFile.map(() => {
-          updateQnaArray.push({
-            optionArray: ['', '', '', ''],
-            optionCheck: 1,
-            answerArray: ['', '', ''],
-            answerNum: 1,
-          });
-        });
-        setQnaArray([...updateQnaArray]);
-      } else {
-        setQuizImgArray([...nowImageFile]);
-
-        const updateQnaArray = [...qnaArray];
-        nowImageFile.map(() => {
-          updateQnaArray.push({
-            optionArray: ['', '', '', ''],
-            optionCheck: 1,
-            answerArray: ['', '', ''],
-            answerNum: 1,
-          });
-        });
-        setQnaArray([...updateQnaArray]);
-      }
-      setCheckQuizList(true);
-      e.target.value = '';
-    }
-  };
-
-  // 새로운 썸네일 이미지가 첨부되었을 때 최신화하기 위한 onChange 함수
-  const onChangeThumbnail = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    if (e.target.files) {
-      const nowThumbnail: File | null = e.target.files[0];
-
-      setThumbnailImg(nowThumbnail);
-
-      e.target.value = '';
     }
   };
 

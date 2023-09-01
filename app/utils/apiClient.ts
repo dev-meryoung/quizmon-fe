@@ -1,5 +1,6 @@
 import axios from 'axios';
 import apiCrypto from 'app/utils/apiCrypto';
+import { QnaArrayType } from 'app/components/ListInQuiz';
 
 interface ApiClient {
   baseUrl: string;
@@ -10,7 +11,17 @@ interface ApiClient {
   userWithdraw: (currentPw: string) => Promise<any>;
   login: (id: string, pw: string) => Promise<any>;
   logout: () => Promise<any>;
-  newQuiz: () => Promise<any>;
+  newQuiz: (
+    title: string,
+    comment: string,
+    limitTime: number,
+    thumbnail: boolean,
+    publicAccess: boolean,
+    randomQuestion: boolean,
+    multipleChoice: boolean,
+    signatureMessage: string,
+    qnaArray: QnaArrayType[]
+  ) => Promise<any>;
 }
 
 // 클라이언트 API
@@ -60,7 +71,7 @@ const apiClient: ApiClient = {
     const headers = {
       Authentication: apiCrypto(method, url),
     };
-    const data: { id: string; password: string } = {
+    const data = {
       id: id,
       password: pw,
     };
@@ -83,7 +94,7 @@ const apiClient: ApiClient = {
       Authentication: apiCrypto(method, url),
       Authorization: localStorage.getItem('jwt'),
     };
-    const data: { oldPassword: string; newPassword: string } = {
+    const data = {
       oldPassword: currentPw,
       newPassword: newPw,
     };
@@ -106,7 +117,7 @@ const apiClient: ApiClient = {
       Authentication: apiCrypto(method, url),
       Authorization: localStorage.getItem('jwt'),
     };
-    const data: { password: string } = {
+    const data = {
       password: currentPw,
     };
 
@@ -127,7 +138,7 @@ const apiClient: ApiClient = {
     const headers = {
       Authentication: apiCrypto(method, url),
     };
-    const data: { id: string; password: string } = {
+    const data = {
       id: id,
       password: pw,
     };
@@ -160,14 +171,36 @@ const apiClient: ApiClient = {
   },
 
   // 퀴즈 생성 API
-  newQuiz() {
+  newQuiz(
+    title,
+    comment,
+    limitTime,
+    thumbnail,
+    publicAccess,
+    randomQuestion,
+    multipleChoice,
+    signatureMessage,
+    qnaArray
+  ) {
     const method: string = 'POST';
     const url: string = `/api/quiz/image`;
 
     const headers = {
       Authentication: apiCrypto(method, url),
+      Authorization: localStorage.getItem('jwt'),
     };
-    const data: {} = {};
+
+    const data = {
+      title: title,
+      comment: comment,
+      limitTime: limitTime,
+      thumbnail: thumbnail,
+      publicAccess: publicAccess,
+      randomQuestion: randomQuestion,
+      multipleChoice: multipleChoice,
+      signatureMessage: signatureMessage,
+      qnaArray: qnaArray,
+    };
 
     return axios
       .post(`${this.baseUrl}${url}`, data, {
