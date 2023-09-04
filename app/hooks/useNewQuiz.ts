@@ -2,6 +2,8 @@ import { UseMutateFunction, useMutation } from 'react-query';
 import apiClient from 'app/utils/apiClient';
 import stringCrypto from 'app/utils/stringCrypto';
 import { QnaArrayType } from 'app/components/ListInQuiz';
+import { randomString } from 'app/utils/randomString';
+import signatureCrypto from 'app/utils/signatureCrypto';
 
 // 퀴즈 생성을 진행하는 useMutate
 export const useNewQuiz = (
@@ -12,7 +14,8 @@ export const useNewQuiz = (
   publicFilter: number,
   randomFilter: number,
   multipleFilter: number,
-  qnaArray: QnaArrayType[]
+  qnaArray: QnaArrayType[],
+  quizImgArray: File[]
 ): {
   newQuizMutate: UseMutateFunction;
   isNewQuizLoading: boolean;
@@ -39,8 +42,9 @@ export const useNewQuiz = (
     multipleChoice = true;
   }
 
-  // S3 이미지 등록에 필요한 signatureMessage 값
-  const signatureMsg = 'aaaaaa';
+  // S3 이미지 등록에 필요한 랜덤 signatureMessage 값과 해당 값의 암호화
+  const signatureMsg: string = randomString();
+  const cryptoMsg = signatureCrypto(signatureMsg);
 
   const {
     mutate: newQuizMutate,
@@ -64,9 +68,13 @@ export const useNewQuiz = (
       .then((data) => {
         if (data.code === 200) {
           console.log(data.result);
-          return data.result;
-        } else {
-          console.log(1);
+
+          const quizId = data.result.quizId;
+          const uploadUrlArray = data.result.uploadUrlArray;
+
+          if (apiClient.imageUpload(cryptoMsg, quizImgArray, uploadUrlArray)) {
+            console.log('업로드 성공!');
+          }
         }
       })
   );

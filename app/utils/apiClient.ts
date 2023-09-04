@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosHeaderValue } from 'axios';
 import apiCrypto from 'app/utils/apiCrypto';
 import { QnaArrayType } from 'app/components/ListInQuiz';
 
@@ -22,6 +22,11 @@ interface ApiClient {
     signatureMessage: string,
     qnaArray: QnaArrayType[]
   ) => Promise<any>;
+  imageUpload: (
+    cryptoMsg: AxiosHeaderValue,
+    quizImgArray: File[],
+    uploadUrlArray: string[]
+  ) => boolean;
 }
 
 // 클라이언트 API
@@ -210,6 +215,44 @@ const apiClient: ApiClient = {
         return res.data;
       });
   },
+
+  // (퀴즈 생성 및 수정 시)이미지 업로드 API
+  imageUpload(cryptoMsg, quizImgArray, uploadUrlArray) {
+    const headers = {
+      signature: cryptoMsg,
+    };
+
+    let flag: boolean = false;
+
+    for (let i = 0; i < quizImgArray.length; i++) {
+      const data = quizImgArray[i];
+
+      axios.put(uploadUrlArray[i], data, { headers }).then((res) => {
+        flag = true;
+        return res.data;
+      });
+    }
+
+    return flag;
+  },
+
+  /*
+ const method: string = 'GET';
+    const url: string = `/api/quiz/${quizId}/image/check`;
+    const headers = {
+      Authentication: apiCrypto(method, url),
+      Authorization: localStorage.getItem('jwt'),
+    };
+
+    return axios
+      .get(`${this.baseUrl}${url}`, {
+        headers,
+      })
+      .then((res) => {
+        console.log(res.data);
+        return res.data;
+      });
+  */
 };
 
 export default apiClient;

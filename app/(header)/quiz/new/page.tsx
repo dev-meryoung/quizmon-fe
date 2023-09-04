@@ -170,7 +170,8 @@ const New = (): React.ReactNode => {
     publicFilter,
     randomFilter,
     multipleFilter,
-    qnaArray
+    qnaArray,
+    quizImgArray
   );
 
   // 퀴즈 등록 버튼을 클릭했을 때 실행되는 postBtnHandler 함수
