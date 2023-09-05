@@ -24,11 +24,23 @@ export const useNewQuiz = (
   newQuizError: any;
 } => {
   // API 타입에 맞춰 값을 수정
+  let apiLimitTime: 3 | 4 | 5 | 7 | 10 = 5;
   let thumbnail: boolean = false;
   let publicAccess: boolean = false;
   let randomQuestion: boolean = false;
   let multipleChoice: boolean = false;
 
+  if (limitTime === 1) {
+    apiLimitTime = 10;
+  } else if (limitTime === 2) {
+    apiLimitTime = 7;
+  } else if (limitTime === 3) {
+    apiLimitTime = 5;
+  } else if (limitTime === 4) {
+    apiLimitTime = 4;
+  } else if (limitTime === 5) {
+    apiLimitTime = 3;
+  }
   if (thumbnailImg) {
     thumbnail = true;
   }
@@ -57,7 +69,7 @@ export const useNewQuiz = (
       .newQuiz(
         title,
         comment,
-        limitTime,
+        apiLimitTime,
         thumbnail,
         publicAccess,
         randomQuestion,
@@ -65,16 +77,23 @@ export const useNewQuiz = (
         signatureMsg,
         qnaArray
       )
-      .then((data) => {
+      .then(async (data) => {
         if (data.code === 200) {
           console.log(data.result);
 
           const quizId = data.result.quizId;
           const uploadUrlArray = data.result.uploadUrlArray;
 
-          if (apiClient.imageUpload(cryptoMsg, quizImgArray, uploadUrlArray)) {
-            console.log('업로드 성공!');
-          }
+          await apiClient
+            .imagesUpload(cryptoMsg, quizImgArray, uploadUrlArray)
+            .then(
+              async () =>
+                await apiClient.checkNewQuiz(quizId).then((data) => {
+                  if (data.code === 200) {
+                    apiClient.quizList('sort=1');
+                  }
+                })
+            );
         }
       })
   );

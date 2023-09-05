@@ -157,7 +157,7 @@ const Join = (): React.ReactNode => {
     if (isJoinSuccess) {
       router.push('/login');
     }
-  }, [router, isJoinSuccess, isJoinError, joinError, id]);
+  }, [router, isJoinSuccess, isJoinError, joinError]);
 
   return (
     <>

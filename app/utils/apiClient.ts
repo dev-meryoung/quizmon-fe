@@ -24,9 +24,17 @@ interface ApiClient {
   ) => Promise<any>;
   imageUpload: (
     cryptoMsg: AxiosHeaderValue,
+    quizImg: File,
+    uploadUrl: string
+  ) => Promise<any>;
+  imagesUpload: (
+    cryptoMsg: AxiosHeaderValue,
     quizImgArray: File[],
     uploadUrlArray: string[]
-  ) => boolean;
+  ) => Promise<any>;
+  checkNewQuiz: (quizId: string) => Promise<any>;
+
+  quizList: (options: string) => Promise<any>;
 }
 
 // 클라이언트 API
@@ -176,7 +184,7 @@ const apiClient: ApiClient = {
   },
 
   // 퀴즈 생성 API
-  newQuiz(
+  async newQuiz(
     title,
     comment,
     limitTime,
@@ -207,7 +215,7 @@ const apiClient: ApiClient = {
       qnaArray: qnaArray,
     };
 
-    return axios
+    return await axios
       .post(`${this.baseUrl}${url}`, data, {
         headers,
       })
@@ -217,27 +225,28 @@ const apiClient: ApiClient = {
   },
 
   // (퀴즈 생성 및 수정 시)이미지 업로드 API
-  imageUpload(cryptoMsg, quizImgArray, uploadUrlArray) {
+  async imageUpload(cryptoMsg, quizImg, uploadUrl) {
     const headers = {
       signature: cryptoMsg,
     };
 
-    let flag: boolean = false;
+    const data = quizImg;
 
-    for (let i = 0; i < quizImgArray.length; i++) {
-      const data = quizImgArray[i];
-
-      axios.put(uploadUrlArray[i], data, { headers }).then((res) => {
-        flag = true;
-        return res.data;
-      });
-    }
-
-    return flag;
+    return await axios.put(uploadUrl, data, { headers }).then((res) => {
+      return res;
+    });
   },
 
-  /*
- const method: string = 'GET';
+  // 다중 이미지 업로드 처리 함수
+  async imagesUpload(cryptoMsg, quizImgArray, uploadUrlArray) {
+    for (let i = 0; i < quizImgArray.length; i++) {
+      await this.imageUpload(cryptoMsg, quizImgArray[i], uploadUrlArray[i]);
+    }
+  },
+
+  // 퀴즈 생성 마무리 확인 API
+  checkNewQuiz(quizId) {
+    const method: string = 'GET';
     const url: string = `/api/quiz/${quizId}/image/check`;
     const headers = {
       Authentication: apiCrypto(method, url),
@@ -249,10 +258,28 @@ const apiClient: ApiClient = {
         headers,
       })
       .then((res) => {
-        console.log(res.data);
         return res.data;
       });
-  */
+  },
+
+  // 퀴즈 목록 불러오기 API
+  quizList(options) {
+    const method: string = 'GET';
+    const url: string = `/api/quiz/list`;
+    const headers = {
+      Authentication: apiCrypto(method, url),
+      Authorization: localStorage.getItem('jwt'),
+    };
+
+    return axios
+      .get(`${this.baseUrl}${url}?${options}`, {
+        headers,
+      })
+      .then((res) => {
+        console.log(res.data.result);
+        return res.data;
+      });
+  },
 };
 
 export default apiClient;

@@ -9,7 +9,8 @@ import styles from 'app/styles/newQuiz.module.scss';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { useNewQuiz } from '@/app/hooks/useNewQuiz';
+import { useNewQuiz } from 'app/hooks/useNewQuiz';
+import LoadingSpinner from 'app/components/LoadingSpinner';
 
 const New = (): React.ReactNode => {
   // 페이지 이동을 위한 useRouter
@@ -110,7 +111,18 @@ const New = (): React.ReactNode => {
   // 새로운 이미지 파일이 첨부되었을 때 최신화하기 위한 onChange 함수
   const onChangeImageFile = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files) {
-      const nowImageFile: File[] | null = Array.from(e.target.files);
+      const newImageFile: File[] | null = Array.from(e.target.files);
+
+      // 이미지 파일 용량 체크 및 제외(5MB 제한)
+      newImageFile.map((img) => {
+        if (img.size > 5242880) {
+          setModalMsg('5MB를 초과하는 이미지 파일은 등록할 수 없습니다.');
+          setViewInfoModal(true);
+
+          return;
+        }
+      });
+      const nowImageFile = newImageFile.filter((img) => img.size < 5242880);
 
       if (quizImgArray) {
         setQuizImgArray([...quizImgArray, ...nowImageFile]);
@@ -244,16 +256,26 @@ const New = (): React.ReactNode => {
         return;
       } else {
         // 유효성 검사를 모두 통과했을 경우 퀴즈 등록 API 호출
-        console.log(qnaArray);
-        console.log(quizImgArray);
-
         newQuizMutate();
       }
     }
   };
 
+  // 퀴즈 생성 과정을 관리하기 위한 useEffect
+  useEffect(() => {
+    if (isNewQuizError) {
+      setModalMsg(newQuizError.response.data.message);
+      setViewInfoModal(true);
+    }
+
+    if (isNewQuizSuccess) {
+      router.push('/');
+    }
+  }, [router, isNewQuizError, isNewQuizSuccess, newQuizError]);
+
   return (
     <>
+      {isNewQuizLoading ? <LoadingSpinner /> : ''}
       {viewInfoModal ? (
         <Modal
           type="INFO"
