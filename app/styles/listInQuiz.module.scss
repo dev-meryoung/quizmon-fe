@@ -270,3 +270,92 @@
   @extend .wrapper;
   border: 1.5px solid v.$red;
 }
+
+// 반응형 모바일 기준
+@media (max-width: 644px) {
+  .wrapper {
+    height: 30rem;
+    flex-wrap: wrap;
+    flex-direction: column;
+
+    .quizImgWrapper {
+      width: 88%;
+      height: 10rem;
+    }
+
+    .quizInfo {
+      display: flex;
+      width: 88%;
+      height: 50%;
+      border-left: none;
+      border-right: none;
+      flex-direction: row;
+
+      .answers {
+        margin-left: 0.3rem;
+        padding-bottom: 0.3rem;
+        border-bottom: 1.5px solid v.$main-deep-gray;
+
+        .shortAnswer {
+          justify-content: space-evenly;
+
+          .shortAnswer_text {
+            width: 85%;
+          }
+
+          .removeBtn_icon {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 0.5rem;
+          }
+        }
+
+        .multipleAnswer {
+          justify-content: space-evenly;
+          .multiple_text {
+            width: 85%;
+          }
+          .multiple_check {
+            margin-right: 0.5rem;
+          }
+          .multiple_check_focused {
+            margin-right: 0.5rem;
+          }
+        }
+      }
+    }
+
+    .quizBtns {
+      display: flex;
+      width: 88%;
+      height: calc(50% - 10rem);
+      flex-direction: row;
+      padding: 0.5rem 0 0 0;
+      margin-left: 0;
+
+      .quizImgEditBtn {
+        display: flex;
+        flex-direction: column;
+        width: 40%;
+        height: 100%;
+
+        .quizImgEdit_icon {
+          width: 1rem;
+          height: 1rem;
+        }
+      }
+
+      .quizDeleteBtn {
+        display: flex;
+        flex-direction: column;
+        width: 40%;
+        height: 100%;
+
+        .quizDelete_icon {
+          width: 1rem;
+          height: 1rem;
+        }
+      }
+    }
+  }
+}

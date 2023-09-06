@@ -159,10 +159,16 @@ const New = (): React.ReactNode => {
   // 새로운 썸네일 이미지가 첨부되었을 때 최신화하기 위한 onChange 함수
   const onChangeThumbnail = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files) {
-      const nowThumbnail: File | null = e.target.files[0];
+      const newThumbnail: File | null = e.target.files[0];
 
-      setThumbnailImg(nowThumbnail);
-
+      // 이미지 파일 용량 체크 및 제외(5MB 제한)
+      if (newThumbnail.size > 5242880) {
+        setModalMsg('5MB를 초과하는 이미지 파일은 등록할 수 없습니다.');
+        setViewInfoModal(true);
+      } else {
+        const nowThumbnail = newThumbnail;
+        setThumbnailImg(nowThumbnail);
+      }
       e.target.value = '';
     }
   };

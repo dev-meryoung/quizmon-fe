@@ -27,10 +27,17 @@ interface ApiClient {
     quizImg: File,
     uploadUrl: string
   ) => Promise<any>;
+  thumbnailUpload: (
+    cryptoMsg: AxiosHeaderValue,
+    thumbnailImg: File,
+    thumbnailUrl: string
+  ) => Promise<any>;
   imagesUpload: (
     cryptoMsg: AxiosHeaderValue,
     quizImgArray: File[],
-    uploadUrlArray: string[]
+    uploadUrlArray: string[],
+    thumbnailImg: File | null,
+    thumbnailUrl: string
   ) => Promise<any>;
   checkNewQuiz: (quizId: string) => Promise<any>;
 
@@ -237,10 +244,33 @@ const apiClient: ApiClient = {
     });
   },
 
+  // (퀴즈 생성 및 수정 시)썸네일 업로드 API
+  async thumbnailUpload(cryptoMsg, thumbnailImg, thumbnailUrl) {
+    const headers = {
+      signature: cryptoMsg,
+    };
+
+    const data = thumbnailImg;
+
+    return await axios.put(thumbnailUrl, data, { headers }).then((res) => {
+      return res;
+    });
+  },
+
   // 다중 이미지 업로드 처리 함수
-  async imagesUpload(cryptoMsg, quizImgArray, uploadUrlArray) {
+  async imagesUpload(
+    cryptoMsg,
+    quizImgArray,
+    uploadUrlArray,
+    thumbnailImg,
+    thumbnailUrl
+  ) {
     for (let i = 0; i < quizImgArray.length; i++) {
       await this.imageUpload(cryptoMsg, quizImgArray[i], uploadUrlArray[i]);
+    }
+
+    if (thumbnailImg) {
+      await this.thumbnailUpload(cryptoMsg, thumbnailImg, thumbnailUrl);
     }
   },
 

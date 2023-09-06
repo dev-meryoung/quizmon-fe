@@ -81,11 +81,18 @@ export const useNewQuiz = (
         if (data.code === 200) {
           console.log(data.result);
 
-          const quizId = data.result.quizId;
-          const uploadUrlArray = data.result.uploadUrlArray;
+          const quizId: string = data.result.quizId;
+          const uploadUrlArray: string[] = data.result.uploadUrlArray;
+          const thumbnailUrl: string = data.result.thumbnailUrl;
 
           await apiClient
-            .imagesUpload(cryptoMsg, quizImgArray, uploadUrlArray)
+            .imagesUpload(
+              cryptoMsg,
+              quizImgArray,
+              uploadUrlArray,
+              thumbnailImg,
+              thumbnailUrl
+            )
             .then(
               async () =>
                 await apiClient.checkNewQuiz(quizId).then((data) => {
