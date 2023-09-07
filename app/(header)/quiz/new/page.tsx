@@ -23,6 +23,9 @@ const New = (): React.ReactNode => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [thumbnailImg, setThumbnailImg] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<
+    string | ArrayBuffer | null
+  >('');
   const [quizImgArray, setQuizImgArray] = useState<File[]>([]);
   const [qnaArray, setQnaArray] = useState<QnaArrayType[]>([]);
 
@@ -168,6 +171,18 @@ const New = (): React.ReactNode => {
       } else {
         const nowThumbnail = newThumbnail;
         setThumbnailImg(nowThumbnail);
+
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          if (e.target) {
+            const stringThumbnail = e.target.result;
+
+            setThumbnailPreview(stringThumbnail);
+          }
+        };
+
+        reader.readAsDataURL(nowThumbnail);
       }
       e.target.value = '';
     }
@@ -494,13 +509,17 @@ const New = (): React.ReactNode => {
                   {thumbnailImg ? (
                     <div className={styles.preview}>
                       <div className={styles.previewImgWrapper}>
-                        <Image
-                          className={styles.previewImg}
-                          src={URL.createObjectURL(thumbnailImg)}
-                          alt={'thumbnail'}
-                          width={500}
-                          height={500}
-                        />
+                        {typeof thumbnailPreview === 'string' ? (
+                          <Image
+                            className={styles.previewImg}
+                            src={thumbnailPreview}
+                            alt={'thumbnail'}
+                            width={500}
+                            height={500}
+                          />
+                        ) : (
+                          ''
+                        )}
                         <div
                           className={styles.previewDelete}
                           onClick={() => {

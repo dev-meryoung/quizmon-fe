@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import styles from 'app/styles/listInQuiz.module.scss';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export interface QnaArrayType {
   optionArray: string[];
@@ -26,6 +26,9 @@ const ListInQuiz = (props: Options): React.ReactNode => {
   // 퀴즈 생성에 필요한 이미지를 관리하기 위한 useState
   const quizImgArray = props.quizImgArray;
   const setQuizImgArray = props.setQuizImgArray;
+
+  // 미리보기 이미지를 관리하기 위한 useState
+  const [previewImg, setPreviewImg] = useState<string | ArrayBuffer | null>('');
 
   // 퀴즈 생성에 필요한 정답 값을 관리하기 위한 useState
   const qnaArray = props.qnaArray;
@@ -200,6 +203,22 @@ const ListInQuiz = (props: Options): React.ReactNode => {
     setQnaArray(updataQnaArray);
   };
 
+  // File 형식을 string 값으로 전환해 미리보기 이미지를 만들어주기 위한 초기 useEffect
+  useEffect(() => {
+    props.quizImgArray[props.quizNum];
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      if (e.target) {
+        const preview = e.target.result;
+        setPreviewImg(preview);
+      }
+    };
+
+    reader.readAsDataURL(props.quizImgArray[props.quizNum]);
+  }, [props.quizImgArray, props.quizNum]);
+
   return (
     <div
       className={
@@ -237,13 +256,17 @@ const ListInQuiz = (props: Options): React.ReactNode => {
         </div>
       </div>
       <div className={styles.quizImgWrapper}>
-        <Image
-          className={styles.quizImg}
-          src={URL.createObjectURL(props.quizImgArray[props.quizNum])}
-          alt={`${props.quizNum}`}
-          width={500}
-          height={500}
-        />
+        {typeof previewImg === 'string' ? (
+          <Image
+            className={styles.quizImg}
+            src={previewImg}
+            alt={`${props.quizNum}`}
+            width={500}
+            height={500}
+          />
+        ) : (
+          ''
+        )}
       </div>
       <div className={styles.quizInfo}>
         {props.multipleFilter === 1 ? (

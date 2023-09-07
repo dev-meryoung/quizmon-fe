@@ -79,8 +79,6 @@ export const useNewQuiz = (
       )
       .then(async (data) => {
         if (data.code === 200) {
-          console.log(data.result);
-
           const quizId: string = data.result.quizId;
           const uploadUrlArray: string[] = data.result.uploadUrlArray;
           const thumbnailUrl: string = data.result.thumbnailUrl;
