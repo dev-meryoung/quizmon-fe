@@ -40,6 +40,7 @@ jobs:
           run: |
             echo "NEXT_PUBLIC_BASE_URL=${{ secrets.SERVER_HOST }}" >> .env
             echo "NEXT_PUBLIC_API_KEY=${{ secrets.NEXT_PUBLIC_API_KEY }}" >> .env
+            echo "NEXT_PUBLIC_SIGNATURE_KEY=${{ secrets.NEXT_PUBLIC_SIGNATURE_KEY }}" >> .env
 
         # 5. Next.js 프로젝트 빌드
         - name: Build Next.js App
