@@ -9,6 +9,7 @@ import { useAuthorCheck } from 'app/hooks/useAuthorCheck';
 import stringCrypto from 'app/utils/stringCrypto';
 import AdminModal from '../components/AdminModal';
 import { useRouter } from 'next/navigation';
+import { useQuizList } from 'app/hooks/useQuizList';
 
 const Home = (): React.ReactNode => {
   // 페이지 이동을 위한 useRouter
@@ -18,12 +19,12 @@ const Home = (): React.ReactNode => {
   const [mounted, setMounted] = useState<boolean>(false);
 
   // 퀴즈 필터 상태를 관리하기 위한 useState
-  const [quizFilter1, setQuizFilter1] = useState<number>(1);
-  const [quizFilter2, setQuizFilter2] = useState<number>(1);
+  const [quizFilter1, setQuizFilter1] = useState<number>(1); // (1 : 최신순, 2 : 인기순)
+  const [quizFilter2, setQuizFilter2] = useState<number>(1); // (1 : 누적(인기), 2 : 실시간(인기))
 
   // 관리자 필터 상태를 관리하기 위한 useState
-  const [adminQuizFilter1, setAdminQuizFilter1] = useState<number>(2);
-  const [adminQuizFilter2, setAdminQuizFilter2] = useState<number>(1);
+  const [adminQuizFilter1, setAdminQuizFilter1] = useState<number>(2); // (1 : 신고순 ON, 2 : 신고순 OFF)
+  const [adminQuizFilter2, setAdminQuizFilter2] = useState<number>(1); // (1 : 전체 공개글, 2 : 공개 퀴즈, 3 : 비공개 퀴즈)
 
   // 메인 페이지에서 발생하는 모달 메시지를 관리하기 위한 useState
   const [modalMsg, setModalMsg] = useState<string>('');
@@ -43,6 +44,16 @@ const Home = (): React.ReactNode => {
     isAuthorCheckError,
     authorCheckError,
   } = useAuthorCheck();
+
+  // 퀴즈 목록 불러오기 관련 useQuery
+  const {
+    quizListData,
+    quizListRefetch,
+    isQuizListLoading,
+    isQuizListSuccess,
+    isQuizListError,
+    quizListError,
+  } = useQuizList(quizFilter1, quizFilter2, adminQuizFilter1, adminQuizFilter2);
 
   // 관리자 모달 창을 열기 위한 핸들러 함수
   const adminModalOpenHandler = (): void => {
@@ -66,6 +77,8 @@ const Home = (): React.ReactNode => {
   // 최초 회원정보 페이지 마운트 과정을 관리하기 위한 useEffect
   useEffect(() => {
     setMounted(true);
+
+    // 테스트 코드 (삭제 예정)
 
     // 관리자 로그인 상태라면 토큰 검증
     if (localStorage.getItem('user')?.split(':')[1] === stringCrypto('true')) {

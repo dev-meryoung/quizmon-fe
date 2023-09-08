@@ -41,7 +41,15 @@ interface ApiClient {
   ) => Promise<any>;
   checkNewQuiz: (quizId: string) => Promise<any>;
 
-  quizList: (options: string) => Promise<any>;
+  quizList: (
+    sort: number,
+    access?: number,
+    timeStamp?: string,
+    seqNum?: number,
+    searchWord?: string,
+    count?: number,
+    userOnly?: boolean
+  ) => Promise<any>;
 }
 
 // 클라이언트 API
@@ -293,7 +301,7 @@ const apiClient: ApiClient = {
   },
 
   // 퀴즈 목록 불러오기 API
-  quizList(options) {
+  quizList(sort, access?, timeStamp?, seqNum?, searchWord?, count?, userOnly?) {
     const method: string = 'GET';
     const url: string = `/api/quiz/list`;
     const headers = {
@@ -301,12 +309,33 @@ const apiClient: ApiClient = {
       Authorization: localStorage.getItem('jwt'),
     };
 
+    // 쿼리 스트링에 사용되는 string 값
+    let querys: string = `sort=${sort}`;
+
+    if (access) {
+      querys += `?access=${access}`;
+    }
+    if (timeStamp) {
+      querys += `?timeStamp=${timeStamp}`;
+    }
+    if (seqNum) {
+      querys += `?seqNum=${seqNum}`;
+    }
+    if (searchWord) {
+      querys += `?searchWord=${searchWord}`;
+    }
+    if (count) {
+      querys += `?count=${count}`;
+    }
+    if (userOnly) {
+      querys += `?userOnly=${userOnly}`;
+    }
+
     return axios
-      .get(`${this.baseUrl}${url}?${options}`, {
+      .get(`${this.baseUrl}${url}?${querys}`, {
         headers,
       })
       .then((res) => {
-        console.log(res.data.result);
         return res.data;
       });
   },

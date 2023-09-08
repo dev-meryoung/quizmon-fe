@@ -95,7 +95,6 @@ export const useNewQuiz = (
               async () =>
                 await apiClient.checkNewQuiz(quizId).then((data) => {
                   if (data.code === 200) {
-                    apiClient.quizList('sort=1');
                   }
                 })
             );
