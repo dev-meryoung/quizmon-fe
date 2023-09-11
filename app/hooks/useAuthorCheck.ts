@@ -23,7 +23,6 @@ export const useAuthorCheck = (): {
       apiClient
         .authorCheck()
         .then((data) => {
-          console.log(data.result);
           return data.result;
         })
         .catch((error) => console.log(error.response.data.message)),

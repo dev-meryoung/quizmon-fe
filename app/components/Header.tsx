@@ -88,8 +88,7 @@ const Header = (): React.ReactNode => {
           title="퀴즈몬"
           priority={true}
           onClick={() => {
-            router.push('/');
-            router.refresh();
+            location.href = '/';
           }}
         />
       </div>

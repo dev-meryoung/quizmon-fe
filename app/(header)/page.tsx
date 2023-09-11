@@ -11,6 +11,19 @@ import AdminModal from '../components/AdminModal';
 import { useRouter } from 'next/navigation';
 import { useQuizList } from 'app/hooks/useQuizList';
 
+export interface QuizListArray {
+  comment: string;
+  limitTime: number;
+  playCount: number;
+  quizId: string;
+  reportCount: number;
+  thumbnailUrl: string;
+  timeStamp: string;
+  title: string;
+  type: string;
+  urlId: string;
+}
+
 const Home = (): React.ReactNode => {
   // 페이지 이동을 위한 useRouter
   const router = useRouter();
@@ -24,7 +37,10 @@ const Home = (): React.ReactNode => {
 
   // 관리자 필터 상태를 관리하기 위한 useState
   const [adminQuizFilter1, setAdminQuizFilter1] = useState<number>(2); // (1 : 신고순 ON, 2 : 신고순 OFF)
-  const [adminQuizFilter2, setAdminQuizFilter2] = useState<number>(1); // (1 : 전체 공개글, 2 : 공개 퀴즈, 3 : 비공개 퀴즈)
+  const [adminQuizFilter2, setAdminQuizFilter2] = useState<number>(2); // (1 : 전체 공개글, 2 : 공개 퀴즈, 3 : 비공개 퀴즈)
+
+  // 불러온 퀴즈 목록 데이터를 관리하기 위한 useState
+  const [quizListArray, setQuizListArray] = useState<QuizListArray[]>([]);
 
   // 메인 페이지에서 발생하는 모달 메시지를 관리하기 위한 useState
   const [modalMsg, setModalMsg] = useState<string>('');
@@ -78,13 +94,20 @@ const Home = (): React.ReactNode => {
   useEffect(() => {
     setMounted(true);
 
-    // 테스트 코드 (삭제 예정)
+    quizListRefetch();
 
     // 관리자 로그인 상태라면 토큰 검증
     if (localStorage.getItem('user')?.split(':')[1] === stringCrypto('true')) {
       authorRefetch();
     }
-  }, [authorRefetch]);
+  }, [authorRefetch, quizListRefetch]);
+
+  // 퀴즈 목록 불러오기 시 일어나는 과정을 관리하기 위한 useEffect
+  useEffect(() => {
+    if (isQuizListSuccess) {
+      setQuizListArray(quizListData.quizArray);
+    }
+  }, [isQuizListSuccess, quizListData]);
 
   // 퀴즈 필터 정렬 시 일어나는 과정을 관리하기 위한 useEffect
   useEffect(() => {
@@ -104,7 +127,7 @@ const Home = (): React.ReactNode => {
 
   return (
     <>
-      {isAuthorCheckLoading ? <LoadingSpinner /> : ''}
+      {isAuthorCheckLoading || isQuizListLoading ? <LoadingSpinner /> : ''}
       <main className={styles.container}>
         <div className={styles.contents}>
           <div className={styles.filterMore}>
@@ -181,19 +204,9 @@ const Home = (): React.ReactNode => {
           </div>
 
           <div className={styles.quizList}>
-            <QuizCard />
-            <QuizCard />
-            <QuizCard />
-            <QuizCard />
-            <QuizCard />
-            <QuizCard />
-            <QuizCard />
-            <QuizCard />
-            <QuizCard />
-            <QuizCard />
-            <QuizCard />
-            <QuizCard />
-            <QuizCard />
+            {quizListArray.map((data) => {
+              return <QuizCard key={data.quizId} data={data} />;
+            })}
           </div>
         </div>
       </main>

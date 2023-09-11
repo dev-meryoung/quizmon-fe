@@ -7,13 +7,27 @@ export const useQuizList = (
   sort2: number,
   sort3: number,
   access?: number,
-  timeStamp?: string,
-  seqNum?: number,
   searchWord?: string,
+  timeStamp?: string,
+  userOnly?: boolean,
   count?: number,
-  userOnly?: boolean
+  seqNum?: number
 ): {
-  quizListData: { id: string; valid: boolean; admin: boolean };
+  quizListData: {
+    quizArray: {
+      comment: string;
+      limitTime: number;
+      playCount: number;
+      quizId: string;
+      reportCount: number;
+      thumbnailUrl: string;
+      timeStamp: string;
+      title: string;
+      type: string;
+      urlId: string;
+    }[];
+    quizCount: number;
+  };
   quizListRefetch: () => Promise<QueryObserverResult<any, unknown>>;
   isQuizListLoading: boolean;
   isQuizListSuccess: boolean;
@@ -44,16 +58,7 @@ export const useQuizList = (
     ['quizList'],
     () =>
       apiClient
-        .quizList(
-          sort,
-          type,
-          access,
-          timeStamp,
-          seqNum,
-          searchWord,
-          count,
-          userOnly
-        )
+        .quizList(sort, searchWord, timeStamp, access, userOnly, count, seqNum)
         .then((data) => {
           console.log(data.result);
           return data.result;

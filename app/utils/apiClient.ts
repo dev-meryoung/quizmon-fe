@@ -43,12 +43,12 @@ interface ApiClient {
 
   quizList: (
     sort: number,
-    access?: number,
-    timeStamp?: string,
-    seqNum?: number,
     searchWord?: string,
+    timeStamp?: string,
+    access?: number,
+    userOnly?: boolean,
     count?: number,
-    userOnly?: boolean
+    seqNum?: number
   ) => Promise<any>;
 }
 
@@ -301,7 +301,7 @@ const apiClient: ApiClient = {
   },
 
   // 퀴즈 목록 불러오기 API
-  quizList(sort, access?, timeStamp?, seqNum?, searchWord?, count?, userOnly?) {
+  quizList(sort, searchWord?, timeStamp?, access?, userOnly?, count?, seqNum?) {
     const method: string = 'GET';
     const url: string = `/api/quiz/list`;
     const headers = {
@@ -312,23 +312,40 @@ const apiClient: ApiClient = {
     // 쿼리 스트링에 사용되는 string 값
     let querys: string = `sort=${sort}`;
 
-    if (access) {
-      querys += `?access=${access}`;
-    }
-    if (timeStamp) {
-      querys += `?timeStamp=${timeStamp}`;
-    }
-    if (seqNum) {
-      querys += `?seqNum=${seqNum}`;
-    }
+    // 검색어
     if (searchWord) {
-      querys += `?searchWord=${searchWord}`;
+      querys += `&searchWord=${searchWord}`;
     }
-    if (count) {
-      querys += `?count=${count}`;
+
+    // 최종 퀴즈 업데이트 시간
+    if (timeStamp) {
+      querys += `&timeStamp=${timeStamp}`;
     }
+
+    // 퀴즈 공개 여부 (기본값 : 공개)
+    if (access !== 2) {
+      // 전체
+      if (access === 1) {
+        querys += `&access=2`;
+        // 비공개
+      } else if (access === 3) {
+        querys += `&access=1`;
+      }
+    }
+
+    // 로그인한 사용자가 등록한 퀴즈만 보기 여부
     if (userOnly) {
-      querys += `?userOnly=${userOnly}`;
+      querys += `&userOnly=${userOnly}`;
+    }
+
+    // 퀴즈 요청 개수
+    if (count) {
+      querys += `&count=${count}`;
+    }
+
+    // 시작 퀴즈 순번
+    if (seqNum) {
+      querys += `&seqNum=${seqNum}`;
     }
 
     return axios

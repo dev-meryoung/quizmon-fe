@@ -5,8 +5,13 @@ import Link from 'next/link';
 import { useState } from 'react';
 import styles from 'app/styles/quizCard.module.scss';
 import test from 'public/imgs/test.jpg';
+import { QuizListArray } from 'app/(header)/page';
 
-const QuizCard = (): React.ReactNode => {
+export interface Options {
+  data: QuizListArray;
+}
+
+const QuizCard = (props: Options): React.ReactNode => {
   // QuizCard 컴포넌트의 퀴즈 정보의 노출 상태를 관리하기 위한 useState
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
@@ -26,23 +31,30 @@ const QuizCard = (): React.ReactNode => {
       >
         <p className={styles.label}>설명</p>
         <div className={styles.comment}>
-          <p>설명</p>
+          <p>{props.data.comment}</p>
         </div>
         <p className={styles.label}>누적 플레이</p>
         <div className={styles.playCount}>
-          <p>1</p>
+          <p>{props.data.playCount}</p>
         </div>
       </div>
       <div className={styles.thumbnail}>
-        <Image className={styles.thumbnail_img} src={test} alt="이미지" />
+        <Image
+          className={styles.thumbnail_img}
+          src={props.data.thumbnailUrl}
+          width={500}
+          height={500}
+          alt="이미지"
+          priority
+        />
       </div>
       <div className={styles.quizInfo}>
-        <p className={styles.title}>퀴즈 타이틀</p>
+        <p className={styles.title}>{props.data.title}</p>
       </div>
       <div className={styles.btns}>
         <Link
           className={styles.playBtn}
-          href={`/quiz/${'url'}`}
+          href={`/quiz/${props.data.urlId}`}
           target="_blank"
         >
           <svg
