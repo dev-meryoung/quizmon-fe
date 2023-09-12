@@ -40,6 +40,7 @@
     height: 65%;
     overflow: hidden;
     .thumbnail_img {
+      width: 100%;
       height: 100%;
       background-color: v.$main-deep-gray;
       object-fit: contain;

@@ -69,7 +69,7 @@ const Home = (): React.ReactNode => {
     isQuizListSuccess,
     isQuizListError,
     quizListError,
-  } = useQuizList(quizFilter1, quizFilter2, adminQuizFilter1, adminQuizFilter2);
+  } = useQuizList();
 
   // 관리자 모달 창을 열기 위한 핸들러 함수
   const adminModalOpenHandler = (): void => {
@@ -93,8 +93,6 @@ const Home = (): React.ReactNode => {
   // 최초 회원정보 페이지 마운트 과정을 관리하기 위한 useEffect
   useEffect(() => {
     setMounted(true);
-
-    quizListRefetch();
 
     // 관리자 로그인 상태라면 토큰 검증
     if (localStorage.getItem('user')?.split(':')[1] === stringCrypto('true')) {
@@ -124,6 +122,13 @@ const Home = (): React.ReactNode => {
       setQuizFilter1(1);
     }
   }, [adminQuizFilter1]);
+
+  useEffect(() => {
+    if (quizFilter1 === 1) {
+    } else if (quizFilter1 === 2) {
+      quizFilter2;
+    }
+  }, [quizFilter1, quizFilter2, adminQuizFilter1, adminQuizFilter2]);
 
   return (
     <>
@@ -204,9 +209,11 @@ const Home = (): React.ReactNode => {
           </div>
 
           <div className={styles.quizList}>
-            {quizListArray.map((data) => {
-              return <QuizCard key={data.quizId} data={data} />;
-            })}
+            {quizListData
+              ? quizListData.quizArray.map((data) => {
+                  return <QuizCard key={data.quizId} data={data} />;
+                })
+              : ''}
           </div>
         </div>
       </main>

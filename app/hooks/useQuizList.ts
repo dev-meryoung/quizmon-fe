@@ -3,11 +3,11 @@ import apiClient from 'app/utils/apiClient';
 
 // 퀴즈 목록을 불러오는 useQuery
 export const useQuizList = (
-  sort1: number,
-  sort2: number,
-  sort3: number,
-  access?: number,
   searchWord?: string,
+  sort1?: number,
+  sort2?: number,
+  sort3?: number,
+  access?: number,
   timeStamp?: string,
   userOnly?: boolean,
   count?: number,
@@ -58,7 +58,7 @@ export const useQuizList = (
     ['quizList'],
     () =>
       apiClient
-        .quizList(sort, searchWord, timeStamp, access, userOnly, count, seqNum)
+        .quizList(1, searchWord, timeStamp, access, userOnly, count, seqNum)
         .then((data) => {
           console.log(data.result);
           return data.result;

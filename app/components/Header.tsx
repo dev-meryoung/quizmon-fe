@@ -5,11 +5,15 @@ import Image from 'next/image';
 import quizmonLogo from 'public/imgs/quizmon-logo.svg';
 import BlurBackground from './BlurBackgrond';
 import styles from 'app/styles/header.module.scss';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import apiClient from 'app/utils/apiClient';
+import { useQuizList } from 'app/hooks/useQuizList';
 
 const Header = (): React.ReactNode => {
+  // 페이지 이동을 위한 useRouter
+  const router = useRouter();
+
   // 헤더 컴포넌트의 마운트 상태를 관리하기 위한 useState
   const [mounted, setMounted] = useState<boolean>(false);
 
@@ -19,8 +23,18 @@ const Header = (): React.ReactNode => {
   // 현재 웹 페이지의 내부 너비 값을 저장하기 위한 useState
   const [windowInnerWidth, setWindowInnerWidth] = useState<number>(0);
 
-  // 페이지 이동을 위한 useRouter
-  const router = useRouter();
+  // 검색창의 Input Dom 정보를 확인하기 위한 useRef
+  const keywordRef = useRef<HTMLInputElement>(null);
+
+  // 퀴즈 목록 불러오기 관련 useQuery
+  const {
+    quizListData,
+    quizListRefetch,
+    isQuizListLoading,
+    isQuizListSuccess,
+    isQuizListError,
+    quizListError,
+  } = useQuizList('테스트');
 
   // 컴포넌트가 처음 마운트 될 때 브라우저의 창 크기가 변경되는 이벤트 리스너를 추가하기 위한 useEffect
   useEffect(() => {
@@ -78,6 +92,12 @@ const Header = (): React.ReactNode => {
     setMobileSearchView(!mobileSearchView);
   };
 
+  // 검색창의 검색 버튼을 클릭했을 때 동작하는 핸들러 함수
+  const searchBtnHandler = (): void => {
+    router.push(`?keyword=${keywordRef.current?.value}`);
+    quizListRefetch();
+  };
+
   return (
     <header className={styles.wrapper}>
       <div className={styles.logo}>
@@ -98,12 +118,14 @@ const Header = (): React.ReactNode => {
             className={styles.search_text}
             type="text"
             spellCheck="false"
+            ref={keywordRef}
           />
           <svg
             className={styles.search_icon}
             xmlns="http://www.w3.org/2000/svg"
             height="1em"
             viewBox="0 0 512 512"
+            onClick={searchBtnHandler}
           >
             <title>검색</title>
             <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
@@ -115,12 +137,14 @@ const Header = (): React.ReactNode => {
             className={styles.search_text}
             type="text"
             spellCheck="false"
+            ref={keywordRef}
           />
           <svg
             className={styles.search_icon}
             xmlns="http://www.w3.org/2000/svg"
             height="1em"
             viewBox="0 0 512 512"
+            onClick={searchBtnHandler}
           >
             <title>검색</title>
             <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />

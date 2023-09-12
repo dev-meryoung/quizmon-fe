@@ -43,7 +43,7 @@ interface ApiClient {
 
   quizList: (
     sort: number,
-    searchWord?: string,
+    searchWord?: string | null,
     timeStamp?: string,
     access?: number,
     userOnly?: boolean,

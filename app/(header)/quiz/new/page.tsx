@@ -64,13 +64,21 @@ const New = (): React.ReactNode => {
   // 최초 퀴즈 생성 페이지 마운트 과정을 관리하기 위한 useEffect
   useEffect(() => {
     setMounted(true);
+
     if (localStorage.getItem('jwt') === null) {
       router.push('/login');
     }
 
     // 새로고침 관련 재확인 메시지 표시
-    window.onbeforeunload = function () {
+    const unloadHandler = function () {
       return '사이트를 새로고침하시겠습니까?';
+    };
+
+    window.onbeforeunload = unloadHandler;
+
+    // useEffect에서 반환한 함수를 사용하여 컴포넌트가 언마운트될 때 이벤트 핸들러를 제거
+    return () => {
+      window.onbeforeunload = null;
     };
   }, [router]);
 
