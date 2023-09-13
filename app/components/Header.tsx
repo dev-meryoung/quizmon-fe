@@ -5,7 +5,7 @@ import Image from 'next/image';
 import quizmonLogo from 'public/imgs/quizmon-logo.svg';
 import BlurBackground from './BlurBackgrond';
 import styles from 'app/styles/header.module.scss';
-import { useEffect, useRef, useState } from 'react';
+import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import apiClient from 'app/utils/apiClient';
 import { useQuizList } from 'app/hooks/useQuizList';
@@ -17,24 +17,14 @@ const Header = (): React.ReactNode => {
   // 헤더 컴포넌트의 마운트 상태를 관리하기 위한 useState
   const [mounted, setMounted] = useState<boolean>(false);
 
+  // 검색창의 검색어를 관리하기 위한 useState
+  const [keyword, setKeyword] = useState<string>('');
+
   // 반응형(모바일) 웹에서 search 컴포넌트의 노출 여부를 관리하기 위한 useState
   const [mobileSearchView, setMobileSearchView] = useState<boolean>(false);
 
   // 현재 웹 페이지의 내부 너비 값을 저장하기 위한 useState
   const [windowInnerWidth, setWindowInnerWidth] = useState<number>(0);
-
-  // 검색창의 Input Dom 정보를 확인하기 위한 useRef
-  const keywordRef = useRef<HTMLInputElement>(null);
-
-  // 퀴즈 목록 불러오기 관련 useQuery
-  const {
-    quizListData,
-    quizListRefetch,
-    isQuizListLoading,
-    isQuizListSuccess,
-    isQuizListError,
-    quizListError,
-  } = useQuizList('테스트');
 
   // 컴포넌트가 처음 마운트 될 때 브라우저의 창 크기가 변경되는 이벤트 리스너를 추가하기 위한 useEffect
   useEffect(() => {
@@ -87,6 +77,12 @@ const Header = (): React.ReactNode => {
     }
   };
 
+  // 검색창의 입력값 변화를 useState에 적용하기 위한 onChange 함수
+  const onChangeKeyword = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const nowKeyword: string = e.target.value;
+    setKeyword(nowKeyword);
+  };
+
   // 반응형(모바일) 웹에서 search 컴포넌트의 노출 여부 상태를 변경하는 핸들러 함수
   const mobileSearchViewHandler = (): void => {
     setMobileSearchView(!mobileSearchView);
@@ -94,8 +90,19 @@ const Header = (): React.ReactNode => {
 
   // 검색창의 검색 버튼을 클릭했을 때 동작하는 핸들러 함수
   const searchBtnHandler = (): void => {
-    router.push(`?keyword=${keywordRef.current?.value}`);
-    quizListRefetch();
+    if (keyword !== '') {
+      router.push(`?keyword=${keyword}`);
+      router.refresh();
+    } else {
+      router.push(`/`);
+    }
+  };
+
+  // 엔터 키 클릭 이벤트를 감지하고 검색을 실행하는 onKeyDown 함수
+  const onEnterKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      searchBtnHandler();
+    }
   };
 
   return (
@@ -118,7 +125,9 @@ const Header = (): React.ReactNode => {
             className={styles.search_text}
             type="text"
             spellCheck="false"
-            ref={keywordRef}
+            value={keyword}
+            onChange={onChangeKeyword}
+            onKeyDown={onEnterKeyDown}
           />
           <svg
             className={styles.search_icon}
@@ -137,7 +146,9 @@ const Header = (): React.ReactNode => {
             className={styles.search_text}
             type="text"
             spellCheck="false"
-            ref={keywordRef}
+            value={keyword}
+            onChange={onChangeKeyword}
+            onKeyDown={onEnterKeyDown}
           />
           <svg
             className={styles.search_icon}

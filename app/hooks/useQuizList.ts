@@ -3,12 +3,10 @@ import apiClient from 'app/utils/apiClient';
 
 // 퀴즈 목록을 불러오는 useQuery
 export const useQuizList = (
-  searchWord?: string,
-  sort1?: number,
-  sort2?: number,
-  sort3?: number,
-  access?: number,
+  searchWord?: string | null,
+  urlSort?: string | null,
   timeStamp?: string,
+  urlAccess?: string,
   userOnly?: boolean,
   count?: number,
   seqNum?: number
@@ -35,16 +33,27 @@ export const useQuizList = (
   quizListError: any;
 } => {
   // API 타입에 맞춰 정렬 방식 값 수정
-  let sort = 0;
+  let sort: number = 0;
 
-  if (sort3 === 1) {
+  if (urlSort === 'report') {
     sort = 4;
-  } else if (sort1 === 1) {
-    sort = 1;
-  } else if (sort1 === 2 && sort2 === 1) {
+  } else if (urlSort === 'all-hot') {
     sort = 3;
-  } else if (sort1 === 2 && sort2 === 2) {
+  } else if (urlSort === 'realtime-hot') {
     sort = 2;
+  } else {
+    sort = 1;
+  }
+
+  // API 타입에 맞춰 접근 종류 값 수정
+  let access: number = 0;
+
+  if (urlAccess === 'all') {
+    access = 2;
+  } else if (urlAccess === 'private') {
+    access = 1;
+  } else {
+    access = 0;
   }
 
   const {
@@ -60,7 +69,6 @@ export const useQuizList = (
       apiClient
         .quizList(1, searchWord, timeStamp, access, userOnly, count, seqNum)
         .then((data) => {
-          console.log(data.result);
           return data.result;
         })
         .catch((error) => console.log(error.response.data.message)),

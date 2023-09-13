@@ -8,7 +8,7 @@ import LoadingSpinner from 'app/components/LoadingSpinner';
 import { useAuthorCheck } from 'app/hooks/useAuthorCheck';
 import stringCrypto from 'app/utils/stringCrypto';
 import AdminModal from '../components/AdminModal';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuizList } from 'app/hooks/useQuizList';
 
 export interface QuizListArray {
@@ -27,6 +27,9 @@ export interface QuizListArray {
 const Home = (): React.ReactNode => {
   // 페이지 이동을 위한 useRouter
   const router = useRouter();
+
+  // 쿼리 파라미터 값을 사용하기 위한 useSearchParams
+  const params = useSearchParams();
 
   // 메인 페이지의 마운트 상태를 관리하기 위한 useState
   const [mounted, setMounted] = useState<boolean>(false);
@@ -69,7 +72,7 @@ const Home = (): React.ReactNode => {
     isQuizListSuccess,
     isQuizListError,
     quizListError,
-  } = useQuizList();
+  } = useQuizList(params.get('keyword'), params.get('sort'));
 
   // 관리자 모달 창을 열기 위한 핸들러 함수
   const adminModalOpenHandler = (): void => {
@@ -94,11 +97,13 @@ const Home = (): React.ReactNode => {
   useEffect(() => {
     setMounted(true);
 
+    quizListRefetch();
+
     // 관리자 로그인 상태라면 토큰 검증
     if (localStorage.getItem('user')?.split(':')[1] === stringCrypto('true')) {
       authorRefetch();
     }
-  }, [authorRefetch, quizListRefetch]);
+  }, [authorRefetch, quizListRefetch, params]);
 
   // 퀴즈 목록 불러오기 시 일어나는 과정을 관리하기 위한 useEffect
   useEffect(() => {
@@ -129,6 +134,10 @@ const Home = (): React.ReactNode => {
       quizFilter2;
     }
   }, [quizFilter1, quizFilter2, adminQuizFilter1, adminQuizFilter2]);
+
+  useEffect(() => {
+    console.log(quizListData);
+  }, [quizListData]);
 
   return (
     <>
