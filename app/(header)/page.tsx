@@ -10,6 +10,7 @@ import stringCrypto from 'app/utils/stringCrypto';
 import AdminModal from '../components/AdminModal';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuizList } from 'app/hooks/useQuizList';
+import setURLQueryString from '../utils/setURLQueryString';
 
 export interface QuizListArray {
   comment: string;
@@ -130,10 +131,15 @@ const Home = (): React.ReactNode => {
 
   useEffect(() => {
     if (quizFilter1 === 1) {
-    } else if (quizFilter1 === 2) {
-      quizFilter2;
+      setURLQueryString(router, 'sort', 'new');
+    } else if (quizFilter1 === 2 && quizFilter2 === 1) {
+      setURLQueryString(router, 'sort', 'all-hot');
+    } else if (quizFilter1 === 2 && quizFilter2 === 2) {
+      setURLQueryString(router, 'sort', 'realtime-hot');
+    } else if (adminQuizFilter1 === 1) {
+      setURLQueryString(router, 'sort', 'report');
     }
-  }, [quizFilter1, quizFilter2, adminQuizFilter1, adminQuizFilter2]);
+  }, [quizFilter1, quizFilter2, adminQuizFilter1, adminQuizFilter2, router]);
 
   useEffect(() => {
     console.log(quizListData);
