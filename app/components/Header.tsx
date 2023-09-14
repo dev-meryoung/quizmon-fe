@@ -6,30 +6,27 @@ import quizmonLogo from 'public/imgs/quizmon-logo.svg';
 import BlurBackground from './BlurBackgrond';
 import styles from 'app/styles/header.module.scss';
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import apiClient from 'app/utils/apiClient';
 
 const Header = (): React.ReactNode => {
   // 페이지 이동을 위한 useRouter
   const router = useRouter();
 
-  // 현재 URL의 query string 값
-  const params = new URLSearchParams(window.location.search);
-
-  // 헤더 컴포넌트의 마운트 상태를 관리하기 위한 useState
-  const [mounted, setMounted] = useState<boolean>(false);
+  // 현재 URL의 query string 값을 가져오기 위한 useSearchParams
+  const params = useSearchParams();
 
   // 검색창의 검색어를 관리하기 위한 useState
   const [keyword, setKeyword] = useState<string>(params.get('keyword') || '');
+
+  // 헤더 컴포넌트의 마운트 상태를 관리하기 위한 useState
+  const [mounted, setMounted] = useState<boolean>(false);
 
   // 반응형(모바일) 웹에서 search 컴포넌트의 노출 여부를 관리하기 위한 useState
   const [mobileSearchView, setMobileSearchView] = useState<boolean>(false);
 
   // 현재 웹 페이지의 내부 너비 값을 저장하기 위한 useState
   const [windowInnerWidth, setWindowInnerWidth] = useState<number>(0);
-
-  // 검색창의 input DOM 정보를 확인하기 위한 useRef
-  const searchKeywordDom = useRef<HTMLInputElement>(null);
 
   // 컴포넌트가 처음 마운트 될 때 브라우저의 창 크기가 변경되는 이벤트 리스너를 추가하기 위한 useEffect
   useEffect(() => {
