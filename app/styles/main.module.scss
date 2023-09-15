@@ -72,6 +72,18 @@
       display: flex;
       justify-content: flex-start;
       flex-wrap: wrap;
+
+      .noneQuiz {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+
+        .noneQuiz_img {
+          display: flex;
+          width: 100%;
+        }
+      }
     }
   }
 

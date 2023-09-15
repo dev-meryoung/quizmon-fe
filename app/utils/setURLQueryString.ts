@@ -10,9 +10,17 @@ const setURLQueryString = (
   const params = new URLSearchParams(window.location.search);
 
   if (params.has(query)) {
-    params.set(query, data);
+    if (query === 'access' && data === 'default') {
+      params.delete('access');
+    } else {
+      params.set(query, data);
+    }
   } else {
-    params.append(query, data);
+    if (query === 'access' && data === 'default') {
+      params.delete('access');
+    } else {
+      params.append(query, data);
+    }
   }
 
   const newQueryString = params.toString();

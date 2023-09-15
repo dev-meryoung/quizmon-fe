@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import styles from 'app/styles/quizCard.module.scss';
-import test from 'public/imgs/test.jpg';
 import { QuizListArray } from 'app/(header)/page';
 
 export interface Options {

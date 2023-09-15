@@ -40,12 +40,11 @@ interface ApiClient {
     thumbnailUrl: string
   ) => Promise<any>;
   checkNewQuiz: (quizId: string) => Promise<any>;
-
   quizList: (
     sort: number,
     searchWord?: string | null,
-    timeStamp?: string,
-    access?: number,
+    timeStamp?: string | null,
+    access?: number | null,
     userOnly?: boolean,
     count?: number,
     seqNum?: number
@@ -323,12 +322,12 @@ const apiClient: ApiClient = {
     }
 
     // 퀴즈 공개 여부 (기본값 : 공개)
-    if (access !== 2) {
+    if (access !== 0) {
       // 전체
-      if (access === 1) {
+      if (access === 2) {
         querys += `&access=2`;
         // 비공개
-      } else if (access === 3) {
+      } else if (access === 1) {
         querys += `&access=1`;
       }
     }

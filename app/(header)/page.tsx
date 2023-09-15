@@ -7,10 +7,12 @@ import QuizCard from 'app/components/QuizCard';
 import LoadingSpinner from 'app/components/LoadingSpinner';
 import { useAuthorCheck } from 'app/hooks/useAuthorCheck';
 import stringCrypto from 'app/utils/stringCrypto';
-import AdminModal from '../components/AdminModal';
+import AdminModal from 'app/components/AdminModal';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuizList } from 'app/hooks/useQuizList';
-import setURLQueryString from '../utils/setURLQueryString';
+import setURLQueryString from 'app/utils/setURLQueryString';
+import Image from 'next/image';
+import noneQuizImg from 'public/imgs/none-quiz.svg';
 
 export interface QuizListArray {
   comment: string;
@@ -43,6 +45,12 @@ const Home = (): React.ReactNode => {
   const [adminQuizFilter1, setAdminQuizFilter1] = useState<number>(2); // (1 : 신고순 ON, 2 : 신고순 OFF)
   const [adminQuizFilter2, setAdminQuizFilter2] = useState<number>(2); // (1 : 전체 공개글, 2 : 공개 퀴즈, 3 : 비공개 퀴즈)
 
+  // 퀴즈 목록 데이터 요청 여부를 관리하기 위한 useState
+  const [queAPI, setQueAPI] = useState<boolean>(false);
+
+  // 다음 퀴즈 목록 데이터 요청 시 필요한 가장 마지막 퀴즈의 생성 시간을 관리하기 위한 useState
+  const [timeStamp, setTimeStamp] = useState<string | null>(null);
+
   // 불러온 퀴즈 목록 데이터를 관리하기 위한 useState
   const [quizListArray, setQuizListArray] = useState<QuizListArray[]>([]);
 
@@ -73,7 +81,26 @@ const Home = (): React.ReactNode => {
     isQuizListSuccess,
     isQuizListError,
     quizListError,
-  } = useQuizList(params.get('keyword'), params.get('sort'));
+  } = useQuizList(
+    params.get('keyword'),
+    params.get('sort'),
+    timeStamp,
+    params.get('access')
+  );
+
+  // 스크롤 이벤트가 발생했을 때 실행할 핸들러 함수
+  const scrollHandler = (): void => {
+    const windowHeight = window.innerHeight;
+    const scrollY = window.scrollY;
+    const bodyHeight = document.body.offsetHeight;
+
+    // 현재 스크롤 위치 + 창의 높이 >= 문서의 전체 높이일 때 최하단에 도착
+    if (scrollY + windowHeight >= bodyHeight) {
+      setQueAPI(true);
+    } else {
+      setQueAPI(false);
+    }
+  };
 
   // 관리자 모달 창을 열기 위한 핸들러 함수
   const adminModalOpenHandler = (): void => {
@@ -98,18 +125,37 @@ const Home = (): React.ReactNode => {
   useEffect(() => {
     setMounted(true);
 
+    // 스크롤 이벤트 리스너 등록
+    window.addEventListener('scroll', scrollHandler);
+
+    // 최초 퀴즈 목록 불러오기
     quizListRefetch();
 
     // 관리자 로그인 상태라면 토큰 검증
     if (localStorage.getItem('user')?.split(':')[1] === stringCrypto('true')) {
       authorRefetch();
     }
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너 해제
+    return () => {
+      window.removeEventListener('scroll', scrollHandler);
+    };
   }, [authorRefetch, quizListRefetch, params]);
+
+  // 페이지 스크롤이 최하단에 도착했을 때 퀴즈 목록을 불러오기 위한 useEffect
+  useEffect(() => {
+    if (queAPI) {
+      quizListRefetch();
+    }
+  }, [queAPI, quizListRefetch]);
 
   // 퀴즈 목록 불러오기 시 일어나는 과정을 관리하기 위한 useEffect
   useEffect(() => {
     if (isQuizListSuccess) {
-      setQuizListArray(quizListData.quizArray);
+      setQuizListArray((quizListArray) => [
+        ...quizListArray,
+        ...quizListData.quizArray,
+      ]);
     }
   }, [isQuizListSuccess, quizListData]);
 
@@ -129,7 +175,10 @@ const Home = (): React.ReactNode => {
     }
   }, [adminQuizFilter1]);
 
+  // 퀴즈 필터(sort 속성) 정렬 시 일어나는 과정을 관리하기 위한 useEffect
   useEffect(() => {
+    setTimeStamp(null);
+
     if (quizFilter1 === 1) {
       setURLQueryString(router, 'sort', 'new');
     } else if (quizFilter1 === 2 && quizFilter2 === 1) {
@@ -139,10 +188,29 @@ const Home = (): React.ReactNode => {
     } else if (adminQuizFilter1 === 1) {
       setURLQueryString(router, 'sort', 'report');
     }
-  }, [quizFilter1, quizFilter2, adminQuizFilter1, adminQuizFilter2, router]);
+  }, [quizFilter1, quizFilter2, adminQuizFilter1, router]);
+
+  // 퀴즈 필터(access 속성) 정렬 시 일어나는 과정을 관리하기 위한 useEffect
+  useEffect(() => {
+    setTimeStamp(null);
+
+    if (adminQuizFilter2 === 1) {
+      setURLQueryString(router, 'access', 'all');
+    } else if (adminQuizFilter2 === 2) {
+      setURLQueryString(router, 'access', 'default');
+    } else if (adminQuizFilter2 === 3) {
+      setURLQueryString(router, 'access', 'private');
+    }
+  }, [adminQuizFilter2, router]);
 
   useEffect(() => {
     console.log(quizListData);
+
+    if (quizListData && quizListData.quizCount === 20) {
+      const ts: string = quizListData.quizArray[19].timeStamp;
+
+      setTimeStamp(ts);
+    }
   }, [quizListData]);
 
   return (
@@ -224,11 +292,19 @@ const Home = (): React.ReactNode => {
           </div>
 
           <div className={styles.quizList}>
-            {quizListData
-              ? quizListData.quizArray.map((data) => {
-                  return <QuizCard key={data.quizId} data={data} />;
-                })
-              : ''}
+            {quizListArray && quizListArray.length > 0 ? (
+              quizListArray.map((data) => {
+                return <QuizCard key={data.quizId} data={data} />;
+              })
+            ) : (
+              <div className={styles.noneQuiz}>
+                <Image
+                  src={noneQuizImg}
+                  alt={'이미지'}
+                  className={styles.noneQuiz_img}
+                />
+              </div>
+            )}
           </div>
         </div>
       </main>
