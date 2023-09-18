@@ -38,8 +38,23 @@ const Home = (): React.ReactNode => {
   const [mounted, setMounted] = useState<boolean>(false);
 
   // 퀴즈 필터 상태를 관리하기 위한 useState
-  const [quizFilter1, setQuizFilter1] = useState<number>(1); // (1 : 최신순, 2 : 인기순)
-  const [quizFilter2, setQuizFilter2] = useState<number>(1); // (1 : 누적(인기), 2 : 실시간(인기))
+  const [quizFilter1, setQuizFilter1] = useState<number>(() => {
+    if (
+      params.get('sort') === 'all-hot' ||
+      params.get('sort') === 'realtime-hot'
+    ) {
+      return 2;
+    } else {
+      return 1;
+    }
+  }); // (1 : 최신순, 2 : 인기순)
+  const [quizFilter2, setQuizFilter2] = useState<number>(() => {
+    if (params.get('sort') === 'realtime-hot') {
+      return 2;
+    } else {
+      return 1;
+    }
+  }); // (1 : 누적(인기), 2 : 실시간(인기))
 
   // 관리자 필터 상태를 관리하기 위한 useState
   const [adminQuizFilter1, setAdminQuizFilter1] = useState<number>(2); // (1 : 신고순 ON, 2 : 신고순 OFF)
@@ -48,8 +63,11 @@ const Home = (): React.ReactNode => {
   // 퀴즈 목록 데이터 요청 여부를 관리하기 위한 useState
   const [queAPI, setQueAPI] = useState<boolean>(false);
 
-  // 다음 퀴즈 목록 데이터 요청 시 필요한 가장 마지막 퀴즈의 생성 시간을 관리하기 위한 useState
+  // 다음 퀴즈 목록 최신순 데이터 요청 시 필요한 가장 마지막 퀴즈의 생성 시간을 관리하기 위한 useState
   const [timeStamp, setTimeStamp] = useState<string | null>(null);
+
+  // 다음 퀴즈 목록 인기순 데이터 요청 시 필요한 가장 마지막 퀴즈의 순번을 관리하기 위한 useState
+  const [seqNum, setSeqNum] = useState<number>(0);
 
   // 불러온 퀴즈 목록 데이터를 관리하기 위한 useState
   const [quizListArray, setQuizListArray] = useState<QuizListArray[]>([]);
@@ -85,7 +103,8 @@ const Home = (): React.ReactNode => {
     params.get('keyword'),
     params.get('sort'),
     timeStamp,
-    params.get('access')
+    params.get('access'),
+    seqNum
   );
 
   // 스크롤 이벤트가 발생했을 때 실행할 핸들러 함수
@@ -145,6 +164,7 @@ const Home = (): React.ReactNode => {
   // 페이지 스크롤이 최하단에 도착했을 때 퀴즈 목록을 불러오기 위한 useEffect
   useEffect(() => {
     if (queAPI) {
+      console.log('!!!!!!!!!!!!!!');
       quizListRefetch();
     }
   }, [queAPI, quizListRefetch]);
@@ -170,21 +190,26 @@ const Home = (): React.ReactNode => {
   useEffect(() => {
     if (adminQuizFilter1 === 1) {
       setQuizFilter1(3);
-    } else if (adminQuizFilter1 === 2) {
+    } else if (adminQuizFilter1 === 2 && params.get('sort') === 'report') {
       setQuizFilter1(1);
     }
-  }, [adminQuizFilter1]);
+  }, [adminQuizFilter1, params]);
 
   // 퀴즈 필터(sort 속성) 정렬 시 일어나는 과정을 관리하기 위한 useEffect
   useEffect(() => {
     setTimeStamp(null);
+    setSeqNum(0);
+    setQuizListArray([]);
 
     if (quizFilter1 === 1) {
+      setQuizFilter2(1);
       setURLQueryString(router, 'sort', 'new');
-    } else if (quizFilter1 === 2 && quizFilter2 === 1) {
-      setURLQueryString(router, 'sort', 'all-hot');
-    } else if (quizFilter1 === 2 && quizFilter2 === 2) {
-      setURLQueryString(router, 'sort', 'realtime-hot');
+    } else if (quizFilter1 === 2) {
+      if (quizFilter2 === 1) {
+        setURLQueryString(router, 'sort', 'all-hot');
+      } else if (quizFilter2 === 2) {
+        setURLQueryString(router, 'sort', 'realtime-hot');
+      }
     } else if (adminQuizFilter1 === 1) {
       setURLQueryString(router, 'sort', 'report');
     }
@@ -193,6 +218,7 @@ const Home = (): React.ReactNode => {
   // 퀴즈 필터(access 속성) 정렬 시 일어나는 과정을 관리하기 위한 useEffect
   useEffect(() => {
     setTimeStamp(null);
+    setQuizListArray([]);
 
     if (adminQuizFilter2 === 1) {
       setURLQueryString(router, 'access', 'all');
@@ -204,12 +230,14 @@ const Home = (): React.ReactNode => {
   }, [adminQuizFilter2, router]);
 
   useEffect(() => {
-    console.log(quizListData);
-
     if (quizListData && quizListData.quizCount === 20) {
       const ts: string = quizListData.quizArray[19].timeStamp;
 
       setTimeStamp(ts);
+    }
+
+    if (quizListData && quizListData.quizArray.length !== 0) {
+      setSeqNum((seqNum) => seqNum + quizListData.quizArray.length + 1);
     }
   }, [quizListData]);
 
@@ -292,19 +320,11 @@ const Home = (): React.ReactNode => {
           </div>
 
           <div className={styles.quizList}>
-            {quizListArray && quizListArray.length > 0 ? (
-              quizListArray.map((data) => {
-                return <QuizCard key={data.quizId} data={data} />;
-              })
-            ) : (
-              <div className={styles.noneQuiz}>
-                <Image
-                  src={noneQuizImg}
-                  alt={'이미지'}
-                  className={styles.noneQuiz_img}
-                />
-              </div>
-            )}
+            {quizListArray.length > 0
+              ? quizListArray.map((data) => {
+                  return <QuizCard key={data.quizId} data={data} />;
+                })
+              : ''}
           </div>
         </div>
       </main>

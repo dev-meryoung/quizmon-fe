@@ -7,9 +7,9 @@ export const useQuizList = (
   sortOption?: string | null,
   timeStamp?: string | null,
   accessOption?: string | null,
+  seqNum?: number,
   userOnly?: boolean,
-  count?: number,
-  seqNum?: number
+  count?: number
 ): {
   quizListData: {
     quizArray: {
@@ -53,6 +53,8 @@ export const useQuizList = (
   } else if (accessOption === 'private') {
     access = 1;
   }
+
+  console.log(seqNum);
 
   const {
     data: quizListData,
