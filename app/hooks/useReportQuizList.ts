@@ -1,17 +1,16 @@
 import { QueryObserverResult, useQuery } from 'react-query';
 import apiClient from 'app/utils/apiClient';
 
-// 퀴즈 목록을 불러오는 useQuery
-export const useQuizList = (
+// 최신순 퀴즈 목록을 불러오는 useQuery
+export const useReportQuizList = (
   searchWord?: string | null,
   sortOption?: string | null,
   timeStamp?: string | null,
   accessOption?: string | null,
-  seqNum?: number,
   userOnly?: boolean,
   count?: number
 ): {
-  quizListData: {
+  reportQuizListData: {
     quizArray: {
       comment: string;
       limitTime: number;
@@ -26,11 +25,11 @@ export const useQuizList = (
     }[];
     quizCount: number;
   };
-  quizListRefetch: () => Promise<QueryObserverResult<any, unknown>>;
-  isQuizListLoading: boolean;
-  isQuizListSuccess: boolean;
-  isQuizListError: boolean;
-  quizListError: any;
+  reportQuizListRefetch: () => Promise<QueryObserverResult<any, unknown>>;
+  isReportQuizListLoading: boolean;
+  isReportQuizListSuccess: boolean;
+  isReportQuizListError: boolean;
+  reportQuizListError: any;
 } => {
   // API 타입에 맞춰 정렬 방식 값 수정
   let sort: number = 0;
@@ -54,20 +53,18 @@ export const useQuizList = (
     access = 1;
   }
 
-  console.log(seqNum);
-
   const {
-    data: quizListData,
-    refetch: quizListRefetch,
-    isLoading: isQuizListLoading,
-    isSuccess: isQuizListSuccess,
-    isError: isQuizListError,
-    error: quizListError,
+    data: reportQuizListData,
+    refetch: reportQuizListRefetch,
+    isLoading: isReportQuizListLoading,
+    isSuccess: isReportQuizListSuccess,
+    isError: isReportQuizListError,
+    error: reportQuizListError,
   } = useQuery(
-    ['quizList'],
+    ['reportQuizList'],
     () =>
       apiClient
-        .quizList(sort, searchWord, timeStamp, access, userOnly, count, seqNum)
+        .newQuizList(sort, searchWord, timeStamp, access, userOnly, count)
         .then((data) => {
           return data.result;
         })
@@ -76,11 +73,11 @@ export const useQuizList = (
   );
 
   return {
-    quizListData,
-    quizListRefetch,
-    isQuizListLoading,
-    isQuizListSuccess,
-    isQuizListError,
-    quizListError,
+    reportQuizListData,
+    reportQuizListRefetch,
+    isReportQuizListLoading,
+    isReportQuizListSuccess,
+    isReportQuizListError,
+    reportQuizListError,
   };
 };

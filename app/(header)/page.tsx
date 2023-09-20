@@ -9,10 +9,13 @@ import { useAuthorCheck } from 'app/hooks/useAuthorCheck';
 import stringCrypto from 'app/utils/stringCrypto';
 import AdminModal from 'app/components/AdminModal';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useQuizList } from 'app/hooks/useQuizList';
+import { useNewQuizList } from 'app/hooks/useNewQuizList';
+import { useAllHotQuizList } from 'app/hooks/useAllHotQuizList';
+import { useRTHotQuizList } from 'app/hooks/useRTHotQuizList';
 import setURLQueryString from 'app/utils/setURLQueryString';
 import Image from 'next/image';
 import noneQuizImg from 'public/imgs/none-quiz.svg';
+import { useReportQuizList } from 'app/hooks/useReportQuizList';
 
 export interface QuizListArray {
   comment: string;
@@ -91,20 +94,64 @@ const Home = (): React.ReactNode => {
     authorCheckError,
   } = useAuthorCheck();
 
-  // 퀴즈 목록 불러오기 관련 useQuery
+  // 최신순 퀴즈 목록 불러오기 관련 useQuery
   const {
-    quizListData,
-    quizListRefetch,
-    isQuizListLoading,
-    isQuizListSuccess,
-    isQuizListError,
-    quizListError,
-  } = useQuizList(
+    newQuizListData,
+    newQuizListRefetch,
+    isNewQuizListLoading,
+    isNewQuizListSuccess,
+    isNewQuizListError,
+    newQuizListError,
+  } = useNewQuizList(
     params.get('keyword'),
     params.get('sort'),
     timeStamp,
-    params.get('access'),
-    seqNum
+    params.get('access')
+  );
+
+  // 누적 인기순 퀴즈 목록 불러오기 관련 useQuery
+  const {
+    allHotQuizListData,
+    allHotQuizListRefetch,
+    isAllHotQuizListLoading,
+    isAllHotQuizListSuccess,
+    isAllHotQuizListError,
+    allHotQuizListError,
+  } = useAllHotQuizList(
+    params.get('keyword'),
+    params.get('sort'),
+    seqNum,
+    params.get('access')
+  );
+
+  // 실시간 인기순 퀴즈 목록 불러오기 관련 useQuery
+  const {
+    rtHotQuizListData,
+    rtHotQuizListRefetch,
+    isRTHotQuizListLoading,
+    isRTHotQuizListSuccess,
+    isRTHotQuizListError,
+    rtHotQuizListError,
+  } = useRTHotQuizList(
+    params.get('keyword'),
+    params.get('sort'),
+    seqNum,
+    params.get('access')
+  );
+
+  // 신고순 퀴즈 목록 불러오기 관련 useQuery
+  const {
+    reportQuizListData,
+    reportQuizListRefetch,
+    isReportQuizListLoading,
+    isReportQuizListSuccess,
+    isReportQuizListError,
+    reportQuizListError,
+  } = useReportQuizList(
+    params.get('keyword'),
+    params.get('sort'),
+    timeStamp,
+    params.get('access')
   );
 
   // 스크롤 이벤트가 발생했을 때 실행할 핸들러 함수
@@ -147,9 +194,6 @@ const Home = (): React.ReactNode => {
     // 스크롤 이벤트 리스너 등록
     window.addEventListener('scroll', scrollHandler);
 
-    // 최초 퀴즈 목록 불러오기
-    quizListRefetch();
-
     // 관리자 로그인 상태라면 토큰 검증
     if (localStorage.getItem('user')?.split(':')[1] === stringCrypto('true')) {
       authorRefetch();
@@ -159,66 +203,27 @@ const Home = (): React.ReactNode => {
     return () => {
       window.removeEventListener('scroll', scrollHandler);
     };
-  }, [authorRefetch, quizListRefetch, params]);
+  }, [authorRefetch]);
 
-  // 페이지 스크롤이 최하단에 도착했을 때 퀴즈 목록을 불러오기 위한 useEffect
-  useEffect(() => {
-    if (queAPI) {
-      console.log('!!!!!!!!!!!!!!');
-      quizListRefetch();
-    }
-  }, [queAPI, quizListRefetch]);
-
-  // 퀴즈 목록 불러오기 시 일어나는 과정을 관리하기 위한 useEffect
-  useEffect(() => {
-    if (isQuizListSuccess) {
-      setQuizListArray((quizListArray) => [
-        ...quizListArray,
-        ...quizListData.quizArray,
-      ]);
-    }
-  }, [isQuizListSuccess, quizListData]);
-
-  // 퀴즈 필터 정렬 시 일어나는 과정을 관리하기 위한 useEffect
+  // 퀴즈 필터와 관리자 필터의 조작을 관리하기 위한 useEffect
   useEffect(() => {
     if (quizFilter1 === 1 || quizFilter1 === 2) {
       setAdminQuizFilter1(2);
     }
   }, [quizFilter1]);
 
-  // 관리자 기능 내 퀴즈 필터 정렬 시 일어나는 과정을 관리하기 위한 useEffect
   useEffect(() => {
     if (adminQuizFilter1 === 1) {
       setQuizFilter1(3);
-    } else if (adminQuizFilter1 === 2 && params.get('sort') === 'report') {
+    } else if (adminQuizFilter1 === 2) {
       setQuizFilter1(1);
     }
-  }, [adminQuizFilter1, params]);
+  }, [adminQuizFilter1]);
 
-  // 퀴즈 필터(sort 속성) 정렬 시 일어나는 과정을 관리하기 위한 useEffect
   useEffect(() => {
+    setQuizListArray([]);
     setTimeStamp(null);
     setSeqNum(0);
-    setQuizListArray([]);
-
-    if (quizFilter1 === 1) {
-      setQuizFilter2(1);
-      setURLQueryString(router, 'sort', 'new');
-    } else if (quizFilter1 === 2) {
-      if (quizFilter2 === 1) {
-        setURLQueryString(router, 'sort', 'all-hot');
-      } else if (quizFilter2 === 2) {
-        setURLQueryString(router, 'sort', 'realtime-hot');
-      }
-    } else if (adminQuizFilter1 === 1) {
-      setURLQueryString(router, 'sort', 'report');
-    }
-  }, [quizFilter1, quizFilter2, adminQuizFilter1, router]);
-
-  // 퀴즈 필터(access 속성) 정렬 시 일어나는 과정을 관리하기 위한 useEffect
-  useEffect(() => {
-    setTimeStamp(null);
-    setQuizListArray([]);
 
     if (adminQuizFilter2 === 1) {
       setURLQueryString(router, 'access', 'all');
@@ -227,23 +232,174 @@ const Home = (): React.ReactNode => {
     } else if (adminQuizFilter2 === 3) {
       setURLQueryString(router, 'access', 'private');
     }
-  }, [adminQuizFilter2, router]);
+  }, [router, adminQuizFilter2]);
+
+  // 퀴즈 필터의 변경 시 일어나는 과정을 관리하기 위한 useEffect
+  useEffect(() => {
+    setSeqNum(0);
+    setTimeStamp(null);
+    setQuizListArray([]);
+
+    if (quizFilter1 === 1 && adminQuizFilter1 === 2) {
+      setURLQueryString(router, 'sort', 'new');
+    } else if (
+      quizFilter1 === 2 &&
+      quizFilter2 === 1 &&
+      adminQuizFilter1 === 2
+    ) {
+      setURLQueryString(router, 'sort', 'all-hot');
+    } else if (
+      quizFilter1 === 2 &&
+      quizFilter2 === 2 &&
+      adminQuizFilter1 === 2
+    ) {
+      setURLQueryString(router, 'sort', 'realtime-hot');
+    } else if (adminQuizFilter1 === 1) {
+      setURLQueryString(router, 'sort', 'report');
+    }
+  }, [router, quizFilter1, quizFilter2, adminQuizFilter1]);
+
+  // url query string 값의 변화에 따른 동작을 관리하기 위한 useEffect
+  useEffect(() => {
+    if (params.get('sort') === 'new') {
+      newQuizListRefetch();
+    } else if (params.get('sort') === 'all-hot') {
+      allHotQuizListRefetch();
+    } else if (params.get('sort') === 'realtime-hot') {
+      rtHotQuizListRefetch();
+    } else if (params.get('sort') === 'report') {
+      reportQuizListRefetch();
+    }
+  }, [
+    params,
+    newQuizListRefetch,
+    allHotQuizListRefetch,
+    rtHotQuizListRefetch,
+    reportQuizListRefetch,
+  ]);
 
   useEffect(() => {
-    if (quizListData && quizListData.quizCount === 20) {
-      const ts: string = quizListData.quizArray[19].timeStamp;
-
-      setTimeStamp(ts);
+    if (params.get('sort') === 'new') {
+      setQuizFilter1(1);
+    } else if (params.get('sort') === 'all-hot') {
+      setQuizFilter1(2);
+      setQuizFilter2(1);
+    } else if (params.get('sort') === 'realtime-hot') {
+      setQuizFilter1(2);
+      setQuizFilter2(2);
+    } else if (params.get('sort') === 'report') {
+      setAdminQuizFilter1(1);
     }
 
-    if (quizListData && quizListData.quizArray.length !== 0) {
-      setSeqNum((seqNum) => seqNum + quizListData.quizArray.length + 1);
+    if (params.get('access') === 'all') {
+      setAdminQuizFilter2(1);
+    } else if (params.get('access') === 'private') {
+      setAdminQuizFilter2(3);
+    } else {
+      setAdminQuizFilter2(2);
     }
-  }, [quizListData]);
+  }, [params]);
+
+  // 페이지 하단에서의 무한 스크롤 과정을 관리하기 위한 useEffect
+  useEffect(() => {
+    if (queAPI) {
+      if (params.get('sort') === 'new') {
+        newQuizListRefetch();
+      } else if (params.get('sort') === 'all-hot') {
+        allHotQuizListRefetch();
+      } else if (params.get('sort') === 'realtime-hot') {
+        rtHotQuizListRefetch();
+      } else if (params.get('sort') === 'report') {
+        reportQuizListRefetch();
+      }
+    }
+  }, [
+    queAPI,
+    params,
+    newQuizListRefetch,
+    allHotQuizListRefetch,
+    rtHotQuizListRefetch,
+    reportQuizListRefetch,
+  ]);
+
+  // 퀴즈 목록을 불러오는 과정을 관리하기 위한 useEffect
+  useEffect(() => {
+    if (newQuizListData && quizFilter1 === 1) {
+      setQuizListArray((quizListArray) => [
+        ...quizListArray,
+        ...newQuizListData.quizArray,
+      ]);
+    } else if (allHotQuizListData && quizFilter1 === 2 && quizFilter2 === 1) {
+      setQuizListArray((quizListArray) => [
+        ...quizListArray,
+        ...allHotQuizListData.quizArray,
+      ]);
+    } else if (rtHotQuizListData && quizFilter1 === 2 && quizFilter2 === 2) {
+      setQuizListArray((quizListArray) => [
+        ...quizListArray,
+        ...rtHotQuizListData.quizArray,
+      ]);
+    } else if (reportQuizListData && adminQuizFilter1 === 1) {
+      setQuizListArray((quizListArray) => [
+        ...quizListArray,
+        ...reportQuizListData.quizArray,
+      ]);
+    }
+  }, [
+    quizFilter1,
+    quizFilter2,
+    adminQuizFilter1,
+    newQuizListData,
+    allHotQuizListData,
+    rtHotQuizListData,
+    reportQuizListData,
+  ]);
+
+  useEffect(() => {
+    if (
+      params.get('sort') === 'new' &&
+      newQuizListData &&
+      newQuizListData.quizArray.length >= 20
+    ) {
+      setTimeStamp(newQuizListData.quizArray[19].timeStamp);
+    } else if (
+      params.get('sort') === 'all-hot' &&
+      allHotQuizListData &&
+      allHotQuizListData.quizArray.length >= 20
+    ) {
+      setSeqNum((seqNum) => seqNum + allHotQuizListData.quizArray.length + 1);
+    } else if (
+      params.get('sort') === 'realtime-hot' &&
+      rtHotQuizListData &&
+      rtHotQuizListData.quizArray.length >= 20
+    ) {
+      setSeqNum((seqNum) => seqNum + rtHotQuizListData.quizArray.length + 1);
+    } else if (
+      params.get('sort') === 'report' &&
+      reportQuizListData &&
+      reportQuizListData.quizArray.length >= 20
+    ) {
+      setTimeStamp(reportQuizListData.quizArray[19].timeStamp);
+    }
+  }, [
+    params,
+    newQuizListData,
+    allHotQuizListData,
+    rtHotQuizListData,
+    reportQuizListData,
+  ]);
 
   return (
     <>
-      {isAuthorCheckLoading || isQuizListLoading ? <LoadingSpinner /> : ''}
+      {isAuthorCheckLoading ||
+      isNewQuizListLoading ||
+      isAllHotQuizListLoading ||
+      isRTHotQuizListLoading ||
+      isReportQuizListLoading ? (
+        <LoadingSpinner />
+      ) : (
+        ''
+      )}
       <main className={styles.container}>
         <div className={styles.contents}>
           <div className={styles.filterMore}>

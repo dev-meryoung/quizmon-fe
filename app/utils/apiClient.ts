@@ -40,14 +40,21 @@ interface ApiClient {
     thumbnailUrl: string
   ) => Promise<any>;
   checkNewQuiz: (quizId: string) => Promise<any>;
-  quizList: (
+  newQuizList: (
     sort: number,
     searchWord?: string | null,
     timeStamp?: string | null,
     access?: number | null,
     userOnly?: boolean,
-    count?: number,
-    seqNum?: number
+    count?: number
+  ) => Promise<any>;
+  hotQuizList: (
+    sort: number,
+    searchWord?: string | null,
+    seqNum?: number,
+    access?: number | null,
+    userOnly?: boolean,
+    count?: number
   ) => Promise<any>;
 }
 
@@ -299,8 +306,8 @@ const apiClient: ApiClient = {
       });
   },
 
-  // 퀴즈 목록 불러오기 API
-  quizList(sort, searchWord?, timeStamp?, access?, userOnly?, count?, seqNum?) {
+  // 최신순 및 신고순 퀴즈 목록 불러오기 API
+  newQuizList(sort, searchWord?, timeStamp?, access?, userOnly?, count?) {
     const method: string = 'GET';
     const url: string = `/api/quiz/list`;
     const headers = {
@@ -342,10 +349,61 @@ const apiClient: ApiClient = {
       querys += `&count=${count}`;
     }
 
+    console.log(querys);
+
+    return axios
+      .get(`${this.baseUrl}${url}?${querys}`, {
+        headers,
+      })
+      .then((res) => {
+        return res.data;
+      });
+  },
+
+  // 인기순 퀴즈 목록 불러오기 API
+  hotQuizList(sort, searchWord?, seqNum?, access?, userOnly?, count?) {
+    const method: string = 'GET';
+    const url: string = `/api/quiz/list`;
+    const headers = {
+      Authentication: apiCrypto(method, url),
+      Authorization: localStorage.getItem('jwt'),
+    };
+
+    // 쿼리 스트링에 사용되는 string 값
+    let querys: string = `sort=${sort}`;
+
+    // 검색어
+    if (searchWord) {
+      querys += `&searchWord=${searchWord}`;
+    }
+
     // 시작 퀴즈 순번
     if (seqNum) {
       querys += `&seqNum=${seqNum}`;
     }
+
+    // 퀴즈 공개 여부 (기본값 : 공개)
+    if (access !== 0) {
+      // 전체
+      if (access === 2) {
+        querys += `&access=2`;
+        // 비공개
+      } else if (access === 1) {
+        querys += `&access=1`;
+      }
+    }
+
+    // 로그인한 사용자가 등록한 퀴즈만 보기 여부
+    if (userOnly) {
+      querys += `&userOnly=${userOnly}`;
+    }
+
+    // 퀴즈 요청 개수
+    if (count) {
+      querys += `&count=${count}`;
+    }
+
+    console.log(querys);
 
     return axios
       .get(`${this.baseUrl}${url}?${querys}`, {
