@@ -3,10 +3,9 @@ import apiClient from 'app/utils/apiClient';
 
 // 최신순 퀴즈 목록을 불러오는 useQuery
 export const useNewQuizList = (
+  filterState: number[],
   searchWord?: string | null,
-  sortOption?: string | null,
   timeStamp?: string | null,
-  accessOption?: string | null,
   userOnly?: boolean,
   count?: number
 ): {
@@ -31,25 +30,12 @@ export const useNewQuizList = (
   isNewQuizListError: boolean;
   newQuizListError: any;
 } => {
-  // API 타입에 맞춰 정렬 방식 값 수정
-  let sort: number = 0;
-
-  if (sortOption === 'report') {
-    sort = 4;
-  } else if (sortOption === 'all-hot') {
-    sort = 3;
-  } else if (sortOption === 'realtime-hot') {
-    sort = 2;
-  } else {
-    sort = 1;
-  }
-
   // API 타입에 맞춰 접근 종류 값 수정
   let access: number = 0;
 
-  if (accessOption === 'all') {
+  if (filterState[1] === 1) {
     access = 2;
-  } else if (accessOption === 'private') {
+  } else if (filterState[1] === 3) {
     access = 1;
   }
 
@@ -64,12 +50,20 @@ export const useNewQuizList = (
     ['newQuizList'],
     () =>
       apiClient
-        .newQuizList(sort, searchWord, timeStamp, access, userOnly, count)
+        .newQuizList(
+          filterState[0],
+          searchWord,
+          timeStamp,
+          access,
+          userOnly,
+          count
+        )
         .then((data) => {
+          console.log(data.result);
           return data.result;
         })
         .catch((error) => console.log(error.response.data.message)),
-    { retry: 0, refetchOnWindowFocus: false, enabled: false }
+    { retry: 0, staleTime: 0, refetchOnWindowFocus: false, enabled: false }
   );
 
   return {
