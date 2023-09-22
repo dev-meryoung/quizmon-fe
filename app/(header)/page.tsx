@@ -60,6 +60,9 @@ const Home = (): React.ReactNode => {
   // 다음 퀴즈 목록 인기순 데이터 요청 시 필요한 가장 마지막 퀴즈의 순번을 관리하기 위한 useState
   const [seqNum, setSeqNum] = useState<number>(0);
 
+  // 불러온 퀴즈 데이터가 없을 경우 나타낼 이미지 노출을 관리하기 위한 useState
+  const [showNoneImg, setShowNoneImg] = useState<boolean>(false);
+
   // 불러온 퀴즈 목록 데이터를 관리하기 위한 useState
   const [quizListArray, setQuizListArray] = useState<QuizListArray[]>([]);
 
@@ -120,7 +123,7 @@ const Home = (): React.ReactNode => {
     isReportQuizListSuccess,
     isReportQuizListError,
     reportQuizListError,
-  } = useReportQuizList(filterState, params.get('keyword'), timeStamp);
+  } = useReportQuizList(filterState, params.get('keyword'), seqNum);
 
   // 스크롤 이벤트가 발생했을 때 실행할 핸들러 함수
   const scrollHandler = (): void => {
@@ -272,27 +275,32 @@ const Home = (): React.ReactNode => {
   // 퀴즈 목록을 불러오는 과정을 관리하기 위한 useEffect
   useEffect(() => {
     !queAPI ? setQuizListArray([]) : '';
+    setShowNoneImg(false);
 
     if (newQuizListData && filterState[0] === 1) {
       setQuizListArray((quizListArray) => [
         ...quizListArray,
         ...newQuizListData.quizArray,
       ]);
+      setShowNoneImg(true);
     } else if (allHotQuizListData && filterState[0] === 3) {
       setQuizListArray((quizListArray) => [
         ...quizListArray,
         ...allHotQuizListData.quizArray,
       ]);
+      setShowNoneImg(true);
     } else if (rtHotQuizListData && filterState[0] === 2) {
       setQuizListArray((quizListArray) => [
         ...quizListArray,
         ...rtHotQuizListData.quizArray,
       ]);
+      setShowNoneImg(true);
     } else if (reportQuizListData && filterState[0] === 4) {
       setQuizListArray((quizListArray) => [
         ...quizListArray,
         ...reportQuizListData.quizArray,
       ]);
+      setShowNoneImg(true);
     }
   }, [
     filterState,
@@ -302,6 +310,7 @@ const Home = (): React.ReactNode => {
     reportQuizListData,
   ]);
 
+  // 무한 스크롤에 사용되는 정보를 관리하기 위한 useEffect
   useEffect(() => {
     if (
       filterState[0] === 1 &&
@@ -326,7 +335,7 @@ const Home = (): React.ReactNode => {
       reportQuizListData &&
       reportQuizListData.quizArray.length >= 20
     ) {
-      setTimeStamp(reportQuizListData.quizArray[19].timeStamp);
+      setSeqNum((seqNum) => seqNum + reportQuizListData.quizArray.length + 1);
     }
   }, [
     filterState,
@@ -423,11 +432,21 @@ const Home = (): React.ReactNode => {
           </div>
 
           <div className={styles.quizList}>
-            {quizListArray.length > 0
-              ? quizListArray.map((data) => {
-                  return <QuizCard key={data.quizId} data={data} />;
-                })
-              : ''}
+            {!showNoneImg ? (
+              ''
+            ) : quizListArray.length > 0 ? (
+              quizListArray.map((data) => {
+                return <QuizCard key={data.quizId} data={data} />;
+              })
+            ) : (
+              <div className={styles.noneQuiz}>
+                <Image
+                  className={styles.noneQuiz_img}
+                  src={noneQuizImg}
+                  alt="none"
+                />
+              </div>
+            )}
           </div>
         </div>
       </main>

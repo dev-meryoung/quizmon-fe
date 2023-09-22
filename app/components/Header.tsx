@@ -127,6 +127,7 @@ const Header = (): React.ReactNode => {
             type="text"
             spellCheck="false"
             value={keyword}
+            onChange={onChangeKeyword}
             onKeyDown={onEnterKeyDown}
           />
           <svg

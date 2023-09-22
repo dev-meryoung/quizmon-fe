@@ -50,7 +50,7 @@ export const useRTHotQuizList = (
     ['rtHotQuizList'],
     () =>
       apiClient
-        .hotQuizList(
+        .sortQuizList(
           filterState[0],
           searchWord,
           seqNum,

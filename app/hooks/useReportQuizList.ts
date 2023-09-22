@@ -5,7 +5,7 @@ import apiClient from 'app/utils/apiClient';
 export const useReportQuizList = (
   filterState: number[],
   searchWord?: string | null,
-  timeStamp?: string | null,
+  seqNum?: number,
   userOnly?: boolean,
   count?: number
 ): {
@@ -50,10 +50,10 @@ export const useReportQuizList = (
     ['reportQuizList'],
     () =>
       apiClient
-        .newQuizList(
+        .sortQuizList(
           filterState[0],
           searchWord,
-          timeStamp,
+          seqNum,
           access,
           userOnly,
           count

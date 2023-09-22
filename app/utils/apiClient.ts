@@ -48,7 +48,7 @@ interface ApiClient {
     userOnly?: boolean,
     count?: number
   ) => Promise<any>;
-  hotQuizList: (
+  sortQuizList: (
     sort: number,
     searchWord?: string | null,
     seqNum?: number,
@@ -361,7 +361,7 @@ const apiClient: ApiClient = {
   },
 
   // 인기순 퀴즈 목록 불러오기 API
-  hotQuizList(sort, searchWord?, seqNum?, access?, userOnly?, count?) {
+  sortQuizList(sort, searchWord?, seqNum?, access?, userOnly?, count?) {
     const method: string = 'GET';
     const url: string = `/api/quiz/list`;
     const headers = {

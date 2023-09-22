@@ -50,7 +50,7 @@ export const useAllHotQuizList = (
     ['allHotQuizList'],
     () =>
       apiClient
-        .hotQuizList(
+        .sortQuizList(
           filterState[0],
           searchWord,
           seqNum,
