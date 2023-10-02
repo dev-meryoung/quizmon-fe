@@ -1,0 +1,169 @@
+/* Main 페이지 */
+@use 'var.module.scss' as v;
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .contents {
+    display: flex;
+    width: 1610px;
+    border: 1px solid v.$main-deep-gray;
+    margin: 2rem 0;
+    flex-direction: column;
+
+    .title {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      margin: 2rem 0 1rem 0;
+
+      .title_text {
+        margin-left: 1.2rem;
+        font-size: v.$font-size-lg;
+        font-weight: bold;
+      }
+
+      .back {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 1.5rem;
+
+        .back_icon {
+          width: 2.5rem;
+          height: 2.5rem;
+        }
+
+        &:hover {
+          cursor: pointer;
+          fill: v.$main-green;
+        }
+      }
+    }
+
+    .filterMore {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 1rem 0 0 1rem;
+
+      .quizFilter {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .quizFilterSet {
+          display: flex;
+        }
+      }
+
+      .more {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .newQuizBtn {
+          display: flex;
+          width: 2.4rem;
+          height: 2.4rem;
+          justify-content: center;
+          align-items: center;
+          border-radius: 100%;
+          background-color: v.$main-green;
+          overflow: hidden;
+          fill: v.$white;
+          box-shadow: 0.5px 0.5px 0.5px 0.5px v.$main-shadow-gray;
+          margin-right: 1rem;
+          .newQuiz_icon {
+            width: 1.5em;
+            height: 1.5rem;
+          }
+
+          &:hover {
+            cursor: pointer;
+            background-color: v.$main-deep-green;
+          }
+        }
+        .admin {
+          display: flex;
+          margin-right: 1.5rem;
+          .admin_icon {
+            &:hover {
+              cursor: pointer;
+              fill: v.$main-green;
+              transition: all 0.3s;
+            }
+          }
+        }
+      }
+    }
+
+    .quizList {
+      display: flex;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+
+      .noneQuiz {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+
+        .noneQuiz_img {
+          display: flex;
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  /** 반응형 웹 포맷 **/
+  @media (max-width: 1609px) {
+    .contents {
+      width: 1288px;
+    }
+  }
+
+  @media (max-width: 1287px) {
+    .contents {
+      width: 966px;
+    }
+  }
+
+  @media (max-width: 965px) {
+    .contents {
+      width: 644px;
+    }
+  }
+
+  // 반응형 모바일 기준
+  @media (max-width: 644px) {
+    .contents {
+      width: calc(100% - 2rem);
+
+      .filterMore {
+        .more {
+          .newQuizBtn {
+            width: 2.2rem;
+            height: 2.2rem;
+
+            .newQuiz_icon {
+              width: 1.2rem;
+              height: 1.2rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 410px) {
+    .quizFilter {
+      flex-direction: column;
+      flex-wrap: wrap;
+    }
+  }
+}

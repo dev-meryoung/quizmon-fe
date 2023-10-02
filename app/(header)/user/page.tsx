@@ -57,6 +57,11 @@ const User = (): React.ReactNode => {
     setModalMsg('');
   };
 
+  // 내가 만든 퀴즈 버튼이 클릭되었을 때 동작하는 myQuizBtnHandler 함수
+  const myQuizBtnHandler = (): void => {
+    router.push('/user/myquiz');
+  };
+
   // userEdit 컴포넌트의 노출 여부 상태를 변경하고 input 값을 초기화하는 viewUserEditHandler 함수
   const viewUserEditHandler = (): void => {
     setViewUserEdit(!viewUserEdit);
@@ -440,7 +445,11 @@ const User = (): React.ReactNode => {
               </div>
             ) : (
               <div className={styles.btns}>
-                <button className={styles.btn} id="myQuizBtn">
+                <button
+                  className={styles.btn}
+                  id="myQuizBtn"
+                  onClick={myQuizBtnHandler}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="120"

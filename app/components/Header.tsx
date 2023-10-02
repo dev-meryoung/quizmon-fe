@@ -95,7 +95,7 @@ const Header = (): React.ReactNode => {
     if (keyword !== '') {
       location.href = `?keyword=${keyword}`;
     } else {
-      location.href = `/`;
+      location.href = `${location.pathname}`;
     }
   };
 
