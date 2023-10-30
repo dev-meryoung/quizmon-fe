@@ -5,16 +5,12 @@ import styles from 'app/styles/myQuiz.module.scss';
 import Filter from 'app/components/Filter';
 import QuizCard from 'app/components/QuizCard';
 import LoadingSpinner from 'app/components/LoadingSpinner';
-import { useAuthorCheck } from 'app/hooks/useAuthorCheck';
-import stringCrypto from 'app/utils/stringCrypto';
-import AdminModal from 'app/components/AdminModal';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useNewQuizList } from 'app/hooks/useNewQuizList';
 import { useAllHotQuizList } from 'app/hooks/useAllHotQuizList';
 import { useRTHotQuizList } from 'app/hooks/useRTHotQuizList';
 import Image from 'next/image';
 import noneQuizImg from 'public/imgs/none-quiz.svg';
-import { useReportQuizList } from 'app/hooks/useReportQuizList';
 
 export interface QuizListArray {
   comment: string;
